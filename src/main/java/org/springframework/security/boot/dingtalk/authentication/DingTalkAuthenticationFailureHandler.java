@@ -18,6 +18,7 @@ import org.springframework.security.boot.biz.exception.AuthenticationCaptchaInco
 import org.springframework.security.boot.biz.exception.AuthenticationCaptchaNotFoundException;
 import org.springframework.security.boot.biz.exception.ErrorCode;
 import org.springframework.security.boot.biz.exception.ErrorResponse;
+import org.springframework.security.boot.dingtalk.exception.DingTalkAuthenticationServiceException;
 import org.springframework.security.boot.dingtalk.exception.DingTalkCodeExpiredException;
 import org.springframework.security.boot.dingtalk.exception.DingTalkCodeIncorrectException;
 import org.springframework.security.boot.utils.WebUtils;
@@ -79,6 +80,8 @@ public class DingTalkAuthenticationFailureHandler extends ExceptionMappingAuthen
 			JSONObject.writeJSONString(response.getWriter(), ErrorResponse.of(e.getMessage(), ErrorCode.CAPTCHA, HttpStatus.UNAUTHORIZED));
 		}  else if (e instanceof AuthenticationCaptchaIncorrectException) {
 			JSONObject.writeJSONString(response.getWriter(), ErrorResponse.of(e.getMessage(), ErrorCode.CAPTCHA, HttpStatus.UNAUTHORIZED));
+		} else if (e instanceof DingTalkAuthenticationServiceException) {
+			JSONObject.writeJSONString(response.getWriter(), ErrorResponse.of(e.getMessage(), ErrorCode.IDENTITY, HttpStatus.UNAUTHORIZED));
 		} else if (e instanceof DingTalkCodeIncorrectException) {
 			JSONObject.writeJSONString(response.getWriter(), ErrorResponse.of("Code was incorrect", ErrorCode.IDENTITY, HttpStatus.UNAUTHORIZED));
 		} else if (e instanceof DingTalkCodeExpiredException) {
