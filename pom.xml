@@ -470,7 +470,7 @@
 		<dependency>
 			<groupId>com.dingtalk</groupId>
 			<artifactId>dingtalk-sdk</artifactId>
-			<version>20190423</version>
+			<version>20190425</version>
 			<scope>provided</scope>
 		</dependency>
 		
