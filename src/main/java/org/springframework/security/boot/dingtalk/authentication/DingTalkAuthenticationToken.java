@@ -22,7 +22,7 @@ import org.springframework.security.core.GrantedAuthority;
 @SuppressWarnings("serial")
 public class DingTalkAuthenticationToken extends AbstractAuthenticationToken {
 
-	private final Object principal;
+	private Object principal;
 	private Object credentials;
 
 	/**
@@ -69,6 +69,10 @@ public class DingTalkAuthenticationToken extends AbstractAuthenticationToken {
 
 	public Object getPrincipal() {
 		return this.principal;
+	}
+	
+	public void setPrincipal(Object principal) {
+		this.principal = principal;
 	}
 
 	public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {

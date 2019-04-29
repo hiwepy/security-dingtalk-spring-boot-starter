@@ -365,6 +365,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<commons-io.version>2.5</commons-io.version>
+		<guava.version>27.0.1-jre</guava.version>
 		<maven.version>3.0</maven.version>
        	<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
@@ -383,6 +384,13 @@
 				<groupId>com.github.vindell</groupId>
 				<artifactId>spring-boot-starter-security-biz</artifactId>
 				<version>${spring-security-biz.version}</version>
+			</dependency>
+			
+			<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+			<dependency>
+			    <groupId>com.google.guava</groupId>
+			    <artifactId>guava</artifactId>
+			    <version>${guava.version}</version>
 			</dependency>
 			
 		</dependencies>
@@ -447,6 +455,11 @@
   			<artifactId>jackson-databind</artifactId>
 		</dependency>
 		
+		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+		<dependency>
+		    <groupId>com.google.guava</groupId>
+		    <artifactId>guava</artifactId>
+		</dependency>
 		<!-- https://github.com/vindell/spring-boot-starter-security-biz -->
 		<dependency>
 			<groupId>com.github.vindell</groupId>

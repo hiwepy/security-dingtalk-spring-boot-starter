@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.boot.biz.authentication.AuthenticationListener;
 import org.springframework.security.boot.biz.userdetails.AuthcUserDetailsService;
+import org.springframework.security.boot.dingtalk.authentication.DingTalkAccessTokenProvider;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationEntryPoint;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationFailureHandler;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationProvider;
@@ -47,9 +48,16 @@ public class SecurityDingTalkAutoConfiguration{
 	}
 	
 	@Bean
+	@ConditionalOnMissingBean
+	public DingTalkAccessTokenProvider dingTalkAccessTokenProvider() {
+		return new DingTalkAccessTokenProvider();
+	}
+	
+	@Bean
 	public DingTalkAuthenticationProvider dingTalkAuthenticationProvider(
-			AuthcUserDetailsService authcUserDetailsService) {
-		return new DingTalkAuthenticationProvider(authcUserDetailsService, dingtalkProperties);
+			AuthcUserDetailsService authcUserDetailsService, 
+			DingTalkAccessTokenProvider dingTalkAccessTokenProvider) {
+		return new DingTalkAuthenticationProvider(authcUserDetailsService, dingTalkAccessTokenProvider, dingtalkProperties);
 	}
 
 	@Bean
