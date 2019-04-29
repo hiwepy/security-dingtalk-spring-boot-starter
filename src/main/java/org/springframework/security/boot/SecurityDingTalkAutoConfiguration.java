@@ -35,26 +35,26 @@ public class SecurityDingTalkAutoConfiguration{
 	
 	@Bean
 	@ConditionalOnMissingBean
-	public DingTalkAuthenticationEntryPoint idcAuthenticationEntryPoint() {
+	public DingTalkAuthenticationEntryPoint dingTalkAuthenticationEntryPoint() {
 		return new DingTalkAuthenticationEntryPoint(dingtalkProperties.getAuthc().getLoginUrl());
 	}
 	
 	@Bean
 	@ConditionalOnMissingBean
-	public DingTalkAuthenticationFailureHandler idcAuthenticationFailureHandler(
+	public DingTalkAuthenticationFailureHandler dingTalkAuthenticationFailureHandler(
 			@Autowired(required = false) List<AuthenticationListener> authenticationListeners) {
 		return new DingTalkAuthenticationFailureHandler(authenticationListeners, dingtalkProperties.getAuthc().getLoginUrl());
 	}
 	
 	@Bean
-	public DingTalkAuthenticationProvider idcCodeAuthenticationProvider(
+	public DingTalkAuthenticationProvider dingTalkAuthenticationProvider(
 			AuthcUserDetailsService authcUserDetailsService) {
 		return new DingTalkAuthenticationProvider(authcUserDetailsService, dingtalkProperties);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public DingTalkAuthenticationSuccessHandler idcAuthenticationSuccessHandler(
+	public DingTalkAuthenticationSuccessHandler dingTalkAuthenticationSuccessHandler(
 			@Autowired(required = false) List<AuthenticationListener> authenticationListeners) {
 		return new DingTalkAuthenticationSuccessHandler(authenticationListeners, dingtalkProperties.getAuthc().getLoginUrl());
 	}
