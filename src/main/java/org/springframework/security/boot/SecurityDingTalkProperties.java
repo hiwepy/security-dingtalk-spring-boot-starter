@@ -9,7 +9,7 @@ public class SecurityDingTalkProperties {
 
 	public static final String PREFIX = "spring.security.dingtalk";
 
-	/** Whether Enable JWT Authentication. */
+	/** Whether Enable DingTalk Authentication. */
 	private boolean enabled = false;
 	
 	private String accessKey;

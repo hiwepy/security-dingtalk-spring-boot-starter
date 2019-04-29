@@ -33,7 +33,7 @@ public class SecurityDingTalkFilterConfiguration {
     @Configuration
     @ConditionalOnProperty(prefix = SecurityDingTalkProperties.PREFIX, value = "enabled", havingValue = "true")
    	@EnableConfigurationProperties({ SecurityDingTalkProperties.class, SecurityBizProperties.class })
-    @Order(106)
+    @Order(104)
    	static class DingTalkWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter implements ApplicationEventPublisherAware {
     	
     	private ApplicationEventPublisher eventPublisher;
