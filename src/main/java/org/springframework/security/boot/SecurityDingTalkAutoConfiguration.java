@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.boot.biz.authentication.AuthenticationListener;
-import org.springframework.security.boot.biz.userdetails.AuthcUserDetailsService;
+import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapter;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAccessTokenProvider;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationEntryPoint;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationFailureHandler;
@@ -55,9 +55,9 @@ public class SecurityDingTalkAutoConfiguration{
 	
 	@Bean
 	public DingTalkAuthenticationProvider dingTalkAuthenticationProvider(
-			AuthcUserDetailsService authcUserDetailsService, 
+			UserDetailsServiceAdapter userDetailsService, 
 			DingTalkAccessTokenProvider dingTalkAccessTokenProvider) {
-		return new DingTalkAuthenticationProvider(authcUserDetailsService, dingTalkAccessTokenProvider, dingtalkProperties);
+		return new DingTalkAuthenticationProvider(userDetailsService, dingTalkAccessTokenProvider, dingtalkProperties);
 	}
 
 	@Bean

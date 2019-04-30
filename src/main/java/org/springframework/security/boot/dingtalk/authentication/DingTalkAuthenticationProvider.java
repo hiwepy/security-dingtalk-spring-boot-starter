@@ -9,8 +9,8 @@ import org.springframework.security.authentication.AccountStatusUserDetailsCheck
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.boot.SecurityDingTalkProperties;
-import org.springframework.security.boot.biz.userdetails.AuthcUserDetailsService;
 import org.springframework.security.boot.biz.userdetails.SecurityPrincipal;
+import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapter;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAccessTokenProvider.KeySecret;
 import org.springframework.security.boot.dingtalk.exception.DingTalkAuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -34,15 +34,15 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 	protected MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
 	private UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
 	private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final AuthcUserDetailsService authcUserDetailsService;
+    private final UserDetailsServiceAdapter userDetailsService;
     private final SecurityDingTalkProperties dingtalkProperties;
     private final DingTalkAccessTokenProvider dingTalkAccessTokenProvider;
     private final KeySecret keySecret;
     
-    public DingTalkAuthenticationProvider(final AuthcUserDetailsService authcUserDetailsService,
+    public DingTalkAuthenticationProvider(final UserDetailsServiceAdapter userDetailsService,
     		final DingTalkAccessTokenProvider dingTalkAccessTokenProvider,
     		final SecurityDingTalkProperties dingtalkProperties) {
-        this.authcUserDetailsService = authcUserDetailsService;
+        this.userDetailsService = userDetailsService;
         this.dingTalkAccessTokenProvider = dingTalkAccessTokenProvider;
         this.dingtalkProperties = dingtalkProperties;
         this.keySecret = new KeySecret(dingtalkProperties.getAccessKey(), dingtalkProperties.getAccessSecret());
@@ -104,7 +104,7 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 				OapiUserGetUseridByUnionidResponse unionidResponse = unionidClient.execute(unionidRequest, dingTalkAccessTokenProvider.getAccessToken(this.keySecret));
 				dingTalkToken.setPrincipal(unionidResponse.getUserid());
 				
-				UserDetails ud = getAuthcUserDetailsService().loadUserDetails(dingTalkToken);
+				UserDetails ud = getUserDetailsService().loadUserDetails(dingTalkToken);
 		        
 		        // User Status Check
 		        getUserDetailsChecker().check(ud);
@@ -144,8 +144,8 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 		return userDetailsChecker;
 	}
 
-	public AuthcUserDetailsService getAuthcUserDetailsService() {
-		return authcUserDetailsService;
+	public UserDetailsServiceAdapter getUserDetailsService() {
+		return userDetailsService;
 	}
     
 }
