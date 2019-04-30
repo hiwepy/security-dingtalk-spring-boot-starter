@@ -55,7 +55,6 @@ public class SecurityDingTalkFilterConfiguration {
    				
    				SecurityDingTalkProperties dingtalkProperties,
    				ObjectProvider<DingTalkAuthenticationProvider> authenticationProvider,
-   				ObjectProvider<DingTalkAuthenticationProcessingFilter> authenticationProcessingFilter,
    				ObjectProvider<DingTalkAuthenticationSuccessHandler> authenticationSuccessHandler,
    				ObjectProvider<DingTalkAuthenticationFailureHandler> authenticationFailureHandler,
    				
