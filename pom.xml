@@ -466,7 +466,7 @@
 			<artifactId>spring-boot-starter-security-biz</artifactId>
 		</dependency>
 		
-		<!--钉钉SDK-->
+		<!--钉钉SDK : https://open-doc.dingtalk.com/microapp/faquestions/vzbp02-->
 		<dependency>
 			<groupId>com.dingtalk</groupId>
 			<artifactId>dingtalk-sdk</artifactId>
