@@ -14,7 +14,6 @@ public class SecurityDingTalkProperties {
 	
 	private String accessKey;
 	private String accessSecret;
-	private String accessToken;
 	
 	/**
 	 * 扫描登陆通过临时授权码获取用基本信息的接口地址
@@ -61,14 +60,6 @@ public class SecurityDingTalkProperties {
 
 	public void setAccessSecret(String accessSecret) {
 		this.accessSecret = accessSecret;
-	}
-
-	public String getAccessToken() {
-		return accessToken;
-	}
-
-	public void setAccessToken(String accessToken) {
-		this.accessToken = accessToken;
 	}
 
 	public String getUserInfoURL() {

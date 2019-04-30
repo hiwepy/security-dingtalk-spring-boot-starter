@@ -16,6 +16,7 @@ import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthent
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationFailureHandler;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationProvider;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationSuccessHandler;
+import org.springframework.security.boot.dingtalk.authentication.DingTalkKeySecret;
 import org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
@@ -50,7 +51,8 @@ public class SecurityDingTalkAutoConfiguration{
 	@Bean
 	@ConditionalOnMissingBean
 	public DingTalkAccessTokenProvider dingTalkAccessTokenProvider() {
-		return new DingTalkAccessTokenProvider();
+		DingTalkKeySecret keySecret = new DingTalkKeySecret(dingtalkProperties.getAccessKey(), dingtalkProperties.getAccessSecret());
+		return new DingTalkAccessTokenProvider(keySecret);
 	}
 	
 	@Bean

@@ -11,7 +11,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.boot.SecurityDingTalkProperties;
 import org.springframework.security.boot.biz.userdetails.SecurityPrincipal;
 import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapter;
-import org.springframework.security.boot.dingtalk.authentication.DingTalkAccessTokenProvider.KeySecret;
 import org.springframework.security.boot.dingtalk.exception.DingTalkAuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -37,7 +36,6 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
     private final UserDetailsServiceAdapter userDetailsService;
     private final SecurityDingTalkProperties dingtalkProperties;
     private final DingTalkAccessTokenProvider dingTalkAccessTokenProvider;
-    private final KeySecret keySecret;
     // https://open-doc.dingtalk.com/microapp/serverapi2/etaarr#-2
     private final DefaultDingTalkClient bycodeClient;
 	// https://open-doc.dingtalk.com/microapp/serverapi2/ege851#-5
@@ -49,7 +47,6 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
         this.userDetailsService = userDetailsService;
         this.dingTalkAccessTokenProvider = dingTalkAccessTokenProvider;
         this.dingtalkProperties = dingtalkProperties;
-        this.keySecret = new KeySecret(dingtalkProperties.getAccessKey(), dingtalkProperties.getAccessSecret());
         this.bycodeClient = new DefaultDingTalkClient(dingtalkProperties.getUserInfoURL());
         this.unionidClient = new DefaultDingTalkClient(dingtalkProperties.getUserIdURL());
     }
@@ -105,7 +102,7 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 				OapiUserGetUseridByUnionidRequest unionidRequest = new OapiUserGetUseridByUnionidRequest();
 				unionidRequest.setUnionid(userInfo.getUnionid());
 				unionidRequest.setHttpMethod("GET");
-				OapiUserGetUseridByUnionidResponse unionidResponse = unionidClient.execute(unionidRequest, dingTalkAccessTokenProvider.getAccessToken(this.keySecret));
+				OapiUserGetUseridByUnionidResponse unionidResponse = unionidClient.execute(unionidRequest, dingTalkAccessTokenProvider.getAccessToken());
 				dingTalkToken.setPrincipal(unionidResponse.getUserid());
 				
 				UserDetails ud = getUserDetailsService().loadUserDetails(dingTalkToken);

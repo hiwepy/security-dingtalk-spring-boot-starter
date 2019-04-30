@@ -35,37 +35,18 @@ public class DingTalkAccessTokenProvider {
 
 	public static String ACCESS_TOKEN_URL = "https://oapi.dingtalk.com/gettoken";
 	public static DefaultDingTalkClient client = new DefaultDingTalkClient(ACCESS_TOKEN_URL);
+	private final DingTalkKeySecret defaultKeySecret;
+
+	public DingTalkAccessTokenProvider(String accessKey, String accessSecret) {
+		this.defaultKeySecret = new DingTalkKeySecret(accessKey, accessSecret);
+	}
 	
-	public static class KeySecret {
-
-		private String accessKey;
-		private String accessSecret;
-
-		public KeySecret(String accessKey, String accessSecret) {
-			this.accessKey = accessKey;
-			this.accessSecret = accessSecret;
-		}
-
-		public String getAccessKey() {
-			return accessKey;
-		}
-
-		public String getAccessSecret() {
-			return accessSecret;
-		}
-
-		public void setAccessKey(String accessKey) {
-			this.accessKey = accessKey;
-		}
-
-		public void setAccessSecret(String accessSecret) {
-			this.accessSecret = accessSecret;
-		}
-
+	public DingTalkAccessTokenProvider(DingTalkKeySecret keySecret) {
+		this.defaultKeySecret = keySecret;
 	}
 	
 	// 缓存接口这里是LoadingCache，LoadingCache在缓存项不存在时可以自动加载缓存
-	private final LoadingCache<KeySecret, String> ACCESS_TOKEN_CACHE
+	private final LoadingCache<DingTalkKeySecret, String> ACCESS_TOKEN_CACHE
 			// CacheBuilder的构造函数是私有的，只能通过其静态方法newBuilder()来获得CacheBuilder的实例
 			= CacheBuilder.newBuilder()
 					// 设置并发级别为8，并发级别是指可以同时写缓存的线程数
@@ -86,15 +67,15 @@ public class DingTalkAccessTokenProvider {
 						}
 					})
 					// build方法中可以指定CacheLoader，在缓存不存在时通过CacheLoader的实现自动加载缓存
-					.build(new CacheLoader<KeySecret, String>() {
+					.build(new CacheLoader<DingTalkKeySecret, String>() {
 
 						@Override
-						public String load(KeySecret keys) throws Exception {
+						public String load(DingTalkKeySecret keySecret) throws Exception {
 
 							OapiGettokenRequest request = new OapiGettokenRequest();
 
-							request.setAppkey(keys.getAccessKey());
-							request.setAppsecret(keys.getAccessSecret());
+							request.setAppkey(keySecret.getAccessKey());
+							request.setAppsecret(keySecret.getAccessSecret());
 
 							request.setHttpMethod("GET");
 							OapiGettokenResponse response = client.execute(request);
@@ -103,7 +84,11 @@ public class DingTalkAccessTokenProvider {
 						}
 					});
 
-	public String getAccessToken(KeySecret keySecret) throws ExecutionException {
+	public String getAccessToken() throws ExecutionException {
+		return ACCESS_TOKEN_CACHE.get(defaultKeySecret);
+	}
+
+	public String getAccessToken(DingTalkKeySecret keySecret) throws ExecutionException {
 		return ACCESS_TOKEN_CACHE.get(keySecret);
 	}
 
