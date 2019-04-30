@@ -74,7 +74,7 @@ public class SecurityDingTalkFilterConfiguration {
    		}
    		
    		@Bean
-   	    public DingTalkAuthenticationProcessingFilter authenticationProcessingFilter() {
+   	    public DingTalkAuthenticationProcessingFilter dingTalkAuthenticationProcessingFilter() {
    	    	
    			DingTalkAuthenticationProcessingFilter authcFilter = new DingTalkAuthenticationProcessingFilter();
    			
@@ -105,7 +105,7 @@ public class SecurityDingTalkFilterConfiguration {
    	    protected void configure(HttpSecurity http) throws Exception {
    	    	
    	    	http.csrf().disable(); // We don't need CSRF for DingTalk LoginTmpCode based authentication
-   	    	http.addFilterBefore(authenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
+   	    	http.addFilterBefore(dingTalkAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
    	        
    	    }
    	    
