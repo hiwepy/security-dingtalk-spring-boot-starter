@@ -25,7 +25,7 @@ public class SecurityDingTalkProperties {
 	 * 获取用户详情的接口地址
 	 * https://open-doc.dingtalk.com/microapp/serverapi2/ege851
 	 */
-	private String userDetailURL = "https://oapi.dingtalk.com/user/get";
+	private String userIdURL = "https://oapi.dingtalk.com/user/getUseridByUnionid";
 	
 	
 	@NestedConfigurationProperty
@@ -79,12 +79,12 @@ public class SecurityDingTalkProperties {
 		this.userInfoURL = userInfoURL;
 	}
 
-	public String getUserDetailURL() {
-		return userDetailURL;
+	public String getUserIdURL() {
+		return userIdURL;
 	}
 
-	public void setUserDetailURL(String userDetailURL) {
-		this.userDetailURL = userDetailURL;
+	public void setUserIdURL(String userIdURL) {
+		this.userIdURL = userIdURL;
 	}
 	
 }

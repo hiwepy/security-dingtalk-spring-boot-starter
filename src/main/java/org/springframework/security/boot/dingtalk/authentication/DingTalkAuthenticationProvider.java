@@ -38,7 +38,11 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
     private final SecurityDingTalkProperties dingtalkProperties;
     private final DingTalkAccessTokenProvider dingTalkAccessTokenProvider;
     private final KeySecret keySecret;
-    
+    // https://open-doc.dingtalk.com/microapp/serverapi2/etaarr#-2
+    private final DefaultDingTalkClient bycodeClient;
+	// https://open-doc.dingtalk.com/microapp/serverapi2/ege851#-5
+    private final DefaultDingTalkClient unionidClient;
+	
     public DingTalkAuthenticationProvider(final UserDetailsServiceAdapter userDetailsService,
     		final DingTalkAccessTokenProvider dingTalkAccessTokenProvider,
     		final SecurityDingTalkProperties dingtalkProperties) {
@@ -46,6 +50,8 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
         this.dingTalkAccessTokenProvider = dingTalkAccessTokenProvider;
         this.dingtalkProperties = dingtalkProperties;
         this.keySecret = new KeySecret(dingtalkProperties.getAccessKey(), dingtalkProperties.getAccessSecret());
+        this.bycodeClient = new DefaultDingTalkClient(dingtalkProperties.getUserInfoURL());
+        this.unionidClient = new DefaultDingTalkClient(dingtalkProperties.getUserIdURL());
     }
 
     /**
@@ -74,10 +80,9 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 		
 		try {
 			
-			DefaultDingTalkClient  client = new DefaultDingTalkClient("https://oapi.dingtalk.com/sns/getuserinfo_bycode");
 			OapiSnsGetuserinfoBycodeRequest bycodeRequest = new OapiSnsGetuserinfoBycodeRequest();
 			bycodeRequest.setTmpAuthCode(loginTmpCode);
-			OapiSnsGetuserinfoBycodeResponse response = client.execute(bycodeRequest, dingtalkProperties.getAccessKey(), dingtalkProperties.getAccessSecret());
+			OapiSnsGetuserinfoBycodeResponse response = bycodeClient.execute(bycodeRequest, dingtalkProperties.getAccessKey(), dingtalkProperties.getAccessSecret());
 			/*{ 
 			    "errcode": 0,
 			    "errmsg": "ok",
@@ -97,7 +102,6 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 				dingTalkToken.setOpenid(userInfo.getOpenid());
 				dingTalkToken.setUnionid(userInfo.getUnionid());
 				
-				DefaultDingTalkClient unionidClient = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/getUseridByUnionid");
 				OapiUserGetUseridByUnionidRequest unionidRequest = new OapiUserGetUseridByUnionidRequest();
 				unionidRequest.setUnionid(userInfo.getUnionid());
 				unionidRequest.setHttpMethod("GET");

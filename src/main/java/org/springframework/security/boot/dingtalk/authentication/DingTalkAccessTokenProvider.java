@@ -28,12 +28,13 @@ import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 
 /**
- * TODO
+ * https://open-doc.dingtalk.com/microapp/serverapi2/eev437
  * @author ： <a href="https://github.com/vindell">wandl</a>
  */
 public class DingTalkAccessTokenProvider {
 
 	public static String ACCESS_TOKEN_URL = "https://oapi.dingtalk.com/gettoken";
+	public static DefaultDingTalkClient client = new DefaultDingTalkClient(ACCESS_TOKEN_URL);
 	
 	public static class KeySecret {
 
@@ -90,7 +91,6 @@ public class DingTalkAccessTokenProvider {
 						@Override
 						public String load(KeySecret keys) throws Exception {
 
-							DefaultDingTalkClient client = new DefaultDingTalkClient(ACCESS_TOKEN_URL);
 							OapiGettokenRequest request = new OapiGettokenRequest();
 
 							request.setAppkey(keys.getAccessKey());
