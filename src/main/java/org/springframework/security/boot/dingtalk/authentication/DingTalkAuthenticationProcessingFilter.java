@@ -21,8 +21,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.boot.biz.exception.AuthMethodNotSupportedException;
+import org.springframework.security.boot.biz.SpringSecurityBizMessageSource;
+import org.springframework.security.boot.biz.exception.AuthResponseCode;
+import org.springframework.security.boot.biz.exception.AuthenticationMethodNotSupportedException;
 import org.springframework.security.boot.utils.WebUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -31,6 +34,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
 
+	protected MessageSourceAccessor messages = SpringSecurityBizMessageSource.getAccessor();
     public static final String SPRING_SECURITY_FORM_CODE_KEY = "loginTmpCode";
 
     private String codeParameter = SPRING_SECURITY_FORM_CODE_KEY;
@@ -48,7 +52,8 @@ public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticati
 			if (logger.isDebugEnabled()) {
 				logger.debug("Authentication method not supported. Request method: " + request.getMethod());
 			}
-			throw new AuthMethodNotSupportedException("Authentication method not supported: " + request.getMethod());
+			throw new AuthenticationMethodNotSupportedException(messages.getMessage(AuthResponseCode.SC_AUTHC_METHOD_NOT_ALLOWED.getMsgKey(), new Object[] { request.getMethod() }, 
+					"Authentication method not supported. Request method:" + request.getMethod()));
 		}
         
 

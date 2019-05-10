@@ -24,14 +24,12 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 @SuppressWarnings("serial")
 public class DingTalkAuthenticationServiceException extends AuthenticationServiceException {
 
-
-	public DingTalkAuthenticationServiceException(String msg) {
+	public DingTalkAuthenticationServiceException( String msg) {
 		super(msg);
 	}
 	
-	public DingTalkAuthenticationServiceException(String msg, Throwable t) {
+	public DingTalkAuthenticationServiceException( String msg, Throwable t) {
 		super(msg, t);
 	}
-
 	
 }

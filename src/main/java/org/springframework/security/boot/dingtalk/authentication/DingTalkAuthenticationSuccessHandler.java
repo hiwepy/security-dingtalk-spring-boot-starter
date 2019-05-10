@@ -1,17 +1,19 @@
 package org.springframework.security.boot.dingtalk.authentication;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.boot.biz.SpringSecurityBizMessageSource;
 import org.springframework.security.boot.biz.authentication.AuthenticationListener;
+import org.springframework.security.boot.biz.exception.AuthResponse;
+import org.springframework.security.boot.biz.exception.AuthResponseCode;
 import org.springframework.security.boot.utils.WebUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -24,6 +26,7 @@ import com.alibaba.fastjson.JSONObject;
  */
 public class DingTalkAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 	
+	protected MessageSourceAccessor messages = SpringSecurityBizMessageSource.getAccessor();
 	private List<AuthenticationListener> authenticationListeners;
 	
 	public DingTalkAuthenticationSuccessHandler(String defaultTargetUrl) {
@@ -51,14 +54,11 @@ public class DingTalkAuthenticationSuccessHandler extends SavedRequestAwareAuthe
 		 */
 		if (WebUtils.isPostRequest(request)) {
 			
-			Map<String, String> retMap = new HashMap<String, String>();
-			retMap.put("status", "1");
-			retMap.put("successUrl", getDefaultTargetUrl());
-
 			response.setStatus(HttpStatus.OK.value());
 			response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 			
-			JSONObject.writeJSONString(response.getWriter(), retMap);
+			JSONObject.writeJSONString(response.getWriter(), AuthResponse.of(AuthResponseCode.SC_AUTHC_SUCCESS.getCode(),
+					messages.getMessage(AuthResponseCode.SC_AUTHC_SUCCESS.getMsgKey())));
 
 			clearAuthenticationAttributes(request);
 		} else {
