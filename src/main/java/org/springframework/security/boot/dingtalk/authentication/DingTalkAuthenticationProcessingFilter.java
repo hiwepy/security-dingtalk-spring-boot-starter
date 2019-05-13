@@ -32,6 +32,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
 
 	protected MessageSourceAccessor messages = SpringSecurityBizMessageSource.getAccessor();
@@ -39,10 +41,17 @@ public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticati
 
     private String codeParameter = SPRING_SECURITY_FORM_CODE_KEY;
     private boolean postOnly = true;
-	
-    public DingTalkAuthenticationProcessingFilter() {
+    private ObjectMapper objectMapper = new ObjectMapper();
+    
+    public DingTalkAuthenticationProcessingFilter(ObjectMapper objectMapper) {
     	super(new AntPathRequestMatcher("/login/dingtalk"));
-    }
+		this.objectMapper = objectMapper;
+	}
+	
+	public DingTalkAuthenticationProcessingFilter(ObjectMapper objectMapper, AntPathRequestMatcher requestMatcher) {
+		super(requestMatcher);
+		this.objectMapper = objectMapper;
+	}
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
@@ -56,14 +65,27 @@ public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticati
 					"Authentication method not supported. Request method:" + request.getMethod()));
 		}
         
+        AbstractAuthenticationToken authRequest;
+        
+        // Post && JSON
+		if(WebUtils.isPostRequest(request) && WebUtils.isContentTypeJson(request)) {
+			
+			DingTalkLoginRequest loginRequest = objectMapper.readValue(request.getReader(), DingTalkLoginRequest.class);
+			
+			authRequest = this.authenticationToken( loginRequest.getLoginTmpCode());
+			
+		} else {
+			
+			String code = obtainCode(request);
 
-        String code = obtainCode(request);
-
-        if (code == null) {
-            code = "";
-        }
- 		
-        AbstractAuthenticationToken authRequest = this.authenticationToken( code);
+	        if (code == null) {
+	            code = "";
+	        }
+	        
+	        authRequest = this.authenticationToken( code);
+	        
+		}
+        
 
 		// Allow subclasses to set the "details" property
 		setDetails(request, authRequest);

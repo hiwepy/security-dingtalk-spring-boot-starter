@@ -25,6 +25,8 @@ import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Configuration
 @AutoConfigureBefore({ SecurityFilterAutoConfiguration.class })
 @EnableConfigurationProperties({ SecurityDingTalkProperties.class })
@@ -39,6 +41,7 @@ public class SecurityDingTalkFilterConfiguration {
     	private ApplicationEventPublisher eventPublisher;
     	
         private final AuthenticationManager authenticationManager;
+        private final ObjectMapper objectMapper;
 	    private final RememberMeServices rememberMeServices;
 		
     	private final SecurityDingTalkProperties dingtalkProperties;
@@ -51,6 +54,7 @@ public class SecurityDingTalkFilterConfiguration {
    		public DingTalkWebSecurityConfigurerAdapter(
    			
    				ObjectProvider<AuthenticationManager> authenticationManagerProvider,
+   				ObjectProvider<ObjectMapper> objectMapperProvider,
    				ObjectProvider<RememberMeServices> rememberMeServicesProvider,
    				
    				SecurityDingTalkProperties dingtalkProperties,
@@ -62,6 +66,7 @@ public class SecurityDingTalkFilterConfiguration {
 				) {
    			
    			this.authenticationManager = authenticationManagerProvider.getIfAvailable();
+   			this.objectMapper = objectMapperProvider.getIfAvailable();
    			this.rememberMeServices = rememberMeServicesProvider.getIfAvailable();
    			
    			this.dingtalkProperties = dingtalkProperties;
@@ -76,7 +81,7 @@ public class SecurityDingTalkFilterConfiguration {
    		@Bean
    	    public DingTalkAuthenticationProcessingFilter dingTalkAuthenticationProcessingFilter() {
    	    	
-   			DingTalkAuthenticationProcessingFilter authcFilter = new DingTalkAuthenticationProcessingFilter();
+   			DingTalkAuthenticationProcessingFilter authcFilter = new DingTalkAuthenticationProcessingFilter(objectMapper);
    			
    			authcFilter.setAllowSessionCreation(dingtalkProperties.getAuthc().isAllowSessionCreation());
    			authcFilter.setApplicationEventPublisher(eventPublisher);
