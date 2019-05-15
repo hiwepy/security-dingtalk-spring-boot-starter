@@ -10,13 +10,16 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.boot.biz.authentication.AuthenticationListener;
+import org.springframework.security.boot.biz.authentication.PostRequestAuthenticationFailureHandler;
+import org.springframework.security.boot.biz.authentication.PostRequestAuthenticationSuccessHandler;
+import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationFailureHandler;
+import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationSuccessHandler;
 import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapter;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAccessTokenProvider;
-import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationEntryPoint;
-import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationFailureHandler;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationProvider;
-import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationSuccessHandler;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkKeySecret;
+import org.springframework.security.boot.dingtalk.authentication.DingTalkMatchedAuthenticationEntryPoint;
+import org.springframework.security.boot.dingtalk.authentication.DingTalkMatchedAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
@@ -35,17 +38,36 @@ public class SecurityDingTalkAutoConfiguration{
 		return new NullAuthenticatedSessionStrategy();
 	}
 	
-	@Bean
-	@ConditionalOnMissingBean
-	public DingTalkAuthenticationEntryPoint dingTalkAuthenticationEntryPoint() {
-		return new DingTalkAuthenticationEntryPoint(dingtalkProperties.getAuthc().getLoginUrl());
+	@Bean("dingTalkAuthenticationSuccessHandler")
+	public PostRequestAuthenticationSuccessHandler dingTalkAuthenticationSuccessHandler(
+			@Autowired(required = false) List<AuthenticationListener> authenticationListeners,
+			@Autowired(required = false) List<MatchedAuthenticationSuccessHandler> successHandlers) {
+		PostRequestAuthenticationSuccessHandler successHandler = new PostRequestAuthenticationSuccessHandler(
+				authenticationListeners, successHandlers, dingtalkProperties.getAuthc().getSuccessUrl());
+		successHandler.setTargetUrlParameter(dingtalkProperties.getAuthc().getTargetUrlParameter());
+		successHandler.setUseReferer(dingtalkProperties.getAuthc().isUseReferer());
+		return successHandler;
+	}
+	
+	@Bean("dingTalkAuthenticationFailureHandler")
+	public PostRequestAuthenticationFailureHandler dingTalkAuthenticationFailureHandler(
+			@Autowired(required = false) List<AuthenticationListener> authenticationListeners,
+			@Autowired(required = false) List<MatchedAuthenticationFailureHandler> failureHandlers) {
+		PostRequestAuthenticationFailureHandler failureHandler = new PostRequestAuthenticationFailureHandler(
+				authenticationListeners, failureHandlers, dingtalkProperties.getAuthc().getFailureUrl());
+		failureHandler.setAllowSessionCreation(dingtalkProperties.getAuthc().isAllowSessionCreation());
+		failureHandler.setUseForward(dingtalkProperties.getAuthc().isUseForward());
+		return failureHandler;
 	}
 	
 	@Bean
-	@ConditionalOnMissingBean
-	public DingTalkAuthenticationFailureHandler dingTalkAuthenticationFailureHandler(
-			@Autowired(required = false) List<AuthenticationListener> authenticationListeners) {
-		return new DingTalkAuthenticationFailureHandler(authenticationListeners, dingtalkProperties.getAuthc().getLoginUrl());
+	public DingTalkMatchedAuthenticationEntryPoint dingTalkMatchedAuthenticationEntryPoint() {
+		return new DingTalkMatchedAuthenticationEntryPoint();
+	}
+	
+	@Bean
+	public DingTalkMatchedAuthenticationFailureHandler dingTalkMatchedAuthenticationFailureHandler() {
+		return new DingTalkMatchedAuthenticationFailureHandler();
 	}
 	
 	@Bean
@@ -60,13 +82,6 @@ public class SecurityDingTalkAutoConfiguration{
 			UserDetailsServiceAdapter userDetailsService, 
 			DingTalkAccessTokenProvider dingTalkAccessTokenProvider) {
 		return new DingTalkAuthenticationProvider(userDetailsService, dingTalkAccessTokenProvider, dingtalkProperties);
-	}
-
-	@Bean
-	@ConditionalOnMissingBean
-	public DingTalkAuthenticationSuccessHandler dingTalkAuthenticationSuccessHandler(
-			@Autowired(required = false) List<AuthenticationListener> authenticationListeners) {
-		return new DingTalkAuthenticationSuccessHandler(authenticationListeners, dingtalkProperties.getAuthc().getLoginUrl());
 	}
 
 }

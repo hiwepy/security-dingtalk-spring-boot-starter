@@ -12,10 +12,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationFailureHandler;
+import org.springframework.security.boot.biz.authentication.PostRequestAuthenticationFailureHandler;
+import org.springframework.security.boot.biz.authentication.PostRequestAuthenticationSuccessHandler;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationProcessingFilter;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationProvider;
-import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationSuccessHandler;
 import org.springframework.security.boot.utils.StringUtils;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -46,8 +46,8 @@ public class SecurityDingTalkFilterConfiguration {
 		
     	private final SecurityDingTalkProperties dingtalkProperties;
     	private final DingTalkAuthenticationProvider authenticationProvider;
-	    private final DingTalkAuthenticationSuccessHandler authenticationSuccessHandler;
-	    private final DingTalkAuthenticationFailureHandler authenticationFailureHandler;
+	    private final PostRequestAuthenticationSuccessHandler authenticationSuccessHandler;
+	    private final PostRequestAuthenticationFailureHandler authenticationFailureHandler;
 	    
 		private final SessionAuthenticationStrategy sessionAuthenticationStrategy;
    		
@@ -59,9 +59,8 @@ public class SecurityDingTalkFilterConfiguration {
    				
    				SecurityDingTalkProperties dingtalkProperties,
    				ObjectProvider<DingTalkAuthenticationProvider> authenticationProvider,
-   				ObjectProvider<DingTalkAuthenticationSuccessHandler> authenticationSuccessHandler,
-   				ObjectProvider<DingTalkAuthenticationFailureHandler> authenticationFailureHandler,
-   				
+   				@Qualifier("dingTalkAuthenticationSuccessHandler") ObjectProvider<PostRequestAuthenticationSuccessHandler> authenticationSuccessHandler,
+   				@Qualifier("dingTalkAuthenticationFailureHandler") ObjectProvider<PostRequestAuthenticationFailureHandler> authenticationFailureHandler,
 				@Qualifier("dingtalkSessionAuthenticationStrategy") ObjectProvider<SessionAuthenticationStrategy> sessionAuthenticationStrategyProvider
 				) {
    			

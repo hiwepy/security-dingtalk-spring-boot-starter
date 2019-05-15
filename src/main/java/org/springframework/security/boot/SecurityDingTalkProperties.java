@@ -2,6 +2,7 @@ package org.springframework.security.boot;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.security.boot.biz.property.SecurityRedirectProperties;
 import org.springframework.security.boot.dingtalk.property.SecurityDingTalkAuthcProperties;
 
 @ConfigurationProperties(prefix = SecurityDingTalkProperties.PREFIX)
@@ -29,6 +30,8 @@ public class SecurityDingTalkProperties {
 	
 	@NestedConfigurationProperty
 	private SecurityDingTalkAuthcProperties authc = new SecurityDingTalkAuthcProperties();
+	@NestedConfigurationProperty
+	private SecurityRedirectProperties redirect = new SecurityRedirectProperties();
 	
 	public boolean isEnabled() {
 		return enabled;
@@ -76,6 +79,14 @@ public class SecurityDingTalkProperties {
 
 	public void setUserIdURL(String userIdURL) {
 		this.userIdURL = userIdURL;
+	}
+
+	public SecurityRedirectProperties getRedirect() {
+		return redirect;
+	}
+
+	public void setRedirect(SecurityRedirectProperties redirect) {
+		this.redirect = redirect;
 	}
 	
 }

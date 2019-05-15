@@ -7,11 +7,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.boot.SecurityDingTalkProperties;
 import org.springframework.security.boot.biz.userdetails.SecurityPrincipal;
 import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapter;
 import org.springframework.security.boot.dingtalk.exception.DingTalkAuthenticationServiceException;
+import org.springframework.security.boot.dingtalk.exception.DingTalkCodeNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.SpringSecurityMessageSource;
@@ -71,8 +72,8 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
         String loginTmpCode = (String) authentication.getCredentials();
 
 		if (!StringUtils.hasLength(loginTmpCode)) {
-			logger.debug("No credentials found in request.");
-			throw new BadCredentialsException("No credentials found in request.");
+			logger.debug("No loginTmpCode found in request.");
+			throw new DingTalkCodeNotFoundException("No loginTmpCode found in request.");
 		}
 		
 		try {
@@ -128,7 +129,7 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 		} catch (ApiException e) {
 			throw new DingTalkAuthenticationServiceException(e.getErrMsg(), e);
 		} catch (ExecutionException e) {
-			throw new DingTalkAuthenticationServiceException(e.getMessage(), e);
+			throw new InternalAuthenticationServiceException(e.getMessage(), e);
 		}
     }
 
