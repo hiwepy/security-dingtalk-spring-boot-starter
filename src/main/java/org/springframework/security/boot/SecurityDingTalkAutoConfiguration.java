@@ -26,9 +26,11 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 @Configuration
 @AutoConfigureBefore(SecurityBizAutoConfiguration.class)
 @ConditionalOnProperty(prefix = SecurityDingTalkProperties.PREFIX, value = "enabled", havingValue = "true")
-@EnableConfigurationProperties({ SecurityDingTalkProperties.class })
+@EnableConfigurationProperties({ SecurityBizProperties.class, SecurityDingTalkProperties.class })
 public class SecurityDingTalkAutoConfiguration{
 
+	@Autowired
+	private SecurityBizProperties bizProperties;
 	@Autowired
 	private SecurityDingTalkProperties dingtalkProperties;
 	
@@ -42,10 +44,15 @@ public class SecurityDingTalkAutoConfiguration{
 	public PostRequestAuthenticationSuccessHandler dingTalkAuthenticationSuccessHandler(
 			@Autowired(required = false) List<AuthenticationListener> authenticationListeners,
 			@Autowired(required = false) List<MatchedAuthenticationSuccessHandler> successHandlers) {
+		
 		PostRequestAuthenticationSuccessHandler successHandler = new PostRequestAuthenticationSuccessHandler(
-				authenticationListeners, successHandlers, dingtalkProperties.getAuthc().getSuccessUrl());
+				authenticationListeners, successHandlers);
+		
+		successHandler.setDefaultTargetUrl(dingtalkProperties.getAuthc().getSuccessUrl());
+		successHandler.setStateless(bizProperties.isStateless());
 		successHandler.setTargetUrlParameter(dingtalkProperties.getAuthc().getTargetUrlParameter());
 		successHandler.setUseReferer(dingtalkProperties.getAuthc().isUseReferer());
+		
 		return successHandler;
 	}
 	
@@ -53,10 +60,15 @@ public class SecurityDingTalkAutoConfiguration{
 	public PostRequestAuthenticationFailureHandler dingTalkAuthenticationFailureHandler(
 			@Autowired(required = false) List<AuthenticationListener> authenticationListeners,
 			@Autowired(required = false) List<MatchedAuthenticationFailureHandler> failureHandlers) {
+		
 		PostRequestAuthenticationFailureHandler failureHandler = new PostRequestAuthenticationFailureHandler(
-				authenticationListeners, failureHandlers, dingtalkProperties.getAuthc().getFailureUrl());
+				authenticationListeners, failureHandlers);
+		
 		failureHandler.setAllowSessionCreation(dingtalkProperties.getAuthc().isAllowSessionCreation());
+		failureHandler.setDefaultFailureUrl(dingtalkProperties.getAuthc().getFailureUrl());
+		failureHandler.setStateless(bizProperties.isStateless());
 		failureHandler.setUseForward(dingtalkProperties.getAuthc().isUseForward());
+		
 		return failureHandler;
 	}
 	

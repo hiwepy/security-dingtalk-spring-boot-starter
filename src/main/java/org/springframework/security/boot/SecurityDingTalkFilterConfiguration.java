@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Configuration
 @AutoConfigureBefore({ SecurityFilterAutoConfiguration.class })
-@EnableConfigurationProperties({ SecurityDingTalkProperties.class })
+@EnableConfigurationProperties({ SecurityBizProperties.class, SecurityDingTalkProperties.class })
 public class SecurityDingTalkFilterConfiguration {
     
     @Configuration
