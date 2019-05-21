@@ -15,11 +15,10 @@ import org.springframework.security.boot.biz.authentication.PostRequestAuthentic
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationFailureHandler;
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationSuccessHandler;
 import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapter;
-import org.springframework.security.boot.dingtalk.authentication.DingTalkAccessTokenProvider;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationProvider;
-import org.springframework.security.boot.dingtalk.authentication.DingTalkKeySecret;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkMatchedAuthenticationEntryPoint;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkMatchedAuthenticationFailureHandler;
+import org.springframework.security.boot.dingtalk.authentication.DingTalkTemplate;
 import org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
@@ -84,16 +83,15 @@ public class SecurityDingTalkAutoConfiguration{
 	
 	@Bean
 	@ConditionalOnMissingBean
-	public DingTalkAccessTokenProvider dingTalkAccessTokenProvider() {
-		DingTalkKeySecret keySecret = new DingTalkKeySecret(dingtalkProperties.getAccessKey(), dingtalkProperties.getAccessSecret());
-		return new DingTalkAccessTokenProvider(keySecret);
+	public DingTalkTemplate dingTalkTemplate() {
+		return new DingTalkTemplate();
 	}
 	
 	@Bean
 	public DingTalkAuthenticationProvider dingTalkAuthenticationProvider(
 			UserDetailsServiceAdapter userDetailsService, 
-			DingTalkAccessTokenProvider dingTalkAccessTokenProvider) {
-		return new DingTalkAuthenticationProvider(userDetailsService, dingTalkAccessTokenProvider, dingtalkProperties);
+			DingTalkTemplate dingTalkTemplate) {
+		return new DingTalkAuthenticationProvider(userDetailsService, dingTalkTemplate, dingtalkProperties);
 	}
 
 }

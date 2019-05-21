@@ -23,9 +23,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
-import com.dingtalk.api.DefaultDingTalkClient;
-import com.dingtalk.api.request.OapiSnsGetuserinfoBycodeRequest;
-import com.dingtalk.api.request.OapiUserGetUseridByUnionidRequest;
 import com.dingtalk.api.response.OapiSnsGetuserinfoBycodeResponse;
 import com.dingtalk.api.response.OapiSnsGetuserinfoBycodeResponse.UserInfo;
 import com.dingtalk.api.response.OapiUserGetUseridByUnionidResponse;
@@ -38,20 +35,14 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
     private final UserDetailsServiceAdapter userDetailsService;
     private final SecurityDingTalkProperties dingtalkProperties;
-    private final DingTalkAccessTokenProvider dingTalkAccessTokenProvider;
-    // https://open-doc.dingtalk.com/microapp/serverapi2/etaarr#-2
-    private final DefaultDingTalkClient bycodeClient;
-	// https://open-doc.dingtalk.com/microapp/serverapi2/ege851#-5
-    private final DefaultDingTalkClient unionidClient;
-	
+    private final DingTalkTemplate dingTalkTemplate;
+ 
     public DingTalkAuthenticationProvider(final UserDetailsServiceAdapter userDetailsService,
-    		final DingTalkAccessTokenProvider dingTalkAccessTokenProvider,
+    		final DingTalkTemplate dingTalkTemplate,
     		final SecurityDingTalkProperties dingtalkProperties) {
         this.userDetailsService = userDetailsService;
-        this.dingTalkAccessTokenProvider = dingTalkAccessTokenProvider;
+        this.dingTalkTemplate = dingTalkTemplate;
         this.dingtalkProperties = dingtalkProperties;
-        this.bycodeClient = new DefaultDingTalkClient(dingtalkProperties.getUserInfoURL());
-        this.unionidClient = new DefaultDingTalkClient(dingtalkProperties.getUserIdURL());
     }
 
     /**
@@ -80,9 +71,9 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 		
 		try {
 			
-			OapiSnsGetuserinfoBycodeRequest bycodeRequest = new OapiSnsGetuserinfoBycodeRequest();
-			bycodeRequest.setTmpAuthCode(loginTmpCode);
-			OapiSnsGetuserinfoBycodeResponse response = bycodeClient.execute(bycodeRequest, dingtalkProperties.getAccessKey(), dingtalkProperties.getAccessSecret());
+			// 扫码登录第三方网站 
+			OapiSnsGetuserinfoBycodeResponse response = dingTalkTemplate.getSnsGetuserinfoBycode(loginTmpCode,
+					dingtalkProperties.getAccessKey(), dingtalkProperties.getAccessSecret());
 			/*{ 
 			    "errcode": 0,
 			    "errmsg": "ok",
@@ -92,13 +83,12 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 			        "unionid": "7Huu46kk"
 			    }
 			}*/
-			
 			if (logger.isDebugEnabled()) {
 				logger.debug(response.getCode());
 			}
 			
 			// 认证成功
-			if(response.getErrcode() == 0) {
+			if(response.isSuccess()) {
 				
 				UserInfo userInfo = response.getUserInfo();
 				
@@ -107,10 +97,11 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 				dingTalkToken.setOpenid(userInfo.getOpenid());
 				dingTalkToken.setUnionid(userInfo.getUnionid());
 				
-				OapiUserGetUseridByUnionidRequest unionidRequest = new OapiUserGetUseridByUnionidRequest();
-				unionidRequest.setUnionid(userInfo.getUnionid());
-				unionidRequest.setHttpMethod("GET");
-				OapiUserGetUseridByUnionidResponse unionidResponse = unionidClient.execute(unionidRequest, dingTalkAccessTokenProvider.getAccessToken());
+				// 获取access_token
+				String accessToken = dingTalkTemplate.getAccessToken(dingtalkProperties.getAppKey(), dingtalkProperties.getAppSecret());
+				// 根据unionid获取userid
+				OapiUserGetUseridByUnionidResponse unionidResponse = dingTalkTemplate.getUseridByUnionid(userInfo.getUnionid(), accessToken);
+				
 				dingTalkToken.setPrincipal(unionidResponse.getUserid());
 				
 				UserDetails ud = getUserDetailsService().loadUserDetails(dingTalkToken);
