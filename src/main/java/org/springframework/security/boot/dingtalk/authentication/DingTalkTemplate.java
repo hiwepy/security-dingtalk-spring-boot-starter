@@ -275,27 +275,19 @@ public class DingTalkTemplate {
 		return response.getBody();
 	}
 
-	
-
 	/**
-	 * 获取用户授权的个人信息
-	 * 
-	 * @param accessToken
-	 * @param uid
-	 * @return
+	 * 根据钉钉的userid拿取用户的详细信息(包括手机号，部门id，等)
+	 * https://open-doc.dingtalk.com/microapp/serverapi2/ege851
+	 * @throws ApiException 
 	 */
-	public String getUserGetOne(String accessToken, String uid) {
-		OapiUserGetResponse response = null;
-		try {
-			DingTalkClient client = new DefaultDingTalkClient(SDINGTALKSERVICE + "/user/get");
-			OapiUserGetRequest request = new OapiUserGetRequest();
-			request.setUserid(uid);
-			request.setHttpMethod(METHOD_GET);
-			response = client.execute(request, accessToken);
-		} catch (ApiException e) {
-			e.printStackTrace();
-		}
-		return response.getBody();
+	public OapiUserGetResponse getUserByUserid( String userid, String accessToken) throws ApiException {
+		
+		DingTalkClient client = new DefaultDingTalkClient(SDINGTALKSERVICE + "/user/get");
+		OapiUserGetRequest request = new OapiUserGetRequest();
+		request.setUserid(userid);
+		request.setHttpMethod(METHOD_GET);
+		
+		return client.execute(request, accessToken);
 	}
 
 	/**
