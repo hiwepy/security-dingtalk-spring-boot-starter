@@ -86,46 +86,48 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 			if (logger.isDebugEnabled()) {
 				logger.debug(response.getCode());
 			}
-			
-			// 认证成功
-			if(response.isSuccess()) {
-				
-				UserInfo userInfo = response.getUserInfo();
-				
-				DingTalkAuthenticationToken dingTalkToken = (DingTalkAuthenticationToken) authentication;
-				dingTalkToken.setNick(userInfo.getNick());
-				dingTalkToken.setOpenid(userInfo.getOpenid());
-				dingTalkToken.setUnionid(userInfo.getUnionid());
-				
-				// 获取access_token
-				String accessToken = dingTalkTemplate.getAccessToken(dingtalkProperties.getAppKey(), dingtalkProperties.getAppSecret());
-				// 根据unionid获取userid
-				OapiUserGetUseridByUnionidResponse unionidResponse = dingTalkTemplate.getUseridByUnionid(userInfo.getUnionid(), accessToken);
-				
-				dingTalkToken.setPrincipal(unionidResponse.getUserid());
-				
-				UserDetails ud = getUserDetailsService().loadUserDetails(dingTalkToken);
-		        
-		        // User Status Check
-		        getUserDetailsChecker().check(ud);
-		        
-		        DingTalkAuthenticationToken authenticationToken = null;
-		        if(SecurityPrincipal.class.isAssignableFrom(ud.getClass())) {
-		        	SecurityPrincipal principal = (SecurityPrincipal)ud;
-		        	if(!StringUtils.hasText(principal.getAlias())) {
-		        		principal.setAlias(userInfo.getNick());
-		        	}
-		        	authenticationToken = new DingTalkAuthenticationToken(ud, ud.getPassword(), ud.getAuthorities());        	
-		        } else {
-		        	authenticationToken = new DingTalkAuthenticationToken(ud.getUsername(), ud.getPassword(), ud.getAuthorities());
-				}
-		        authenticationToken.setDetails(authentication.getDetails());
-		        
-		        return authenticationToken;
+
+			if(!response.isSuccess()) {
+				logger.error(JSONObject.toJSONString(AuthResponse.of(response.getErrorCode(), response.getErrmsg())));
+				throw new DingTalkAuthenticationServiceException(response.getErrmsg());
 			}
-			throw new DingTalkAuthenticationServiceException(JSONObject.toJSONString(AuthResponse.of(response.getErrorCode(), response.getErrmsg())));
+				
+			UserInfo userInfo = response.getUserInfo();
+			
+			DingTalkAuthenticationToken dingTalkToken = (DingTalkAuthenticationToken) authentication;
+			dingTalkToken.setNick(userInfo.getNick());
+			dingTalkToken.setOpenid(userInfo.getOpenid());
+			dingTalkToken.setUnionid(userInfo.getUnionid());
+			
+			// 获取access_token
+			String accessToken = dingTalkTemplate.getAccessToken(dingtalkProperties.getAppKey(), dingtalkProperties.getAppSecret());
+			// 根据unionid获取userid
+			OapiUserGetUseridByUnionidResponse unionidResponse = dingTalkTemplate.getUseridByUnionid(userInfo.getUnionid(), accessToken);
+			if(!unionidResponse.isSuccess()) {
+				logger.error(JSONObject.toJSONString(AuthResponse.of(unionidResponse.getErrorCode(), unionidResponse.getErrmsg())));
+				throw new DingTalkAuthenticationServiceException(unionidResponse.getErrmsg());
+			}
+			dingTalkToken.setPrincipal(unionidResponse.getUserid());
+			UserDetails ud = getUserDetailsService().loadUserDetails(dingTalkToken);
+	        
+	        // User Status Check
+	        getUserDetailsChecker().check(ud);
+	        
+	        DingTalkAuthenticationToken authenticationToken = null;
+	        if(SecurityPrincipal.class.isAssignableFrom(ud.getClass())) {
+	        	SecurityPrincipal principal = (SecurityPrincipal)ud;
+	        	if(!StringUtils.hasText(principal.getAlias())) {
+	        		principal.setAlias(userInfo.getNick());
+	        	}
+	        	authenticationToken = new DingTalkAuthenticationToken(ud, ud.getPassword(), ud.getAuthorities());        	
+	        } else {
+	        	authenticationToken = new DingTalkAuthenticationToken(ud.getUsername(), ud.getPassword(), ud.getAuthorities());
+			}
+	        authenticationToken.setDetails(authentication.getDetails());
+	        
+	        return authenticationToken;
 		} catch (ApiException e) {
-			throw new DingTalkAuthenticationServiceException(JSONObject.toJSONString(AuthResponse.of(e.getErrCode(), e.getErrMsg())), e);
+			throw new DingTalkAuthenticationServiceException(e.getErrMsg(), e);
 		} catch (ExecutionException e) {
 			throw new InternalAuthenticationServiceException(e.getMessage(), e);
 		}
