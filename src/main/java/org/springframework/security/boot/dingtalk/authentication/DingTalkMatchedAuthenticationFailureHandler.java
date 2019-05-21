@@ -44,7 +44,7 @@ public class DingTalkMatchedAuthenticationFailureHandler implements MatchedAuthe
 		
 		if (e instanceof DingTalkAuthenticationServiceException) {
 			JSONObject.writeJSONString(response.getWriter(), AuthResponse.of(AuthResponseCode.SC_AUTHZ_THIRD_PARTY_SERVICE.getCode(), 
-					messages.getMessage(AuthResponseCode.SC_AUTHZ_THIRD_PARTY_SERVICE.getMsgKey(), e.getMessage())));
+					e.getMessage()));
 		} else if (e instanceof DingTalkCodeNotFoundException) {
 			JSONObject.writeJSONString(response.getWriter(), AuthResponse.of(AuthResponseCode.SC_AUTHZ_DINGTALK_REQUIRED.getCode(), 
 					messages.getMessage(AuthResponseCode.SC_AUTHZ_DINGTALK_REQUIRED.getMsgKey(), e.getMessage())));
