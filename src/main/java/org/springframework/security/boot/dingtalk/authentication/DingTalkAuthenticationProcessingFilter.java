@@ -37,7 +37,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
 
 	protected MessageSourceAccessor messages = SpringSecurityBizMessageSource.getAccessor();
-    public static final String SPRING_SECURITY_FORM_CODE_KEY = "loginTmpCode";
+    public static final String SPRING_SECURITY_FORM_CODE_KEY = "code";
 
     private String codeParameter = SPRING_SECURITY_FORM_CODE_KEY;
     private boolean postOnly = true;
@@ -69,6 +69,10 @@ public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticati
         
         // Post && JSON
 		if(WebUtils.isPostRequest(request) && WebUtils.isContentTypeJson(request)) {
+			
+			if (logger.isDebugEnabled()) {
+				logger.debug("Post && JSON");
+			}
 			
 			DingTalkLoginRequest loginRequest = objectMapper.readValue(request.getReader(), DingTalkLoginRequest.class);
 			

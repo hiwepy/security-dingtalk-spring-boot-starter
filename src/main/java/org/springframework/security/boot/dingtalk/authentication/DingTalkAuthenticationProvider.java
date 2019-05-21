@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AccountStatusUserDetailsCheck
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.boot.SecurityDingTalkProperties;
+import org.springframework.security.boot.biz.exception.AuthResponse;
 import org.springframework.security.boot.biz.userdetails.SecurityPrincipal;
 import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapter;
 import org.springframework.security.boot.dingtalk.exception.DingTalkAuthenticationServiceException;
@@ -21,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.request.OapiSnsGetuserinfoBycodeRequest;
 import com.dingtalk.api.request.OapiUserGetUseridByUnionidRequest;
@@ -90,6 +92,11 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 			        "unionid": "7Huu46kk"
 			    }
 			}*/
+			
+			if (logger.isDebugEnabled()) {
+				logger.debug(response.getCode());
+			}
+			
 			// 认证成功
 			if(response.getErrcode() == 0) {
 				
@@ -125,9 +132,9 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 		        
 		        return authenticationToken;
 			}
-			throw new DingTalkAuthenticationServiceException(response.getErrmsg());
+			throw new DingTalkAuthenticationServiceException(JSONObject.toJSONString(AuthResponse.of(response.getErrorCode(), response.getErrmsg())));
 		} catch (ApiException e) {
-			throw new DingTalkAuthenticationServiceException(e.getErrMsg(), e);
+			throw new DingTalkAuthenticationServiceException(JSONObject.toJSONString(AuthResponse.of(e.getErrCode(), e.getErrMsg())), e);
 		} catch (ExecutionException e) {
 			throw new InternalAuthenticationServiceException(e.getMessage(), e);
 		}
