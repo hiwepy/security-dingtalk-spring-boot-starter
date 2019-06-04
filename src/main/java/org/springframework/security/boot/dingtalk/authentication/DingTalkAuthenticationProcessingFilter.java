@@ -68,7 +68,7 @@ public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticati
         AbstractAuthenticationToken authRequest;
         
         // Post && JSON
-		if(WebUtils.isAjaxResponse(request)) {
+		if(WebUtils.isObjectRequest(request)) {
 			
 			if (logger.isDebugEnabled()) {
 				logger.debug("Post && JSON");
