@@ -13,31 +13,27 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.springframework.security.boot.dingtalk.authentication;
+package org.springframework.security.boot.dingtalk.cache;
 
-public class DingTalkKeySecret {
+public interface LocalCache<K, V> {
 	
-	private String accessKey;
-	private String accessSecret;
+	/**
+	 * Returns the value associated with {@code key} in this cache, or {@code null}
+	 * if there is no cached value for {@code key}.
+	 **/
+	V get(K key) throws Exception;
 
-	public DingTalkKeySecret(String accessKey, String accessSecret) {
-		this.accessKey = accessKey;
-		this.accessSecret = accessSecret;
-	}
+	/**
+	 * Associates {@code value} with {@code key} in this cache. If the cache
+	 * previously contained a value associated with {@code key}, the old value is
+	 * replaced by {@code value}.
+	 *
+	 **/
+	void put(K key, V value);
 
-	public String getAccessKey() {
-		return accessKey;
-	}
-
-	public String getAccessSecret() {
-		return accessSecret;
-	}
-
-	public void setAccessKey(String accessKey) {
-		this.accessKey = accessKey;
-	}
-
-	public void setAccessSecret(String accessSecret) {
-		this.accessSecret = accessSecret;
-	}
+	/**
+	 * Discards any cached value for key {@code key}.
+	 */
+	void remove(Object key);
+	
 }

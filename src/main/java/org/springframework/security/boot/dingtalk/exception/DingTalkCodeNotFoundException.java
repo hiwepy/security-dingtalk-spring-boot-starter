@@ -15,21 +15,35 @@
  */
 package org.springframework.security.boot.dingtalk.exception;
 
-import org.springframework.security.boot.biz.exception.ExternalAuthenticationServiceException;
+
+import org.springframework.security.core.AuthenticationException;
 
 /**
- * DingTalk 服务端认证异常
- * @author 		： <a href="https://github.com/vindell">wandl</a>
+ *
  */
 @SuppressWarnings("serial")
-public class DingTalkAuthenticationServiceException extends ExternalAuthenticationServiceException {
+public class DingTalkCodeNotFoundException extends AuthenticationException {
+	// ~ Constructors
+	// ===================================================================================================
 
-	public DingTalkAuthenticationServiceException( String msg) {
+	/**
+	 * Constructs an <code>DingTalkCodeNotFoundException</code> with the
+	 * specified message.
+	 *
+	 * @param msg the detail message
+	 */
+	public DingTalkCodeNotFoundException(String msg) {
 		super(msg);
 	}
-	
-	public DingTalkAuthenticationServiceException( String msg, Throwable t) {
+
+	/**
+	 * Constructs an <code>DingTalkCodeNotFoundException</code> with the
+	 * specified message and root cause.
+	 *
+	 * @param msg the detail message
+	 * @param t root cause
+	 */
+	public DingTalkCodeNotFoundException(String msg, Throwable t) {
 		super(msg, t);
 	}
-	
 }

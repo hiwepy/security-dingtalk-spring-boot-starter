@@ -21,24 +21,37 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.boot.biz.exception.AuthMethodNotSupportedException;
+import org.springframework.security.boot.biz.SpringSecurityBizMessageSource;
+import org.springframework.security.boot.biz.exception.AuthResponseCode;
+import org.springframework.security.boot.biz.exception.AuthenticationMethodNotSupportedException;
 import org.springframework.security.boot.utils.WebUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
 
-    public static final String SPRING_SECURITY_FORM_CODE_KEY = "loginTmpCode";
+	protected MessageSourceAccessor messages = SpringSecurityBizMessageSource.getAccessor();
+    public static final String SPRING_SECURITY_FORM_CODE_KEY = "code";
 
     private String codeParameter = SPRING_SECURITY_FORM_CODE_KEY;
     private boolean postOnly = true;
-	
-    public DingTalkAuthenticationProcessingFilter() {
+    private ObjectMapper objectMapper = new ObjectMapper();
+    
+    public DingTalkAuthenticationProcessingFilter(ObjectMapper objectMapper) {
     	super(new AntPathRequestMatcher("/login/dingtalk"));
-    }
+		this.objectMapper = objectMapper;
+	}
+	
+	public DingTalkAuthenticationProcessingFilter(ObjectMapper objectMapper, AntPathRequestMatcher requestMatcher) {
+		super(requestMatcher);
+		this.objectMapper = objectMapper;
+	}
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
@@ -48,17 +61,35 @@ public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticati
 			if (logger.isDebugEnabled()) {
 				logger.debug("Authentication method not supported. Request method: " + request.getMethod());
 			}
-			throw new AuthMethodNotSupportedException("Authentication method not supported: " + request.getMethod());
+			throw new AuthenticationMethodNotSupportedException(messages.getMessage(AuthResponseCode.SC_AUTHC_METHOD_NOT_ALLOWED.getMsgKey(), new Object[] { request.getMethod() }, 
+					"Authentication method not supported. Request method:" + request.getMethod()));
 		}
         
+        AbstractAuthenticationToken authRequest;
+        
+        // Post && JSON
+		if(WebUtils.isObjectRequest(request)) {
+			
+			if (logger.isDebugEnabled()) {
+				logger.debug("Post && JSON");
+			}
+			
+			DingTalkLoginRequest loginRequest = objectMapper.readValue(request.getReader(), DingTalkLoginRequest.class);
+			
+			authRequest = this.authenticationToken( loginRequest.getLoginTmpCode());
+			
+		} else {
+			
+			String code = obtainCode(request);
 
-        String code = obtainCode(request);
-
-        if (code == null) {
-            code = "";
-        }
- 		
-        AbstractAuthenticationToken authRequest = this.authenticationToken( code);
+	        if (code == null) {
+	            code = "";
+	        }
+	        
+	        authRequest = this.authenticationToken( code);
+	        
+		}
+        
 
 		// Allow subclasses to set the "details" property
 		setDetails(request, authRequest);

@@ -12,10 +12,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationFailureHandler;
+import org.springframework.security.boot.biz.authentication.PostRequestAuthenticationFailureHandler;
+import org.springframework.security.boot.biz.authentication.PostRequestAuthenticationSuccessHandler;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationProcessingFilter;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationProvider;
-import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationSuccessHandler;
 import org.springframework.security.boot.utils.StringUtils;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,9 +25,11 @@ import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Configuration
 @AutoConfigureBefore({ SecurityFilterAutoConfiguration.class })
-@EnableConfigurationProperties({ SecurityDingTalkProperties.class })
+@EnableConfigurationProperties({ SecurityBizProperties.class, SecurityDingTalkProperties.class })
 public class SecurityDingTalkFilterConfiguration {
     
     @Configuration
@@ -39,29 +41,31 @@ public class SecurityDingTalkFilterConfiguration {
     	private ApplicationEventPublisher eventPublisher;
     	
         private final AuthenticationManager authenticationManager;
+        private final ObjectMapper objectMapper;
 	    private final RememberMeServices rememberMeServices;
 		
     	private final SecurityDingTalkProperties dingtalkProperties;
     	private final DingTalkAuthenticationProvider authenticationProvider;
-	    private final DingTalkAuthenticationSuccessHandler authenticationSuccessHandler;
-	    private final DingTalkAuthenticationFailureHandler authenticationFailureHandler;
+	    private final PostRequestAuthenticationSuccessHandler authenticationSuccessHandler;
+	    private final PostRequestAuthenticationFailureHandler authenticationFailureHandler;
 	    
 		private final SessionAuthenticationStrategy sessionAuthenticationStrategy;
    		
    		public DingTalkWebSecurityConfigurerAdapter(
    			
    				ObjectProvider<AuthenticationManager> authenticationManagerProvider,
+   				ObjectProvider<ObjectMapper> objectMapperProvider,
    				ObjectProvider<RememberMeServices> rememberMeServicesProvider,
    				
    				SecurityDingTalkProperties dingtalkProperties,
    				ObjectProvider<DingTalkAuthenticationProvider> authenticationProvider,
-   				ObjectProvider<DingTalkAuthenticationSuccessHandler> authenticationSuccessHandler,
-   				ObjectProvider<DingTalkAuthenticationFailureHandler> authenticationFailureHandler,
-   				
+   				@Qualifier("dingTalkAuthenticationSuccessHandler") ObjectProvider<PostRequestAuthenticationSuccessHandler> authenticationSuccessHandler,
+   				@Qualifier("dingTalkAuthenticationFailureHandler") ObjectProvider<PostRequestAuthenticationFailureHandler> authenticationFailureHandler,
 				@Qualifier("dingtalkSessionAuthenticationStrategy") ObjectProvider<SessionAuthenticationStrategy> sessionAuthenticationStrategyProvider
 				) {
    			
    			this.authenticationManager = authenticationManagerProvider.getIfAvailable();
+   			this.objectMapper = objectMapperProvider.getIfAvailable();
    			this.rememberMeServices = rememberMeServicesProvider.getIfAvailable();
    			
    			this.dingtalkProperties = dingtalkProperties;
@@ -76,7 +80,7 @@ public class SecurityDingTalkFilterConfiguration {
    		@Bean
    	    public DingTalkAuthenticationProcessingFilter dingTalkAuthenticationProcessingFilter() {
    	    	
-   			DingTalkAuthenticationProcessingFilter authcFilter = new DingTalkAuthenticationProcessingFilter();
+   			DingTalkAuthenticationProcessingFilter authcFilter = new DingTalkAuthenticationProcessingFilter(objectMapper);
    			
    			authcFilter.setAllowSessionCreation(dingtalkProperties.getAuthc().isAllowSessionCreation());
    			authcFilter.setApplicationEventPublisher(eventPublisher);
