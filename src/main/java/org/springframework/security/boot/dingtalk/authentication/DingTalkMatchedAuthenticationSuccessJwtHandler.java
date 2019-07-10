@@ -44,7 +44,7 @@ public class DingTalkMatchedAuthenticationSuccessJwtHandler implements MatchedAu
 	
 	@Override
 	public boolean supports(Authentication authentication) {
-		return SubjectUtils.supports(authentication.getClass(), DingTalkAuthenticationToken.class);
+		return SubjectUtils.isAssignableFrom(authentication.getClass(), DingTalkAuthenticationToken.class);
 	}
 	
 	@Override

@@ -31,7 +31,7 @@ public class DingTalkMatchedAuthenticationFailureHandler implements MatchedAuthe
 	 
 	@Override
 	public boolean supports(AuthenticationException e) {
-		return SubjectUtils.supports(e.getClass(), DingTalkAuthenticationServiceException.class,
+		return SubjectUtils.isAssignableFrom(e.getClass(), DingTalkAuthenticationServiceException.class,
 				DingTalkCodeIncorrectException.class, DingTalkCodeExpiredException.class);
 	}
 
