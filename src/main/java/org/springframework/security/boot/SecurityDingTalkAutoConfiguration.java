@@ -63,7 +63,7 @@ public class SecurityDingTalkAutoConfiguration{
 		PostRequestAuthenticationFailureHandler failureHandler = new PostRequestAuthenticationFailureHandler(
 				authenticationListeners, failureHandlers);
 		
-		failureHandler.setAllowSessionCreation(dingtalkProperties.getAuthc().isAllowSessionCreation());
+		failureHandler.setAllowSessionCreation(bizProperties.getSessionMgt().isAllowSessionCreation());
 		failureHandler.setDefaultFailureUrl(dingtalkProperties.getAuthc().getFailureUrl());
 		failureHandler.setStateless(bizProperties.isStateless());
 		failureHandler.setUseForward(dingtalkProperties.getAuthc().isUseForward());

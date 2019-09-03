@@ -44,6 +44,7 @@ public class SecurityDingTalkFilterConfiguration {
         private final ObjectMapper objectMapper;
 	    private final RememberMeServices rememberMeServices;
 		
+	    private final SecurityBizProperties bizProperties;
     	private final SecurityDingTalkProperties dingtalkProperties;
     	private final DingTalkAuthenticationProvider authenticationProvider;
 	    private final PostRequestAuthenticationSuccessHandler authenticationSuccessHandler;
@@ -57,6 +58,7 @@ public class SecurityDingTalkFilterConfiguration {
    				ObjectProvider<ObjectMapper> objectMapperProvider,
    				ObjectProvider<RememberMeServices> rememberMeServicesProvider,
    				
+   				SecurityBizProperties bizProperties,
    				SecurityDingTalkProperties dingtalkProperties,
    				ObjectProvider<DingTalkAuthenticationProvider> authenticationProvider,
    				@Qualifier("dingTalkAuthenticationSuccessHandler") ObjectProvider<PostRequestAuthenticationSuccessHandler> authenticationSuccessHandler,
@@ -68,6 +70,7 @@ public class SecurityDingTalkFilterConfiguration {
    			this.objectMapper = objectMapperProvider.getIfAvailable();
    			this.rememberMeServices = rememberMeServicesProvider.getIfAvailable();
    			
+   			this.bizProperties = bizProperties;
    			this.dingtalkProperties = dingtalkProperties;
    			this.authenticationProvider = authenticationProvider.getIfAvailable();
    			this.authenticationSuccessHandler = authenticationSuccessHandler.getIfAvailable();
@@ -82,7 +85,7 @@ public class SecurityDingTalkFilterConfiguration {
    	    	
    			DingTalkAuthenticationProcessingFilter authcFilter = new DingTalkAuthenticationProcessingFilter(objectMapper);
    			
-   			authcFilter.setAllowSessionCreation(dingtalkProperties.getAuthc().isAllowSessionCreation());
+   			authcFilter.setAllowSessionCreation(bizProperties.getSessionMgt().isAllowSessionCreation());
    			authcFilter.setApplicationEventPublisher(eventPublisher);
    			authcFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
    			authcFilter.setAuthenticationManager(authenticationManager);
