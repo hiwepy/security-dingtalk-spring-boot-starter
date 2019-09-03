@@ -19,8 +19,6 @@ import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthent
 import org.springframework.security.boot.dingtalk.authentication.DingTalkMatchedAuthenticationEntryPoint;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkMatchedAuthenticationFailureHandler;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkTemplate;
-import org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy;
-import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
 @Configuration
 @AutoConfigureBefore(SecurityBizAutoConfiguration.class)
@@ -32,12 +30,6 @@ public class SecurityDingTalkAutoConfiguration{
 	private SecurityBizProperties bizProperties;
 	@Autowired
 	private SecurityDingTalkProperties dingtalkProperties;
-	
-	@Bean("dingtalkSessionAuthenticationStrategy")
-	@ConditionalOnMissingBean(name = "dingtalkSessionAuthenticationStrategy")
-	public SessionAuthenticationStrategy dingtalkSessionAuthenticationStrategy() {
-		return new NullAuthenticatedSessionStrategy();
-	}
 	
 	@Bean("dingTalkAuthenticationSuccessHandler")
 	public PostRequestAuthenticationSuccessHandler dingTalkAuthenticationSuccessHandler(

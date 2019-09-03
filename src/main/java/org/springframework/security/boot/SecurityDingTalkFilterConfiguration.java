@@ -63,7 +63,7 @@ public class SecurityDingTalkFilterConfiguration {
    				ObjectProvider<DingTalkAuthenticationProvider> authenticationProvider,
    				@Qualifier("dingTalkAuthenticationSuccessHandler") ObjectProvider<PostRequestAuthenticationSuccessHandler> authenticationSuccessHandler,
    				@Qualifier("dingTalkAuthenticationFailureHandler") ObjectProvider<PostRequestAuthenticationFailureHandler> authenticationFailureHandler,
-				@Qualifier("dingtalkSessionAuthenticationStrategy") ObjectProvider<SessionAuthenticationStrategy> sessionAuthenticationStrategyProvider
+				ObjectProvider<SessionAuthenticationStrategy> sessionAuthenticationStrategyProvider
 				) {
    			
    			this.authenticationManager = authenticationManagerProvider.getIfAvailable();
