@@ -91,8 +91,8 @@ public class SecurityDingTalkFilterConfiguration {
    			authcFilter.setAuthenticationManager(authenticationManager);
    			authcFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
    			authcFilter.setContinueChainBeforeSuccessfulAuthentication(dingtalkProperties.getAuthc().isContinueChainBeforeSuccessfulAuthentication());
-   			if (StringUtils.hasText(dingtalkProperties.getAuthc().getLoginUrlPatterns())) {
-   				authcFilter.setFilterProcessesUrl(dingtalkProperties.getAuthc().getLoginUrlPatterns());
+   			if (StringUtils.hasText(dingtalkProperties.getAuthc().getLoginUrl())) {
+   				authcFilter.setFilterProcessesUrl(dingtalkProperties.getAuthc().getLoginUrl());
    			}
    			//authcFilter.setMessageSource(messageSource);
    			authcFilter.setCodeParameter(dingtalkProperties.getAuthc().getCodeParameter());
@@ -118,7 +118,7 @@ public class SecurityDingTalkFilterConfiguration {
    	    
    	    @Override
 	    public void configure(WebSecurity web) throws Exception {
-	    	web.ignoring().antMatchers(dingtalkProperties.getAuthc().getLoginUrlPatterns());
+	    	web.ignoring().antMatchers(dingtalkProperties.getAuthc().getLoginUrl());
 	    }
    	    
    		@Override
