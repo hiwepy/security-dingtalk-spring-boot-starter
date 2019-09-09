@@ -54,17 +54,18 @@ public class SecurityDingTalkFilterConfiguration {
    		
    		public DingTalkWebSecurityConfigurerAdapter(
    			
-   				ObjectProvider<AuthenticationManager> authenticationManagerProvider,
-   				ObjectProvider<ObjectMapper> objectMapperProvider,
-   				ObjectProvider<RememberMeServices> rememberMeServicesProvider,
-   				
    				SecurityBizProperties bizProperties,
    				SecurityDingTalkProperties dingtalkProperties,
+
+   				ObjectProvider<AuthenticationManager> authenticationManagerProvider,
    				ObjectProvider<DingTalkAuthenticationProvider> authenticationProvider,
-   				@Qualifier("dingTalkAuthenticationSuccessHandler") ObjectProvider<PostRequestAuthenticationSuccessHandler> authenticationSuccessHandler,
-   				@Qualifier("dingTalkAuthenticationFailureHandler") ObjectProvider<PostRequestAuthenticationFailureHandler> authenticationFailureHandler,
-				ObjectProvider<SessionAuthenticationStrategy> sessionAuthenticationStrategyProvider
-				) {
+   				ObjectProvider<ObjectMapper> objectMapperProvider,
+   				ObjectProvider<PostRequestAuthenticationFailureHandler> authenticationFailureHandler,
+   				ObjectProvider<RememberMeServices> rememberMeServicesProvider,
+				ObjectProvider<SessionAuthenticationStrategy> sessionAuthenticationStrategyProvider,
+				
+				@Qualifier("dingTalkAuthenticationSuccessHandler") ObjectProvider<PostRequestAuthenticationSuccessHandler> authenticationSuccessHandler
+			) {
    			
    			this.authenticationManager = authenticationManagerProvider.getIfAvailable();
    			this.objectMapper = objectMapperProvider.getIfAvailable();

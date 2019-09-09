@@ -10,9 +10,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.boot.biz.authentication.AuthenticationListener;
-import org.springframework.security.boot.biz.authentication.PostRequestAuthenticationFailureHandler;
 import org.springframework.security.boot.biz.authentication.PostRequestAuthenticationSuccessHandler;
-import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationFailureHandler;
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationSuccessHandler;
 import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapter;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationProvider;
@@ -45,22 +43,6 @@ public class SecurityDingTalkAutoConfiguration{
 		successHandler.setUseReferer(dingtalkProperties.getAuthc().isUseReferer());
 		
 		return successHandler;
-	}
-	
-	@Bean("dingTalkAuthenticationFailureHandler")
-	public PostRequestAuthenticationFailureHandler dingTalkAuthenticationFailureHandler(
-			@Autowired(required = false) List<AuthenticationListener> authenticationListeners,
-			@Autowired(required = false) List<MatchedAuthenticationFailureHandler> failureHandlers) {
-		
-		PostRequestAuthenticationFailureHandler failureHandler = new PostRequestAuthenticationFailureHandler(
-				authenticationListeners, failureHandlers);
-		
-		failureHandler.setAllowSessionCreation(bizProperties.getSessionMgt().isAllowSessionCreation());
-		failureHandler.setDefaultFailureUrl(dingtalkProperties.getAuthc().getFailureUrl());
-		failureHandler.setStateless(bizProperties.isStateless());
-		failureHandler.setUseForward(dingtalkProperties.getAuthc().isUseForward());
-		
-		return failureHandler;
 	}
 	
 	@Bean
