@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -16,7 +15,6 @@ import org.springframework.security.boot.biz.authentication.PostRequestAuthentic
 import org.springframework.security.boot.biz.authentication.PostRequestAuthenticationSuccessHandler;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationProcessingFilter;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationProvider;
-import org.springframework.security.boot.utils.StringUtils;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -36,9 +34,7 @@ public class SecurityDingTalkFilterConfiguration {
     @ConditionalOnProperty(prefix = SecurityDingTalkProperties.PREFIX, value = "enabled", havingValue = "true")
    	@EnableConfigurationProperties({ SecurityDingTalkProperties.class, SecurityBizProperties.class })
     @Order(104)
-   	static class DingTalkWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter implements ApplicationEventPublisherAware {
-    	
-    	private ApplicationEventPublisher eventPublisher;
+   	static class DingTalkWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
     	
         private final AuthenticationManager authenticationManager;
         private final ObjectMapper objectMapper;
@@ -82,26 +78,29 @@ public class SecurityDingTalkFilterConfiguration {
    		}
    		
    		@Bean
-   	    public DingTalkAuthenticationProcessingFilter dingTalkAuthenticationProcessingFilter() {
+   	    public DingTalkAuthenticationProcessingFilter authenticationProcessingFilter() {
    	    	
-   			DingTalkAuthenticationProcessingFilter authcFilter = new DingTalkAuthenticationProcessingFilter(objectMapper);
+   			DingTalkAuthenticationProcessingFilter authenticationFilter = new DingTalkAuthenticationProcessingFilter(objectMapper);
    			
-   			authcFilter.setAllowSessionCreation(bizProperties.getSessionMgt().isAllowSessionCreation());
-   			authcFilter.setApplicationEventPublisher(eventPublisher);
-   			authcFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
-   			authcFilter.setAuthenticationManager(authenticationManager);
-   			authcFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
-   			authcFilter.setContinueChainBeforeSuccessfulAuthentication(dingtalkProperties.getAuthc().isContinueChainBeforeSuccessfulAuthentication());
-   			if (StringUtils.hasText(dingtalkProperties.getAuthc().getPathPattern())) {
-   				authcFilter.setFilterProcessesUrl(dingtalkProperties.getAuthc().getPathPattern());
-   			}
-   			//authcFilter.setMessageSource(messageSource);
-   			authcFilter.setCodeParameter(dingtalkProperties.getAuthc().getCodeParameter());
-   			authcFilter.setPostOnly(dingtalkProperties.getAuthc().isPostOnly());
-   			authcFilter.setRememberMeServices(rememberMeServices);
-   			authcFilter.setSessionAuthenticationStrategy(sessionAuthenticationStrategy);
+			/**
+			 * 批量设置参数
+			 */
+			PropertyMapper map = PropertyMapper.get().alwaysApplyingWhenNonNull();
+			
+			map.from(bizProperties.getSessionMgt().isAllowSessionCreation()).to(authenticationFilter::setAllowSessionCreation);
+			
+			map.from(authenticationManager).to(authenticationFilter::setAuthenticationManager);
+			map.from(authenticationSuccessHandler).to(authenticationFilter::setAuthenticationSuccessHandler);
+			map.from(authenticationFailureHandler).to(authenticationFilter::setAuthenticationFailureHandler);
+			
+			map.from(dingtalkProperties.getAuthc().getCodeParameter()).to(authenticationFilter::setCodeParameter);
+			map.from(dingtalkProperties.getAuthc().getPathPattern()).to(authenticationFilter::setFilterProcessesUrl);
+			map.from(dingtalkProperties.getAuthc().isPostOnly()).to(authenticationFilter::setPostOnly);
+			map.from(rememberMeServices).to(authenticationFilter::setRememberMeServices);
+			map.from(sessionAuthenticationStrategy).to(authenticationFilter::setSessionAuthenticationStrategy);
+			map.from(dingtalkProperties.getAuthc().isContinueChainBeforeSuccessfulAuthentication()).to(authenticationFilter::setContinueChainBeforeSuccessfulAuthentication);
    			
-   	        return authcFilter;
+   	        return authenticationFilter;
    	    }
    		
    		@Override
@@ -113,7 +112,7 @@ public class SecurityDingTalkFilterConfiguration {
    	    protected void configure(HttpSecurity http) throws Exception {
    	    	
    	    	http.csrf().disable(); // We don't need CSRF for DingTalk LoginTmpCode based authentication
-   	    	http.addFilterBefore(dingTalkAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
+   	    	http.addFilterBefore(authenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
    	        
    	    }
    	    
@@ -121,12 +120,9 @@ public class SecurityDingTalkFilterConfiguration {
 	    public void configure(WebSecurity web) throws Exception {
 	    	web.ignoring().antMatchers(dingtalkProperties.getAuthc().getPathPattern());
 	    }
-   	    
-   		@Override
-   		public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-   			this.eventPublisher = applicationEventPublisher;
-   		}
 
    	}
 
 }
+
+
