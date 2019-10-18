@@ -77,7 +77,6 @@ public class SecurityDingTalkFilterConfiguration {
    			
    		}
    		
-   		@Bean
    	    public DingTalkAuthenticationProcessingFilter authenticationProcessingFilter() {
    	    	
    			DingTalkAuthenticationProcessingFilter authenticationFilter = new DingTalkAuthenticationProcessingFilter(objectMapper);
