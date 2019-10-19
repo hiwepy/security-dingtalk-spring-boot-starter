@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.PropertyMapper;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -103,21 +102,23 @@ public class SecurityDingTalkFilterConfiguration {
    	    }
    		
    		@Override
-   	    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		public void configure(AuthenticationManagerBuilder auth) throws Exception {
    	        auth.authenticationProvider(authenticationProvider);
    	    }
 
    	    @Override
-   	    protected void configure(HttpSecurity http) throws Exception {
+		public void configure(HttpSecurity http) throws Exception {
    	    	
    	    	http.csrf().disable(); // We don't need CSRF for DingTalk LoginTmpCode based authentication
-   	    	http.addFilterBefore(authenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
+   	    	
+   	    	http.antMatcher(dingtalkProperties.getAuthc().getPathPattern())
+   	    		.addFilterBefore(authenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
    	        
    	    }
    	    
    	    @Override
 	    public void configure(WebSecurity web) throws Exception {
-	    	web.ignoring().antMatchers(dingtalkProperties.getAuthc().getPathPattern());
+	    	//web.ignoring().antMatchers(dingtalkProperties.getAuthc().getPathPattern());
 	    }
 
    	}
