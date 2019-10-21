@@ -1,9 +1,6 @@
 package org.springframework.security.boot;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.security.boot.biz.property.SecurityRedirectProperties;
-import org.springframework.security.boot.dingtalk.property.SecurityDingTalkAuthcProperties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -44,10 +41,5 @@ public class SecurityDingTalkProperties {
 	 * 企业ID
 	 */
 	private String corpId;
-
-	@NestedConfigurationProperty
-	private SecurityDingTalkAuthcProperties authc = new SecurityDingTalkAuthcProperties();
-	@NestedConfigurationProperty
-	private SecurityRedirectProperties redirect = new SecurityRedirectProperties();
 
 }
