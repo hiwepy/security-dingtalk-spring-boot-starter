@@ -17,7 +17,6 @@ import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthent
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
@@ -33,7 +32,7 @@ public class SecurityDingTalkFilterConfiguration {
     @ConditionalOnProperty(prefix = SecurityDingTalkProperties.PREFIX, value = "enabled", havingValue = "true")
    	@EnableConfigurationProperties({ SecurityDingTalkProperties.class, SecurityBizProperties.class })
     @Order(104)
-   	static class DingTalkWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+   	static class DingTalkWebSecurityConfigurerAdapter extends SecurityBizConfigurerAdapter {
     	
         private final AuthenticationManager authenticationManager;
         private final ObjectMapper objectMapper;
@@ -61,6 +60,8 @@ public class SecurityDingTalkFilterConfiguration {
 				
 				@Qualifier("dingTalkAuthenticationSuccessHandler") ObjectProvider<PostRequestAuthenticationSuccessHandler> authenticationSuccessHandler
 			) {
+   			
+   			super(bizProperties);
    			
    			this.authenticationManager = authenticationManagerProvider.getIfAvailable();
    			this.objectMapper = objectMapperProvider.getIfAvailable();
@@ -104,6 +105,7 @@ public class SecurityDingTalkFilterConfiguration {
    		@Override
 		public void configure(AuthenticationManagerBuilder auth) throws Exception {
    	        auth.authenticationProvider(authenticationProvider);
+   	        super.configure(auth);
    	    }
 
    	    @Override
@@ -113,12 +115,13 @@ public class SecurityDingTalkFilterConfiguration {
    	    	
    	    	http.antMatcher(dingtalkProperties.getAuthc().getPathPattern())
    	    		.addFilterBefore(authenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
-   	        
+   	    	
+   	        super.configure(http);
    	    }
    	    
    	    @Override
 	    public void configure(WebSecurity web) throws Exception {
-	    	//web.ignoring().antMatchers(dingtalkProperties.getAuthc().getPathPattern());
+	    	super.configure(web);
 	    }
 
    	}
