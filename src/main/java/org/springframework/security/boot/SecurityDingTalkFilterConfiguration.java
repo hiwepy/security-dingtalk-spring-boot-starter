@@ -106,7 +106,7 @@ public class SecurityDingTalkFilterConfiguration {
     @Configuration
     @ConditionalOnProperty(prefix = SecurityDingTalkProperties.PREFIX, value = "enabled", havingValue = "true")
     @EnableConfigurationProperties({ SecurityBizProperties.class, SecurityDingTalkProperties.class, SecurityDingTalkAuthcProperties.class })
-    @Order(SecurityProperties.DEFAULT_FILTER_ORDER + 50)
+    @Order(SecurityProperties.DEFAULT_FILTER_ORDER + 5)
    	static class DingTalkWebSecurityConfigurerAdapter extends SecurityBizConfigurerAdapter {
     	
 	    private final SecurityBizProperties bizProperties;
@@ -271,7 +271,7 @@ public class SecurityDingTalkFilterConfiguration {
    	    
    	    @Override
 	    public void configure(WebSecurity web) throws Exception {
-	    	super.configure(web);
+	    	
 	    }
 
    	}
