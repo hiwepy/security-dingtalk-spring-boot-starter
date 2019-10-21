@@ -1,5 +1,6 @@
 package org.springframework.security.boot;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.boot.biz.authentication.AuthenticationListener;
 import org.springframework.security.boot.biz.authentication.PostRequestAuthenticationFailureHandler;
 import org.springframework.security.boot.biz.authentication.PostRequestAuthenticationSuccessHandler;
@@ -171,9 +173,13 @@ public class SecurityDingTalkFilterConfiguration {
    			
    		}
    		
-		@Override
-		protected AuthenticationManager authenticationManager() throws Exception {
-			return authenticationManager == null ? super.authenticationManager() : authenticationManager;
+   		@Override
+		public AuthenticationManager authenticationManagerBean() throws Exception {
+   			AuthenticationManager parentManager = authenticationManager == null ? super.authenticationManagerBean() : authenticationManager;
+			ProviderManager authenticationManager = new ProviderManager( Arrays.asList(authenticationProvider), parentManager);
+			// 不擦除认证密码，擦除会导致TokenBasedRememberMeServices因为找不到Credentials再调用UserDetailsService而抛出UsernameNotFoundException
+			authenticationManager.setEraseCredentialsAfterAuthentication(false);
+			return authenticationManager;
 		}
 		
    	    public DingTalkAuthenticationProcessingFilter authenticationProcessingFilter() throws Exception {
@@ -187,7 +193,7 @@ public class SecurityDingTalkFilterConfiguration {
 			
 			map.from(bizProperties.getSessionMgt().isAllowSessionCreation()).to(authenticationFilter::setAllowSessionCreation);
 			
-			map.from(authenticationManager()).to(authenticationFilter::setAuthenticationManager);
+			map.from(authenticationManagerBean()).to(authenticationFilter::setAuthenticationManager);
 			map.from(authenticationSuccessHandler).to(authenticationFilter::setAuthenticationSuccessHandler);
 			map.from(authenticationFailureHandler).to(authenticationFilter::setAuthenticationFailureHandler);
 			
