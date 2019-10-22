@@ -46,7 +46,6 @@ import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -137,7 +136,6 @@ public class SecurityDingTalkFilterConfiguration {
    				ObjectProvider<PostRequestAuthenticationFailureHandler> authenticationFailureHandler,
    				@Qualifier("dingtalkAuthenticationSuccessHandler") ObjectProvider<PostRequestAuthenticationSuccessHandler> authenticationSuccessHandler,
    				ObjectProvider<CsrfTokenRepository> csrfTokenRepositoryProvider,
-   				ObjectProvider<CorsConfigurationSource> configurationSourceProvider,
    				ObjectProvider<InvalidSessionStrategy> invalidSessionStrategyProvider,
    				@Qualifier("dingtalkLogoutSuccessHandler") ObjectProvider<LogoutSuccessHandler> logoutSuccessHandlerProvider,
    				ObjectProvider<LogoutHandler> logoutHandlerProvider,
@@ -149,7 +147,7 @@ public class SecurityDingTalkFilterConfiguration {
 				ObjectProvider<SessionInformationExpiredStrategy> sessionInformationExpiredStrategyProvider
 			) {
    			
-   			super(bizProperties, csrfTokenRepositoryProvider.getIfAvailable(), configurationSourceProvider.getIfAvailable());
+   			super(bizProperties, csrfTokenRepositoryProvider.getIfAvailable());
    			
    			
    			this.bizProperties = bizProperties;

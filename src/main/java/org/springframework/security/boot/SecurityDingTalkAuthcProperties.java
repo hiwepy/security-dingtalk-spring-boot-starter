@@ -18,7 +18,7 @@ package org.springframework.security.boot;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.security.boot.biz.property.SecurityAuthcProperties;
-import org.springframework.security.boot.biz.property.SecurityHeaderCrosProperties;
+import org.springframework.security.boot.biz.property.SecurityHeaderCorsProperties;
 import org.springframework.security.boot.biz.property.SecurityHeaderCsrfProperties;
 import org.springframework.security.boot.biz.property.SecurityHeadersProperties;
 import org.springframework.security.boot.biz.property.SecurityLogoutProperties;
@@ -44,7 +44,7 @@ public class SecurityDingTalkAuthcProperties extends SecurityAuthcProperties {
     private String codeParameter = DingTalkAuthenticationProcessingFilter.SPRING_SECURITY_FORM_CODE_KEY;
     
     @NestedConfigurationProperty
-	private SecurityHeaderCrosProperties cros = new SecurityHeaderCrosProperties();
+	private SecurityHeaderCorsProperties cros = new SecurityHeaderCorsProperties();
 	
 	@NestedConfigurationProperty
 	private SecurityHeaderCsrfProperties csrf = new SecurityHeaderCsrfProperties();
