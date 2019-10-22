@@ -23,7 +23,6 @@ import org.springframework.security.boot.biz.authentication.AuthenticationListen
 import org.springframework.security.boot.biz.authentication.PostRequestAuthenticationFailureHandler;
 import org.springframework.security.boot.biz.authentication.PostRequestAuthenticationSuccessHandler;
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationSuccessHandler;
-import org.springframework.security.boot.biz.property.SecurityCsrfProperties;
 import org.springframework.security.boot.biz.property.SecurityLogoutProperties;
 import org.springframework.security.boot.biz.property.SecuritySessionMgtProperties;
 import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapter;
@@ -32,7 +31,6 @@ import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthent
 import org.springframework.security.boot.dingtalk.authentication.DingTalkMatchedAuthenticationEntryPoint;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkMatchedAuthenticationFailureHandler;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkTemplate;
-import org.springframework.security.boot.utils.StringUtils;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -44,11 +42,11 @@ import org.springframework.security.web.authentication.logout.HttpStatusReturnin
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -112,13 +110,12 @@ public class SecurityDingTalkFilterConfiguration {
    	static class DingTalkWebSecurityConfigurerAdapter extends SecurityBizConfigurerAdapter {
     	
 	    private final SecurityBizProperties bizProperties;
-    	private final SecurityDingTalkAuthcProperties dingtalkAuthcProperties;
+    	private final SecurityDingTalkAuthcProperties authcProperties;
     	
     	private final AuthenticationManager authenticationManager;
 	    private final DingTalkAuthenticationProvider authenticationProvider;
 	    private final PostRequestAuthenticationSuccessHandler authenticationSuccessHandler;
 	    private final PostRequestAuthenticationFailureHandler authenticationFailureHandler;
-	    private final CsrfTokenRepository csrfTokenRepository;
 	    private final InvalidSessionStrategy invalidSessionStrategy;
 	    private final LogoutSuccessHandler logoutSuccessHandler;
 	    private final List<LogoutHandler> logoutHandlers;
@@ -140,6 +137,7 @@ public class SecurityDingTalkFilterConfiguration {
    				ObjectProvider<PostRequestAuthenticationFailureHandler> authenticationFailureHandler,
    				@Qualifier("dingtalkAuthenticationSuccessHandler") ObjectProvider<PostRequestAuthenticationSuccessHandler> authenticationSuccessHandler,
    				ObjectProvider<CsrfTokenRepository> csrfTokenRepositoryProvider,
+   				ObjectProvider<CorsConfigurationSource> configurationSourceProvider,
    				ObjectProvider<InvalidSessionStrategy> invalidSessionStrategyProvider,
    				@Qualifier("dingtalkLogoutSuccessHandler") ObjectProvider<LogoutSuccessHandler> logoutSuccessHandlerProvider,
    				ObjectProvider<LogoutHandler> logoutHandlerProvider,
@@ -151,16 +149,16 @@ public class SecurityDingTalkFilterConfiguration {
 				ObjectProvider<SessionInformationExpiredStrategy> sessionInformationExpiredStrategyProvider
 			) {
    			
-   			super(bizProperties);
+   			super(bizProperties, csrfTokenRepositoryProvider.getIfAvailable(), configurationSourceProvider.getIfAvailable());
+   			
    			
    			this.bizProperties = bizProperties;
-   			this.dingtalkAuthcProperties = dingtalkAuthcProperties;
+   			this.authcProperties = dingtalkAuthcProperties;
    			
    			this.authenticationManager = authenticationManagerProvider.getIfAvailable();
    			this.authenticationProvider = authenticationProvider.getIfAvailable();
    			this.authenticationFailureHandler = authenticationFailureHandler.getIfAvailable();
    			this.authenticationSuccessHandler = authenticationSuccessHandler.getIfAvailable();
-   			this.csrfTokenRepository = csrfTokenRepositoryProvider.getIfAvailable();
    			this.invalidSessionStrategy = invalidSessionStrategyProvider.getIfAvailable();
    			this.logoutSuccessHandler = logoutSuccessHandlerProvider.getIfAvailable();
    			this.logoutHandlers = logoutHandlerProvider.stream().collect(Collectors.toList());
@@ -197,12 +195,12 @@ public class SecurityDingTalkFilterConfiguration {
 			map.from(authenticationSuccessHandler).to(authenticationFilter::setAuthenticationSuccessHandler);
 			map.from(authenticationFailureHandler).to(authenticationFilter::setAuthenticationFailureHandler);
 			
-			map.from(dingtalkAuthcProperties.getCodeParameter()).to(authenticationFilter::setCodeParameter);
-			map.from(dingtalkAuthcProperties.getPathPattern()).to(authenticationFilter::setFilterProcessesUrl);
-			map.from(dingtalkAuthcProperties.isPostOnly()).to(authenticationFilter::setPostOnly);
+			map.from(authcProperties.getCodeParameter()).to(authenticationFilter::setCodeParameter);
+			map.from(authcProperties.getPathPattern()).to(authenticationFilter::setFilterProcessesUrl);
+			map.from(authcProperties.isPostOnly()).to(authenticationFilter::setPostOnly);
 			map.from(rememberMeServices).to(authenticationFilter::setRememberMeServices);
 			map.from(sessionAuthenticationStrategy).to(authenticationFilter::setSessionAuthenticationStrategy);
-			map.from(dingtalkAuthcProperties.isContinueChainBeforeSuccessfulAuthentication()).to(authenticationFilter::setContinueChainBeforeSuccessfulAuthentication);
+			map.from(authcProperties.isContinueChainBeforeSuccessfulAuthentication()).to(authenticationFilter::setContinueChainBeforeSuccessfulAuthentication);
    			
    	        return authenticationFilter;
    	    }
@@ -219,7 +217,7 @@ public class SecurityDingTalkFilterConfiguration {
    	  // Session 管理器配置参数
    	    	SecuritySessionMgtProperties sessionMgt = bizProperties.getSessionMgt();
    	    	// Session 注销配置参数
-   	    	SecurityLogoutProperties logout = dingtalkAuthcProperties.getLogout();
+   	    	SecurityLogoutProperties logout = authcProperties.getLogout();
    	    	
    	    	http.csrf().disable(); // We don't need CSRF for JWT based authentication
 	    	http.headers().cacheControl(); // 禁用缓存
@@ -252,27 +250,13 @@ public class SecurityDingTalkFilterConfiguration {
    	    		.requestCache()
    	        	.requestCache(requestCache)
    	        	.and()
-   	        	.antMatcher(dingtalkAuthcProperties.getPathPattern())
+   	        	.antMatcher(authcProperties.getPathPattern())
    	        	.addFilterBefore(authenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class); 
    	    	
-   	    	// CSRF 配置
-   	    	SecurityCsrfProperties csrf = dingtalkAuthcProperties.getCsrf();
-   	    	if(csrf.isEnabled()) {
-   	       		http.csrf()
-   				   	.csrfTokenRepository(csrfTokenRepository)
-   				   	.ignoringAntMatchers(StringUtils.tokenizeToStringArray(csrf.getIgnoringAntMatchers()))
-   					.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
-   	        } else {
-   	        	http.csrf().disable();
-   	        }
+   	    	super.configure(http, authcProperties.getCros());
+   	    	super.configure(http, authcProperties.getCsrf());
+   	    	super.configure(http, authcProperties.getHeaders());
 	    	super.configure(http);
-	    	
-   	    	http.csrf().disable(); // We don't need CSRF for DingTalk LoginTmpCode based authentication
-   	    	
-   	    	http.antMatcher(dingtalkAuthcProperties.getPathPattern())
-   	    		.addFilterBefore(authenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
-   	    	
-   	        super.configure(http);
    	    }
    	    
    	    @Override
