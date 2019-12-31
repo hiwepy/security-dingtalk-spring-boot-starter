@@ -1,4 +1,4 @@
-# spring-boot-starter-security-dingtalk
+# security-dingtalk-spring-boot-starter
 security dingtalk starter for spring boot
 
 ### 说明
@@ -13,7 +13,7 @@ security dingtalk starter for spring boot
 ``` xml
 <dependency>
 	<groupId>${project.groupId}</groupId>
-	<artifactId>spring-boot-starter-security-dingtalk</artifactId>
+	<artifactId>security-dingtalk-spring-boot-starter</artifactId>
 	<version>${project.version}</version>
 </dependency>
 ```
