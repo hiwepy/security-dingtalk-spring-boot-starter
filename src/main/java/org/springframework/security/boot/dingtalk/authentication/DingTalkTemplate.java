@@ -30,6 +30,7 @@ import com.dingtalk.api.request.OapiSnsGetuserinfoBycodeRequest;
 import com.dingtalk.api.request.OapiSnsGetuserinfoRequest;
 import com.dingtalk.api.request.OapiUserGetRequest;
 import com.dingtalk.api.request.OapiUserGetUseridByUnionidRequest;
+import com.dingtalk.api.request.OapiUserGetuserinfoRequest;
 import com.dingtalk.api.response.OapiDepartmentGetResponse;
 import com.dingtalk.api.response.OapiGettokenResponse;
 import com.dingtalk.api.response.OapiSnsGetPersistentCodeResponse;
@@ -39,6 +40,7 @@ import com.dingtalk.api.response.OapiSnsGetuserinfoBycodeResponse;
 import com.dingtalk.api.response.OapiSnsGetuserinfoResponse;
 import com.dingtalk.api.response.OapiUserGetResponse;
 import com.dingtalk.api.response.OapiUserGetUseridByUnionidResponse;
+import com.dingtalk.api.response.OapiUserGetuserinfoResponse;
 import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -188,7 +190,20 @@ public class DingTalkTemplate {
 	}
 	
 	/**
-	 * 	通过临时授权码Code获取用户信息，临时授权码只能使用一次。
+	 * 企业内部应用免登录：通过免登授权码和access_token获取用户信息
+	 * https://ding-doc.dingtalk.com/doc#/serverapi2/clotub
+	 * @throws ApiException 
+	 */
+	public OapiUserGetuserinfoResponse getUserinfoBycode( String code, String accessToken) throws ApiException {
+		DingTalkClient client = new DefaultDingTalkClient(SDINGTALKSERVICE + "/user/getuserinfo");
+		OapiUserGetuserinfoRequest request = new OapiUserGetuserinfoRequest();
+		request.setCode(code);
+		request.setHttpMethod(METHOD_GET);
+		return client.execute(request, accessToken);
+	}
+	
+	/**
+	 * 第三方应用钉钉扫码登录：通过临时授权码Code获取用户信息，临时授权码只能使用一次。
 	 * https://open-doc.dingtalk.com/microapp/serverapi2/kymkv6
 	 * @throws ApiException 
 	 */

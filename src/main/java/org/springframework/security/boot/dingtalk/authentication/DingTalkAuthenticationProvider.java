@@ -23,9 +23,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
-import com.dingtalk.api.response.OapiSnsGetuserinfoBycodeResponse;
-import com.dingtalk.api.response.OapiSnsGetuserinfoBycodeResponse.UserInfo;
-import com.dingtalk.api.response.OapiUserGetUseridByUnionidResponse;
+import com.dingtalk.api.response.OapiUserGetResponse;
+import com.dingtalk.api.response.OapiUserGetuserinfoResponse;
 import com.taobao.api.ApiException;
 
 public class DingTalkAuthenticationProvider implements AuthenticationProvider {
@@ -71,17 +70,18 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 		
 		try {
 			
-			// 扫码登录第三方网站 
-			OapiSnsGetuserinfoBycodeResponse response = dingTalkTemplate.getSnsGetuserinfoBycode(loginTmpCode,
-					dingtalkProperties.getAccessKey(), dingtalkProperties.getAccessSecret());
-			/*{ 
-			    "errcode": 0,
+			
+			// 获取access_token
+			String accessToken = dingTalkTemplate.getAccessToken(dingtalkProperties.getAppKey(), dingtalkProperties.getAppSecret());
+						
+			// 企业内部应用免登录：通过免登授权码和access_token获取用户信息
+			OapiUserGetuserinfoResponse response = dingTalkTemplate.getUserinfoBycode(loginTmpCode, accessToken);
+			/*{
+			    "userid": "****",
+			    "sys_level": 1,
 			    "errmsg": "ok",
-			    "user_info": {
-			        "nick": "张三",
-			        "openid": "liSii8KCxxxxx",
-			        "unionid": "7Huu46kk"
-			    }
+			    "is_sys": true,
+			    "errcode": 0
 			}*/
 			if (logger.isDebugEnabled()) {
 				logger.debug(response.getCode());
@@ -91,23 +91,24 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 				logger.error(JSONObject.toJSONString(AuthResponse.of(response.getErrorCode(), response.getErrmsg())));
 				throw new DingTalkAuthenticationServiceException(response.getErrmsg());
 			}
-				
-			UserInfo userInfo = response.getUserInfo();
+			
+			OapiUserGetResponse userInfoResponse = dingTalkTemplate.getUserByUserid(response.getUserid(), accessToken);
+			if(!userInfoResponse.isSuccess()) {
+				logger.error(JSONObject.toJSONString(AuthResponse.of(userInfoResponse.getErrorCode(), userInfoResponse.getErrmsg())));
+				throw new DingTalkAuthenticationServiceException(userInfoResponse.getErrmsg());
+			}
 			
 			DingTalkAuthenticationToken dingTalkToken = (DingTalkAuthenticationToken) authentication;
-			dingTalkToken.setNick(userInfo.getNick());
-			dingTalkToken.setOpenid(userInfo.getOpenid());
-			dingTalkToken.setUnionid(userInfo.getUnionid());
 			
-			// 获取access_token
-			String accessToken = dingTalkTemplate.getAccessToken(dingtalkProperties.getAppKey(), dingtalkProperties.getAppSecret());
-			// 根据unionid获取userid
-			OapiUserGetUseridByUnionidResponse unionidResponse = dingTalkTemplate.getUseridByUnionid(userInfo.getUnionid(), accessToken);
-			if(!unionidResponse.isSuccess()) {
-				logger.error(JSONObject.toJSONString(AuthResponse.of(unionidResponse.getErrorCode(), unionidResponse.getErrmsg())));
-				throw new DingTalkAuthenticationServiceException(unionidResponse.getErrmsg());
-			}
-			dingTalkToken.setPrincipal(unionidResponse.getUserid());
+			dingTalkToken.setAvatar(userInfoResponse.getAvatar());
+			dingTalkToken.setName(userInfoResponse.getName());
+			dingTalkToken.setNick(userInfoResponse.getNickname());
+			dingTalkToken.setMobile(userInfoResponse.getMobile());
+			dingTalkToken.setEmail(userInfoResponse.getEmail());
+			dingTalkToken.setJobnumber(userInfoResponse.getJobnumber());
+			dingTalkToken.setUnionid(userInfoResponse.getUnionid());
+			dingTalkToken.setPrincipal(userInfoResponse.getUserid());
+			
 			UserDetails ud = getUserDetailsService().loadUserDetails(dingTalkToken);
 	        
 	        // User Status Check
@@ -115,9 +116,9 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 	        
 	        DingTalkAuthenticationToken authenticationToken = null;
 	        if(SecurityPrincipal.class.isAssignableFrom(ud.getClass())) {
-	        	SecurityPrincipal principal = (SecurityPrincipal)ud;
+	        	SecurityPrincipal principal = (SecurityPrincipal) ud;
 	        	if(!StringUtils.hasText(principal.getAlias())) {
-	        		principal.setAlias(userInfo.getNick());
+	        		principal.setAlias(userInfoResponse.getNickname());
 	        	}
 	        	authenticationToken = new DingTalkAuthenticationToken(ud, ud.getPassword(), ud.getAuthorities());        	
 	        } else {

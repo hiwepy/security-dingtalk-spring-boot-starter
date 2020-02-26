@@ -76,7 +76,7 @@ public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticati
 			
 			DingTalkLoginRequest loginRequest = objectMapper.readValue(request.getReader(), DingTalkLoginRequest.class);
 			
-			authRequest = this.authenticationToken( loginRequest.getLoginTmpCode());
+			authRequest = this.authenticationToken( loginRequest.getCode());
 			
 		} else {
 			

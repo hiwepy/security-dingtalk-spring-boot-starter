@@ -5,19 +5,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DingTalkLoginRequest {
 	
-    private String loginTmpCode;
-
+    private String code;
+    
     @JsonCreator
-    public DingTalkLoginRequest(@JsonProperty("loginTmpCode") String loginTmpCode) {
-        this.loginTmpCode = loginTmpCode;
+    public DingTalkLoginRequest(@JsonProperty("code") String code) {
+        this.code = code;
     }
 
-	public String getLoginTmpCode() {
-		return loginTmpCode;
+	public String getCode() {
+		return code;
 	}
 
-	public void setLoginTmpCode(String loginTmpCode) {
-		this.loginTmpCode = loginTmpCode;
+	public void setCode(String code) {
+		this.code = code;
 	}
 	
 }
