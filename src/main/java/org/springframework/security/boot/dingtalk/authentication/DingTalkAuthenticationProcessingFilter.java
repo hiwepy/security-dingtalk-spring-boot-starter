@@ -38,7 +38,9 @@ public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticati
 
 	protected MessageSourceAccessor messages = SpringSecurityBizMessageSource.getAccessor();
     public static final String SPRING_SECURITY_FORM_CODE_KEY = "code";
+    public static final String SPRING_SECURITY_FORM_TMPCODE_KEY = "loginTmpCode";
 
+    private String tmpCodeParameter = SPRING_SECURITY_FORM_TMPCODE_KEY;
     private String codeParameter = SPRING_SECURITY_FORM_CODE_KEY;
     private boolean postOnly = true;
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -76,17 +78,23 @@ public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticati
 			
 			DingTalkLoginRequest loginRequest = objectMapper.readValue(request.getReader(), DingTalkLoginRequest.class);
 			
-			authRequest = this.authenticationToken( loginRequest.getCode());
+			authRequest = this.authenticationToken( loginRequest );
 			
 		} else {
 			
 			String code = obtainCode(request);
-
+			String loginTmpCode = obtainTmpCode(request);
+			
 	        if (code == null) {
 	            code = "";
 	        }
+	        if (loginTmpCode == null) {
+	        	loginTmpCode = "";
+	        }
 	        
-	        authRequest = this.authenticationToken( code);
+	        DingTalkLoginRequest loginRequest = new DingTalkLoginRequest(code, loginTmpCode);
+	        
+	        authRequest = this.authenticationToken( loginRequest);
 	        
 		}
         
@@ -100,6 +108,10 @@ public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticati
 
     protected String obtainCode(HttpServletRequest request) {
         return request.getParameter(codeParameter);
+    }
+    
+    protected String obtainTmpCode(HttpServletRequest request) {
+        return request.getParameter(tmpCodeParameter);
     }
 
     /**
@@ -115,8 +127,8 @@ public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticati
 		authRequest.setDetails(authenticationDetailsSource.buildDetails(request));
 	}
 	
-	protected AbstractAuthenticationToken authenticationToken(String tmpAuthCode) {
-		return new DingTalkAuthenticationToken(tmpAuthCode);
+	protected AbstractAuthenticationToken authenticationToken(DingTalkLoginRequest loginRequest) {
+		return new DingTalkAuthenticationToken(loginRequest);
 	}
 
 	public String getCodeParameter() {
@@ -125,6 +137,14 @@ public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticati
 
 	public void setCodeParameter(String codeParameter) {
 		this.codeParameter = codeParameter;
+	}
+
+	public String getTmpCodeParameter() {
+		return tmpCodeParameter;
+	}
+
+	public void setTmpCodeParameter(String tmpCodeParameter) {
+		this.tmpCodeParameter = tmpCodeParameter;
 	}
 
 	public boolean isPostOnly() {

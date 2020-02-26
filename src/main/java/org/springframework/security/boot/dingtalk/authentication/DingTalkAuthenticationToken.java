@@ -26,7 +26,6 @@ public class DingTalkAuthenticationToken extends AbstractAuthenticationToken {
 	private Object principal;
 	private Object credentials;
 	
-	
 	/**
 	 * 员工头像url
 	 */
@@ -66,10 +65,9 @@ public class DingTalkAuthenticationToken extends AbstractAuthenticationToken {
 	 */
 	protected Map<String, String> extattr;
 
-	public DingTalkAuthenticationToken(String credentials) {
+	public DingTalkAuthenticationToken(Object principal) {
 		super(null);
-		this.principal = null;
-		this.credentials = credentials;
+		this.principal = principal;
 		setAuthenticated(false);
 	}
 
