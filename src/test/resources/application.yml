@@ -1,7 +1,7 @@
 spring:
   # Spring Security 配置
   security:
-             # 默认路径拦截规则定义
+    # 默认路径拦截规则定义
     filter-chain-definition-map:
        '[/]' : anon
        '[/**/favicon.ico]' : anon
@@ -22,17 +22,15 @@ spring:
        '[/monitoring2]' : roles[1,admin]
        '[/monitoring3]' : perms[1,admin]
        '[/monitoring4]' : perms[1]
-    jwt:
-      enabled: true
+    dingtalk:      enabled: true
+      access-key: 移动接入应用-扫码登录应用的appId
+      access-secret: 移动接入应用-扫码登录应用的appSecret
+      agent-id: 企业内部开发：程序客户端ID
+      app-key: 企业内部开发：应用的唯一标识key
+      app-secret: 企业内部开发：应用的密钥
       authc:
+        path-pattern: /login/dingtalk
         continue-chain-before-successful-authentication: false
-        login-url-pattern: /login/jwt
-        password-parameter: pwd
-        post-only: true
-        use-forward: false
-      authz:        allow-session-creation: false
-        continue-chain-before-successful-authentication: true
-        path-pattern: /**
         
       
       
