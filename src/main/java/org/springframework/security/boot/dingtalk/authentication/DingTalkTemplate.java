@@ -63,7 +63,7 @@ public class DingTalkTemplate {
 	private final LoadingCache<String, Optional<String>> ACCESS_TOKEN_CACHES = CacheBuilder.newBuilder()
 			// 设置并发级别为8，并发级别是指可以同时写缓存的线程数
 			.concurrencyLevel(8)
-			// 设置写缓存后600秒钟过期
+			// 正常情况下access_token有效期为7200秒，有效期内重复获取返回相同结果，并自动续期
 			.expireAfterWrite(6000, TimeUnit.SECONDS)
 			// 设置缓存容器的初始容量为10
 			.initialCapacity(2)
