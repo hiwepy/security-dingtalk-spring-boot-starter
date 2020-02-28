@@ -1,5 +1,6 @@
 package org.springframework.security.boot.dingtalk.authentication;
 
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
@@ -141,21 +142,13 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 			throw new DingTalkAuthenticationServiceException(userInfoResponse.getErrmsg());
 		}
 		
-		
-		dingTalkToken.setAvatar(userInfoResponse.getAvatar());
-		dingTalkToken.setName(userInfoResponse.getName());
-		dingTalkToken.setNick(userInfoResponse.getNickname());
-		dingTalkToken.setMobile(userInfoResponse.getMobile());
-		dingTalkToken.setEmail(userInfoResponse.getEmail());
-		dingTalkToken.setJobnumber(userInfoResponse.getJobnumber());
-		dingTalkToken.setUnionid(userInfoResponse.getUnionid());
-		dingTalkToken.setPrincipal(userInfoResponse.getUserid());
+		// 解析钉钉用户信息到Token对象
+		this.extractRespone(dingTalkToken, userInfoResponse);
 		
 		return dingTalkToken;
     }
     
-    
-    protected DingTalkAuthenticationToken doAuthenticationByTmpCode(Authentication authentication, String accessToken, String loginTmpCode) throws ApiException{
+	protected DingTalkAuthenticationToken doAuthenticationByTmpCode(Authentication authentication, String accessToken, String loginTmpCode) throws ApiException{
     	
     	// 第三方应用钉钉扫码登录：通过临时授权码Code获取用户信息，临时授权码只能使用一次
 		OapiSnsGetuserinfoBycodeResponse response = dingTalkTemplate.getSnsGetuserinfoBycode(loginTmpCode,
@@ -199,16 +192,71 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 			logger.error(JSONObject.toJSONString(AuthResponse.of(userInfoResponse.getErrorCode(), userInfoResponse.getErrmsg())));
 			throw new DingTalkAuthenticationServiceException(userInfoResponse.getErrmsg());
 		}
-		
-		dingTalkToken.setAvatar(userInfoResponse.getAvatar());
-		dingTalkToken.setName(userInfoResponse.getName());
-		dingTalkToken.setMobile(userInfoResponse.getMobile());
-		dingTalkToken.setEmail(userInfoResponse.getEmail());
-		dingTalkToken.setJobnumber(userInfoResponse.getJobnumber());
-		dingTalkToken.setPrincipal(userInfoResponse.getUserid());
-		
+		// 解析钉钉用户信息到Token对象
+		this.extractRespone(dingTalkToken, userInfoResponse);
 		return dingTalkToken;
     }
+
+    /*    
+	 {
+	    "active":true,
+	    "avatar":"https://static.dingtalk.com/media/lADPBbCc1dSekr_NAczNAcw_460_460.jpg",
+	    "body":"{"errcode":0,"unionid":"DhoiSf4ug6KuOpAY95CytZwiEiE","userid":"061955121419944345","isLeaderInDepts":"{110421538:false}","isBoss":false,"isSenior":false,"department":[110421538],"orderInDepts":"{110421538:176362815343598512}","errmsg":"ok","active":true,"avatar":"https://static.dingtalk.com/media/lADPBbCc1dSekr_NAczNAcw_460_460.jpg","isAdmin":false,"tags":{},"isHide":false,"jobnumber":"","name":"万大龙","position":"高级JAVA开发"}",
+	    "department":[
+	        110421538
+	    ],
+	    "errcode":0,
+	    "errmsg":"ok",
+	    "errorCode":"0",
+	    "isAdmin":false,
+	    "isBoss":false,
+	    "isHide":false,
+	    "isLeaderInDepts":"{110421538:false}",
+	    "isSenior":false,
+	    "jobnumber":"",
+	    "msg":"ok",
+	    "name":"",
+	    "orderInDepts":"{110421538:176362815343598512}",
+	    "params":{
+	        "userid":"061955121419944345"
+	    },
+	    "position":"高级JAVA开发",
+	    "success":true,
+	    "unionid":"DhoiSf4ug6KuOpAY95CytZwiEiE",
+	    "userid":"061955121419944345"
+	} 
+	*/
+    @SuppressWarnings("unchecked")
+	protected void extractRespone(DingTalkAuthenticationToken dingTalkToken, OapiUserGetResponse userInfoResponse) {
+
+		dingTalkToken.setActive(userInfoResponse.getActive());
+		dingTalkToken.setAdmin(userInfoResponse.getIsAdmin());
+		dingTalkToken.setAvatar(userInfoResponse.getAvatar());
+		dingTalkToken.setBoss(userInfoResponse.getIsBoss());
+		dingTalkToken.setDepts(userInfoResponse.getDepartment());
+		dingTalkToken.setEmail(userInfoResponse.getEmail());
+		if(StringUtils.hasText(userInfoResponse.getExtattr())) {
+			dingTalkToken.setExtattr(JSONObject.parseObject(userInfoResponse.getExtattr(), Map.class));
+		}
+		dingTalkToken.setHide(userInfoResponse.getIsHide());
+		dingTalkToken.setHiredDate(userInfoResponse.getHiredDate());
+		dingTalkToken.setInviteMobile(userInfoResponse.getInviteMobile());
+		dingTalkToken.setJobnumber(userInfoResponse.getJobnumber());
+		dingTalkToken.setMobile(userInfoResponse.getMobile());
+		dingTalkToken.setName(userInfoResponse.getName());
+		dingTalkToken.setNick(userInfoResponse.getNickname());
+		dingTalkToken.setOrgEmail(userInfoResponse.getOrgEmail());
+		dingTalkToken.setPosition(userInfoResponse.getPosition());
+		dingTalkToken.setPrincipal(userInfoResponse.getUserid());
+		dingTalkToken.setRemark(userInfoResponse.getRemark());
+		dingTalkToken.setRoles(userInfoResponse.getRoles());
+		dingTalkToken.setSenior(userInfoResponse.getIsSenior());
+		dingTalkToken.setStateCode(userInfoResponse.getStateCode());
+		dingTalkToken.setTel(userInfoResponse.getTel());
+		dingTalkToken.setWorkPlace(userInfoResponse.getWorkPlace());
+		
+	}
+    
     
     @Override
     public boolean supports(Class<?> authentication) {

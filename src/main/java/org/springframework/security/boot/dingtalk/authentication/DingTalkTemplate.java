@@ -57,7 +57,7 @@ import com.taobao.api.ApiException;
  */
 public class DingTalkTemplate {
 
-	private final String SDINGTALKSERVICE = "https://oapi.dingtalk.com";
+	private final String DINGTALK_SERVICE = "https://oapi.dingtalk.com";
 	private final String METHOD_GET = "GET";
 
 	private final LoadingCache<String, Optional<String>> ACCESS_TOKEN_CACHES = CacheBuilder.newBuilder()
@@ -94,7 +94,7 @@ public class DingTalkTemplate {
 					
 					request.setHttpMethod(METHOD_GET);
 					
-					DingTalkClient client = new DefaultDingTalkClient(SDINGTALKSERVICE + "/gettoken");
+					DingTalkClient client = new DefaultDingTalkClient(DINGTALK_SERVICE + "/gettoken");
 					OapiGettokenResponse response = client.execute(request);
 
 					if (response.isSuccess()) {
@@ -137,7 +137,7 @@ public class DingTalkTemplate {
 					request.setAppsecret(key.getString("appSecret"));
 					request.setHttpMethod(METHOD_GET);
 
-					DingTalkClient client = new DefaultDingTalkClient(SDINGTALKSERVICE + "/sns/gettoken");
+					DingTalkClient client = new DefaultDingTalkClient(DINGTALK_SERVICE + "/sns/gettoken");
 
 					OapiSnsGettokenResponse response = client.execute(request);
 
@@ -195,7 +195,7 @@ public class DingTalkTemplate {
 	 * @throws ApiException 
 	 */
 	public OapiUserGetuserinfoResponse getUserinfoBycode( String code, String accessToken) throws ApiException {
-		DingTalkClient client = new DefaultDingTalkClient(SDINGTALKSERVICE + "/user/getuserinfo");
+		DingTalkClient client = new DefaultDingTalkClient(DINGTALK_SERVICE + "/user/getuserinfo");
 		OapiUserGetuserinfoRequest request = new OapiUserGetuserinfoRequest();
 		request.setCode(code);
 		request.setHttpMethod(METHOD_GET);
@@ -208,7 +208,7 @@ public class DingTalkTemplate {
 	 * @throws ApiException 
 	 */
 	public OapiSnsGetuserinfoBycodeResponse getSnsGetuserinfoBycode( String code, String accessKey, String accessSecret) throws ApiException {
-		DingTalkClient client = new DefaultDingTalkClient(SDINGTALKSERVICE + "/sns/getuserinfo_bycode");
+		DingTalkClient client = new DefaultDingTalkClient(DINGTALK_SERVICE + "/sns/getuserinfo_bycode");
 		OapiSnsGetuserinfoBycodeRequest request = new OapiSnsGetuserinfoBycodeRequest();
 		request.setTmpAuthCode(code);
 		return client.execute(request, accessKey, accessSecret);
@@ -221,7 +221,7 @@ public class DingTalkTemplate {
 	 */
 	public OapiUserGetUseridByUnionidResponse getUseridByUnionid( String unionid, String accessToken) throws ApiException {
 		
-		DingTalkClient client = new DefaultDingTalkClient(SDINGTALKSERVICE + "/user/getUseridByUnionid");
+		DingTalkClient client = new DefaultDingTalkClient(DINGTALK_SERVICE + "/user/getUseridByUnionid");
 		OapiUserGetUseridByUnionidRequest request = new OapiUserGetUseridByUnionidRequest();
 		request.setUnionid(unionid);
 		request.setHttpMethod(METHOD_GET);
@@ -238,7 +238,7 @@ public class DingTalkTemplate {
 	public String get_persistent_code(String accessToken, String code) {
 		OapiSnsGetPersistentCodeResponse response = null;
 		try {
-			DingTalkClient client = new DefaultDingTalkClient(SDINGTALKSERVICE + "/sns/get_persistent_code");
+			DingTalkClient client = new DefaultDingTalkClient(DINGTALK_SERVICE + "/sns/get_persistent_code");
 			OapiSnsGetPersistentCodeRequest request = new OapiSnsGetPersistentCodeRequest();
 			request.setTmpAuthCode(code);
 			response = client.execute(request, accessToken);
@@ -259,7 +259,7 @@ public class DingTalkTemplate {
 	public String get_sns_token(String openId, String persistentCode, String accessToken) {
 		OapiSnsGetSnsTokenResponse response = null;
 		try {
-			DingTalkClient client = new DefaultDingTalkClient(SDINGTALKSERVICE + "/sns/get_sns_token");
+			DingTalkClient client = new DefaultDingTalkClient(DINGTALK_SERVICE + "/sns/get_sns_token");
 			OapiSnsGetSnsTokenRequest request = new OapiSnsGetSnsTokenRequest();
 			request.setOpenid(openId);
 			request.setPersistentCode(persistentCode);
@@ -279,7 +279,7 @@ public class DingTalkTemplate {
 	public String get_sns_userinfo_unionid(String snsToken) {
 		OapiSnsGetuserinfoResponse response = null;
 		try {
-			DingTalkClient client = new DefaultDingTalkClient(SDINGTALKSERVICE + "/sns/getuserinfo");
+			DingTalkClient client = new DefaultDingTalkClient(DINGTALK_SERVICE + "/sns/getuserinfo");
 			OapiSnsGetuserinfoRequest request = new OapiSnsGetuserinfoRequest();
 			request.setSnsToken(snsToken);
 			request.setHttpMethod(METHOD_GET);
@@ -297,7 +297,7 @@ public class DingTalkTemplate {
 	 */
 	public OapiUserGetResponse getUserByUserid( String userid, String accessToken) throws ApiException {
 		
-		DingTalkClient client = new DefaultDingTalkClient(SDINGTALKSERVICE + "/user/get");
+		DingTalkClient client = new DefaultDingTalkClient(DINGTALK_SERVICE + "/user/get");
 		OapiUserGetRequest request = new OapiUserGetRequest();
 		request.setUserid(userid);
 		request.setHttpMethod(METHOD_GET);
@@ -314,7 +314,7 @@ public class DingTalkTemplate {
 	 * @throws ApiException
 	 */
 	public OapiDepartmentGetResponse getDepartmentInfo(String accessToken, String deptid) throws ApiException {
-		DingTalkClient client = new DefaultDingTalkClient(SDINGTALKSERVICE + "/department/get");
+		DingTalkClient client = new DefaultDingTalkClient(DINGTALK_SERVICE + "/department/get");
 		OapiDepartmentGetRequest request = new OapiDepartmentGetRequest();
 		request.setId(deptid);
 		request.setHttpMethod(METHOD_GET);
