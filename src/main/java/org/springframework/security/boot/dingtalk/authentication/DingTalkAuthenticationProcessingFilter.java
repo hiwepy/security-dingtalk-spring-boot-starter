@@ -42,7 +42,7 @@ public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticati
 
     private String tmpCodeParameter = SPRING_SECURITY_FORM_TMPCODE_KEY;
     private String codeParameter = SPRING_SECURITY_FORM_CODE_KEY;
-    private boolean postOnly = true;
+    private boolean postOnly = false;
     private ObjectMapper objectMapper = new ObjectMapper();
     
     public DingTalkAuthenticationProcessingFilter(ObjectMapper objectMapper) {
