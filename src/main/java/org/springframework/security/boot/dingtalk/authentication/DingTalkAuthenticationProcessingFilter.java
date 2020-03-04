@@ -26,22 +26,26 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.boot.biz.SpringSecurityBizMessageSource;
 import org.springframework.security.boot.biz.exception.AuthResponseCode;
 import org.springframework.security.boot.biz.exception.AuthenticationMethodNotSupportedException;
+import org.springframework.security.boot.dingtalk.exception.DingTalkCodeNotFoundException;
 import org.springframework.security.boot.utils.WebUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
 
 	protected MessageSourceAccessor messages = SpringSecurityBizMessageSource.getAccessor();
+    public static final String SPRING_SECURITY_FORM_APPID_KEY = "appId";
     public static final String SPRING_SECURITY_FORM_CODE_KEY = "code";
     public static final String SPRING_SECURITY_FORM_TMPCODE_KEY = "loginTmpCode";
 
-    private String tmpCodeParameter = SPRING_SECURITY_FORM_TMPCODE_KEY;
+    private String appIdParameter = SPRING_SECURITY_FORM_APPID_KEY;
     private String codeParameter = SPRING_SECURITY_FORM_CODE_KEY;
+    private String tmpCodeParameter = SPRING_SECURITY_FORM_TMPCODE_KEY;
     private boolean postOnly = false;
     private ObjectMapper objectMapper = new ObjectMapper();
     
@@ -78,21 +82,36 @@ public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticati
 			
 			DingTalkLoginRequest loginRequest = objectMapper.readValue(request.getReader(), DingTalkLoginRequest.class);
 			
+			if ( !StringUtils.hasText(loginRequest.getAppId())) {
+				logger.debug("No appId found in request.");
+				throw new DingTalkCodeNotFoundException("No appId found in request.");
+			}
+			if ( !StringUtils.hasText(loginRequest.getCode()) && !StringUtils.hasText(loginRequest.getLoginTmpCode())) {
+				logger.debug("No loginTmpCode or Code found in request.");
+				throw new DingTalkCodeNotFoundException("No loginTmpCode or Code found in request.");
+			}
+			
 			authRequest = this.authenticationToken( loginRequest );
 			
 		} else {
 			
+			/**
+			 * 	应用的唯一标识key
+			 */
+			String appId = obtainAppId(request);;
 			String code = obtainCode(request);
 			String loginTmpCode = obtainTmpCode(request);
 			
-	        if (code == null) {
-	            code = "";
-	        }
-	        if (loginTmpCode == null) {
-	        	loginTmpCode = "";
-	        }
+			if ( !StringUtils.hasText(appId)) {
+				logger.debug("No appId found in request.");
+				throw new DingTalkCodeNotFoundException("No appId found in request.");
+			}
+			if ( !StringUtils.hasText(code) && !StringUtils.hasText(loginTmpCode)) {
+				logger.debug("No loginTmpCode or Code found in request.");
+				throw new DingTalkCodeNotFoundException("No loginTmpCode or Code found in request.");
+			}
 	        
-	        DingTalkLoginRequest loginRequest = new DingTalkLoginRequest(code, loginTmpCode);
+	        DingTalkLoginRequest loginRequest = new DingTalkLoginRequest(appId, code, loginTmpCode);
 	        
 	        authRequest = this.authenticationToken( loginRequest);
 	        
@@ -106,6 +125,11 @@ public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticati
 
     }
 
+
+    protected String obtainAppId(HttpServletRequest request) {
+        return request.getParameter(appIdParameter);
+    }
+    
     protected String obtainCode(HttpServletRequest request) {
         return request.getParameter(codeParameter);
     }
@@ -129,6 +153,14 @@ public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticati
 	
 	protected AbstractAuthenticationToken authenticationToken(DingTalkLoginRequest loginRequest) {
 		return new DingTalkAuthenticationToken(loginRequest);
+	}
+	
+	public String getAppIdParameter() {
+		return appIdParameter;
+	}
+
+	public void setAppIdParameter(String appIdParameter) {
+		this.appIdParameter = appIdParameter;
 	}
 
 	public String getCodeParameter() {

@@ -1,10 +1,12 @@
 package org.springframework.security.boot.dingtalk.authentication;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -15,12 +17,17 @@ import org.springframework.security.boot.biz.userdetails.SecurityPrincipal;
 import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapter;
 import org.springframework.security.boot.dingtalk.exception.DingTalkAuthenticationServiceException;
 import org.springframework.security.boot.dingtalk.exception.DingTalkCodeNotFoundException;
+import org.springframework.security.boot.dingtalk.property.SecurityDingTalkCropAppProperties;
+import org.springframework.security.boot.dingtalk.property.SecurityDingTalkLoginProperties;
+import org.springframework.security.boot.dingtalk.property.SecurityDingTalkPersonalMiniAppProperties;
+import org.springframework.security.boot.dingtalk.property.SecurityDingTalkSuiteProperties;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.SpringSecurityMessageSource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
@@ -31,7 +38,7 @@ import com.dingtalk.api.response.OapiUserGetUseridByUnionidResponse;
 import com.dingtalk.api.response.OapiUserGetuserinfoResponse;
 import com.taobao.api.ApiException;
 
-public class DingTalkAuthenticationProvider implements AuthenticationProvider {
+public class DingTalkAuthenticationProvider implements AuthenticationProvider, InitializingBean {
 	
 	protected MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
 	private UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
@@ -39,7 +46,8 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
     private final UserDetailsServiceAdapter userDetailsService;
     private final SecurityDingTalkProperties dingtalkProperties;
     private final DingTalkTemplate dingTalkTemplate;
- 
+    private Map<String, String> appKeySecret = new ConcurrentHashMap<>();
+    
     public DingTalkAuthenticationProvider(final UserDetailsServiceAdapter userDetailsService,
     		final DingTalkTemplate dingTalkTemplate,
     		final SecurityDingTalkProperties dingtalkProperties) {
@@ -48,6 +56,31 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
         this.dingtalkProperties = dingtalkProperties;
     }
 
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		
+		if(!CollectionUtils.isEmpty(this.dingtalkProperties.getCropApps())) {
+			for (SecurityDingTalkCropAppProperties properties : this.dingtalkProperties.getCropApps()) {
+				appKeySecret.put(properties.getAgentId(), properties.getAppSecret());
+			}
+		}
+		if(!CollectionUtils.isEmpty(this.dingtalkProperties.getApps())) {
+			for (SecurityDingTalkPersonalMiniAppProperties properties : this.dingtalkProperties.getApps()) {
+				appKeySecret.put(properties.getAppId(), properties.getAppSecret());
+			}
+		}
+		if(!CollectionUtils.isEmpty(this.dingtalkProperties.getSuites())) {
+			for (SecurityDingTalkSuiteProperties properties : this.dingtalkProperties.getSuites()) {
+				appKeySecret.put(properties.getAppId(), properties.getSuiteSecret());
+			}
+		}
+		if(!CollectionUtils.isEmpty(this.dingtalkProperties.getLogins())) {
+			for (SecurityDingTalkLoginProperties properties : this.dingtalkProperties.getLogins()) {
+				appKeySecret.put(properties.getAppId(), properties.getAppSecret());
+			}
+		}
+	}
+    
     /**
      * 
      * <p>完成匹配Token的认证，这里返回的对象最终会通过：SecurityContextHolder.getContext().setAuthentication(authResult); 放置在上下文中</p>
@@ -74,9 +107,15 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 		
 		try {
 
-			// 获取access_token
-			String accessToken = dingTalkTemplate.getAccessToken(dingtalkProperties.getAppKey(), dingtalkProperties.getAppSecret());
+			if(!appKeySecret.containsKey(loginRequest.getAppId())) {
+				logger.debug("Invalid appId.");
+				throw new DingTalkCodeNotFoundException("Invalid appId.");
+			}
 			
+			String appId = loginRequest.getAppId();
+			String appSecret = appKeySecret.get(loginRequest.getAppId());
+			// 获取access_token
+			String accessToken = dingTalkTemplate.getAccessToken(appId, appSecret);
 			
 			DingTalkAuthenticationToken dingTalkToken = (DingTalkAuthenticationToken) authentication;
 			
@@ -86,7 +125,7 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 			}
 			// 第三方应用钉钉扫码登录：通过临时授权码Code获取用户信息，临时授权码只能使用一次
 			else if(StringUtils.hasText(loginRequest.getLoginTmpCode())) {
-				dingTalkToken = doAuthenticationByTmpCode(authentication, accessToken, loginRequest.getLoginTmpCode());
+				dingTalkToken = doAuthenticationByTmpCode(authentication, accessToken, loginRequest.getLoginTmpCode(), appId, appSecret);
 			}
 			
 			UserDetails ud = getUserDetailsService().loadUserDetails(dingTalkToken);
@@ -148,11 +187,10 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider {
 		return dingTalkToken;
     }
     
-	protected DingTalkAuthenticationToken doAuthenticationByTmpCode(Authentication authentication, String accessToken, String loginTmpCode) throws ApiException{
+	protected DingTalkAuthenticationToken doAuthenticationByTmpCode(Authentication authentication, String accessToken, String loginTmpCode, String appId, String appSecret) throws ApiException{
     	
     	// 第三方应用钉钉扫码登录：通过临时授权码Code获取用户信息，临时授权码只能使用一次
-		OapiSnsGetuserinfoBycodeResponse response = dingTalkTemplate.getSnsGetuserinfoBycode(loginTmpCode,
-				dingtalkProperties.getAccessKey(), dingtalkProperties.getAccessSecret());
+		OapiSnsGetuserinfoBycodeResponse response = dingTalkTemplate.getSnsGetuserinfoBycode(loginTmpCode, appId, appSecret);
 		/*{ 
 		    "errcode": 0,
 		    "errmsg": "ok",
