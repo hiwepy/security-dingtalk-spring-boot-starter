@@ -61,7 +61,7 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider, I
 		
 		if(!CollectionUtils.isEmpty(this.dingtalkProperties.getCropApps())) {
 			for (SecurityDingTalkCropAppProperties properties : this.dingtalkProperties.getCropApps()) {
-				appKeySecret.put(properties.getAgentId(), properties.getAppSecret());
+				appKeySecret.put(properties.getAppKey(), properties.getAppSecret());
 			}
 		}
 		if(!CollectionUtils.isEmpty(this.dingtalkProperties.getApps())) {
@@ -79,6 +79,9 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider, I
 				appKeySecret.put(properties.getAppId(), properties.getAppSecret());
 			}
 		}
+		
+		logger.debug(appKeySecret.toString());
+		
 	}
     
     /**
@@ -107,15 +110,15 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider, I
 		
 		try {
 
-			if(!appKeySecret.containsKey(loginRequest.getAppId())) {
-				logger.debug("Invalid appId.");
-				throw new DingTalkCodeNotFoundException("Invalid appId.");
+			if(!appKeySecret.containsKey(loginRequest.getKey())) {
+				logger.debug("Invalid App Key {} .", loginRequest.getKey());
+				throw new DingTalkCodeNotFoundException("Invalid App Key.");
 			}
 			
-			String appId = loginRequest.getAppId();
-			String appSecret = appKeySecret.get(loginRequest.getAppId());
+			String appKey = loginRequest.getKey();
+			String appSecret = appKeySecret.get(loginRequest.getKey());
 			// 获取access_token
-			String accessToken = dingTalkTemplate.getAccessToken(appId, appSecret);
+			String accessToken = dingTalkTemplate.getAccessToken(appKey, appSecret);
 			
 			DingTalkAuthenticationToken dingTalkToken = (DingTalkAuthenticationToken) authentication;
 			
@@ -125,7 +128,7 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider, I
 			}
 			// 第三方应用钉钉扫码登录：通过临时授权码Code获取用户信息，临时授权码只能使用一次
 			else if(StringUtils.hasText(loginRequest.getLoginTmpCode())) {
-				dingTalkToken = doAuthenticationByTmpCode(authentication, accessToken, loginRequest.getLoginTmpCode(), appId, appSecret);
+				dingTalkToken = doAuthenticationByTmpCode(authentication, accessToken, loginRequest.getLoginTmpCode(), appKey, appSecret);
 			}
 			
 			UserDetails ud = getUserDetailsService().loadUserDetails(dingTalkToken);

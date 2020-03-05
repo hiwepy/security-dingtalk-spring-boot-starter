@@ -82,9 +82,9 @@ public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticati
 			
 			DingTalkLoginRequest loginRequest = objectMapper.readValue(request.getReader(), DingTalkLoginRequest.class);
 			
-			if ( !StringUtils.hasText(loginRequest.getAppId())) {
-				logger.debug("No appId found in request.");
-				throw new DingTalkCodeNotFoundException("No appId found in request.");
+			if ( !StringUtils.hasText(loginRequest.getKey())) {
+				logger.debug("No key (appId or appKey) found in request.");
+				throw new DingTalkCodeNotFoundException("No key (appId or appKey) found in request.");
 			}
 			if ( !StringUtils.hasText(loginRequest.getCode()) && !StringUtils.hasText(loginRequest.getLoginTmpCode())) {
 				logger.debug("No loginTmpCode or Code found in request.");

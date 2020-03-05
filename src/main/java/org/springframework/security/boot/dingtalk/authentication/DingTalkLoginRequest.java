@@ -8,24 +8,26 @@ public class DingTalkLoginRequest {
 	/**
 	 * 	应用的唯一标识key
 	 */
-	private String appId;
+	private String key;
 	private String code;
     private String loginTmpCode;
     
     @JsonCreator
-    public DingTalkLoginRequest(@JsonProperty("appId") String appId, @JsonProperty("code") String code,  @JsonProperty("loginTmpCode") String loginTmpCode) {
-        this.appId = appId;
+    public DingTalkLoginRequest(@JsonProperty("key") String key, @JsonProperty("code") String code,  @JsonProperty("loginTmpCode") String loginTmpCode) {
+        this.key = key;
         this.code = code;
         this.loginTmpCode = loginTmpCode;
     }
 
-	public String getAppId() {
-		return appId;
+	public String getKey() {
+		return key;
 	}
 
-	public void setAppId(String appId) {
-		this.appId = appId;
+	public void setKey(String key) {
+		this.key = key;
 	}
+
+
 
 	public String getCode() {
 		return code;
