@@ -39,11 +39,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
 
 	protected MessageSourceAccessor messages = SpringSecurityBizMessageSource.getAccessor();
-    public static final String SPRING_SECURITY_FORM_APPID_KEY = "appId";
+    public static final String SPRING_SECURITY_FORM_APP_KEY = "key";
     public static final String SPRING_SECURITY_FORM_CODE_KEY = "code";
     public static final String SPRING_SECURITY_FORM_TMPCODE_KEY = "loginTmpCode";
 
-    private String appIdParameter = SPRING_SECURITY_FORM_APPID_KEY;
+    private String keyParameter = SPRING_SECURITY_FORM_APP_KEY;
     private String codeParameter = SPRING_SECURITY_FORM_CODE_KEY;
     private String tmpCodeParameter = SPRING_SECURITY_FORM_TMPCODE_KEY;
     private boolean postOnly = false;
@@ -98,7 +98,7 @@ public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticati
 			/**
 			 * 	应用的唯一标识key
 			 */
-			String appId = obtainAppId(request);;
+			String appId = obtainKey(request);;
 			String code = obtainCode(request);
 			String loginTmpCode = obtainTmpCode(request);
 			
@@ -125,9 +125,8 @@ public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticati
 
     }
 
-
-    protected String obtainAppId(HttpServletRequest request) {
-        return request.getParameter(appIdParameter);
+    protected String obtainKey(HttpServletRequest request) {
+        return request.getParameter(keyParameter);
     }
     
     protected String obtainCode(HttpServletRequest request) {
@@ -155,12 +154,12 @@ public class DingTalkAuthenticationProcessingFilter extends AbstractAuthenticati
 		return new DingTalkAuthenticationToken(loginRequest);
 	}
 	
-	public String getAppIdParameter() {
-		return appIdParameter;
+	public String getKeyParameter() {
+		return keyParameter;
 	}
 
-	public void setAppIdParameter(String appIdParameter) {
-		this.appIdParameter = appIdParameter;
+	public void setKeyParameter(String keyParameter) {
+		this.keyParameter = keyParameter;
 	}
 
 	public String getCodeParameter() {

@@ -43,7 +43,7 @@
 		</developer>
 	</developers>
 	
-    <distributionManagement>
+   <distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
 			<name>Maven Snapshots Repository</name>
