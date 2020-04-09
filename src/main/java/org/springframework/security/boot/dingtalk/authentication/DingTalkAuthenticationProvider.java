@@ -1,7 +1,6 @@
 package org.springframework.security.boot.dingtalk.authentication;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
@@ -11,23 +10,17 @@ import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.boot.SecurityDingTalkProperties;
 import org.springframework.security.boot.biz.exception.AuthResponse;
 import org.springframework.security.boot.biz.userdetails.SecurityPrincipal;
 import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapter;
 import org.springframework.security.boot.dingtalk.exception.DingTalkAuthenticationServiceException;
 import org.springframework.security.boot.dingtalk.exception.DingTalkCodeNotFoundException;
-import org.springframework.security.boot.dingtalk.property.SecurityDingTalkCropAppProperties;
-import org.springframework.security.boot.dingtalk.property.SecurityDingTalkLoginProperties;
-import org.springframework.security.boot.dingtalk.property.SecurityDingTalkPersonalMiniAppProperties;
-import org.springframework.security.boot.dingtalk.property.SecurityDingTalkSuiteProperties;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.SpringSecurityMessageSource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
@@ -36,6 +29,7 @@ import com.dingtalk.api.response.OapiSnsGetuserinfoBycodeResponse.UserInfo;
 import com.dingtalk.api.response.OapiUserGetResponse;
 import com.dingtalk.api.response.OapiUserGetUseridByUnionidResponse;
 import com.dingtalk.api.response.OapiUserGetuserinfoResponse;
+import com.dingtalk.spring.boot.DingTalkTemplate;
 import com.taobao.api.ApiException;
 
 public class DingTalkAuthenticationProvider implements AuthenticationProvider, InitializingBean {
@@ -44,43 +38,16 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider, I
 	private UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
 	private final Logger logger = LoggerFactory.getLogger(getClass());
     private final UserDetailsServiceAdapter userDetailsService;
-    private final SecurityDingTalkProperties dingtalkProperties;
     private final DingTalkTemplate dingTalkTemplate;
-    private Map<String, String> appKeySecret = new ConcurrentHashMap<>();
     
     public DingTalkAuthenticationProvider(final UserDetailsServiceAdapter userDetailsService,
-    		final DingTalkTemplate dingTalkTemplate,
-    		final SecurityDingTalkProperties dingtalkProperties) {
+    		final DingTalkTemplate dingTalkTemplate) {
         this.userDetailsService = userDetailsService;
         this.dingTalkTemplate = dingTalkTemplate;
-        this.dingtalkProperties = dingtalkProperties;
     }
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		
-		if(!CollectionUtils.isEmpty(this.dingtalkProperties.getCropApps())) {
-			for (SecurityDingTalkCropAppProperties properties : this.dingtalkProperties.getCropApps()) {
-				appKeySecret.put(properties.getAppKey(), properties.getAppSecret());
-			}
-		}
-		if(!CollectionUtils.isEmpty(this.dingtalkProperties.getApps())) {
-			for (SecurityDingTalkPersonalMiniAppProperties properties : this.dingtalkProperties.getApps()) {
-				appKeySecret.put(properties.getAppId(), properties.getAppSecret());
-			}
-		}
-		if(!CollectionUtils.isEmpty(this.dingtalkProperties.getSuites())) {
-			for (SecurityDingTalkSuiteProperties properties : this.dingtalkProperties.getSuites()) {
-				appKeySecret.put(properties.getAppId(), properties.getSuiteSecret());
-			}
-		}
-		if(!CollectionUtils.isEmpty(this.dingtalkProperties.getLogins())) {
-			for (SecurityDingTalkLoginProperties properties : this.dingtalkProperties.getLogins()) {
-				appKeySecret.put(properties.getAppId(), properties.getAppSecret());
-			}
-		}
-		
-		logger.debug(appKeySecret.toString());
 		
 	}
     
@@ -110,13 +77,13 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider, I
 		
 		try {
 
-			if(!appKeySecret.containsKey(loginRequest.getKey())) {
+			if(!dingTalkTemplate.hasAppKey(loginRequest.getKey())) {
 				logger.debug("Invalid App Key {} .", loginRequest.getKey());
 				throw new DingTalkCodeNotFoundException("Invalid App Key.");
 			}
 			
 			String appKey = loginRequest.getKey();
-			String appSecret = appKeySecret.get(loginRequest.getKey());
+			String appSecret = dingTalkTemplate.getAppSecret(loginRequest.getKey());
 			// 获取access_token
 			String accessToken = dingTalkTemplate.getAccessToken(appKey, appSecret);
 			

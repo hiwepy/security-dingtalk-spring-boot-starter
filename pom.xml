@@ -376,6 +376,7 @@
         <maven-surefire-plugin.vertsion>2.22.1</maven-surefire-plugin.vertsion>
 		<maven-nexus-staging-plugin.version>1.6.8</maven-nexus-staging-plugin.version>
 		<spring-security-biz.version>1.0.0-SNAPSHOT</spring-security-biz.version>
+		<spring-boot-starter-dingtalk.version>1.0.0-SNAPSHOT</spring-boot-starter-dingtalk.version>
 	</properties>
 	
 	<dependencyManagement>
@@ -388,6 +389,12 @@
 				<version>${spring-security-biz.version}</version>
 			</dependency>
 			
+			<dependency>
+				<groupId>com.github.hiwepy</groupId>
+				<artifactId>dingtalk-spring-boot-starter</artifactId>
+				<version>${spring-boot-starter-dingtalk.version}</version>
+			</dependency>
+	
 			<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
 			<dependency>
 			    <groupId>com.google.guava</groupId>
@@ -514,6 +521,11 @@
 			<scope>provided</scope>
 		</dependency>
 		
+		<dependency>
+			<groupId>com.github.hiwepy</groupId>
+			<artifactId>dingtalk-spring-boot-starter</artifactId>
+		</dependency>
+			
 		<!--钉钉SDK : https://open-doc.dingtalk.com/microapp/faquestions/vzbp02-->
 		<dependency>
 			<groupId>com.dingtalk</groupId>

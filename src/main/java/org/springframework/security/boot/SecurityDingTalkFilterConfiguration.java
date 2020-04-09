@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
@@ -27,7 +26,6 @@ import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthent
 import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationProvider;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkMatchedAuthenticationEntryPoint;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkMatchedAuthenticationFailureHandler;
-import org.springframework.security.boot.dingtalk.authentication.DingTalkTemplate;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.core.session.SessionRegistry;
@@ -43,6 +41,7 @@ import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
+import com.dingtalk.spring.boot.DingTalkTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Configuration
@@ -61,17 +60,10 @@ public class SecurityDingTalkFilterConfiguration {
 	}
 	
 	@Bean
-	@ConditionalOnMissingBean
-	public DingTalkTemplate dingtalkTemplate() {
-		return new DingTalkTemplate();
-	}
-	
-	@Bean
 	public DingTalkAuthenticationProvider dingtalkAuthenticationProvider(
-			SecurityDingTalkProperties dingtalkProperties,
 			UserDetailsServiceAdapter userDetailsService, 
 			DingTalkTemplate dingtalkTemplate) {
-		return new DingTalkAuthenticationProvider(userDetailsService, dingtalkTemplate, dingtalkProperties);
+		return new DingTalkAuthenticationProvider(userDetailsService, dingtalkTemplate);
 	}
 	
     @Configuration
