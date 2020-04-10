@@ -118,8 +118,6 @@ public class DingTalkAuthenticationProvider implements AuthenticationProvider, I
 	        return authenticationToken;
 		} catch (ApiException e) {
 			throw new DingTalkAuthenticationServiceException(e.getErrMsg(), e);
-		} catch (ExecutionException e) {
-			throw new InternalAuthenticationServiceException(e.getMessage(), e);
 		}
     }
 
