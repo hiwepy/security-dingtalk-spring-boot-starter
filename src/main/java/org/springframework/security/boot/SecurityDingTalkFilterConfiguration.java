@@ -22,8 +22,8 @@ import org.springframework.security.boot.biz.authentication.nested.MatchedAuthen
 import org.springframework.security.boot.biz.property.SecurityLogoutProperties;
 import org.springframework.security.boot.biz.property.SecuritySessionMgtProperties;
 import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapter;
-import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationProcessingFilter;
-import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationProvider;
+import org.springframework.security.boot.dingtalk.authentication.DingTalkMpAuthenticationProcessingFilter;
+import org.springframework.security.boot.dingtalk.authentication.DingTalkMpAuthenticationProvider;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkMatchedAuthenticationEntryPoint;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkMatchedAuthenticationFailureHandler;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -60,10 +60,10 @@ public class SecurityDingTalkFilterConfiguration {
 	}
 	
 	@Bean
-	public DingTalkAuthenticationProvider dingtalkAuthenticationProvider(
+	public DingTalkMpAuthenticationProvider dingtalkAuthenticationProvider(
 			UserDetailsServiceAdapter userDetailsService, 
 			DingTalkTemplate dingtalkTemplate) {
-		return new DingTalkAuthenticationProvider(userDetailsService, dingtalkTemplate);
+		return new DingTalkMpAuthenticationProvider(userDetailsService, dingtalkTemplate);
 	}
 	
     @Configuration
@@ -92,7 +92,7 @@ public class SecurityDingTalkFilterConfiguration {
    				SecurityBizProperties bizProperties,
    				SecurityDingTalkAuthcProperties authcProperties,
    				
-   				ObjectProvider<DingTalkAuthenticationProvider> authenticationProvider,
+   				ObjectProvider<DingTalkMpAuthenticationProvider> authenticationProvider,
    				ObjectProvider<AuthenticationManager> authenticationManagerProvider,
    				ObjectProvider<AuthenticationListener> authenticationListenerProvider,
    				ObjectProvider<MatchedAuthenticationEntryPoint> authenticationEntryPointProvider,
@@ -125,9 +125,9 @@ public class SecurityDingTalkFilterConfiguration {
    			
    		}
    		
-   	    public DingTalkAuthenticationProcessingFilter authenticationProcessingFilter() throws Exception {
+   	    public DingTalkMpAuthenticationProcessingFilter authenticationProcessingFilter() throws Exception {
    	    	
-   			DingTalkAuthenticationProcessingFilter authenticationFilter = new DingTalkAuthenticationProcessingFilter(objectMapper);
+   			DingTalkMpAuthenticationProcessingFilter authenticationFilter = new DingTalkMpAuthenticationProcessingFilter(objectMapper);
    			
 			/**
 			 * 批量设置参数

@@ -23,7 +23,7 @@ import org.springframework.security.boot.biz.property.SecurityHeaderCsrfProperti
 import org.springframework.security.boot.biz.property.SecurityHeadersProperties;
 import org.springframework.security.boot.biz.property.SecurityLogoutProperties;
 import org.springframework.security.boot.biz.property.SecurityRedirectProperties;
-import org.springframework.security.boot.dingtalk.authentication.DingTalkAuthenticationProcessingFilter;
+import org.springframework.security.boot.dingtalk.authentication.DingTalkMpAuthenticationProcessingFilter;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -41,10 +41,10 @@ public class SecurityDingTalkAuthcProperties extends SecurityAuthcProperties {
 	private String pathPattern = "/login/dingtalk";
 	
 	/** the code parameter name. Defaults to "code". */
-    private String codeParameter = DingTalkAuthenticationProcessingFilter.SPRING_SECURITY_FORM_CODE_KEY;
+    private String codeParameter = DingTalkMpAuthenticationProcessingFilter.SPRING_SECURITY_FORM_CODE_KEY;
     
     /** the code parameter name. Defaults to "loginTmpCode". */
-    private String tmpCodeParameter = DingTalkAuthenticationProcessingFilter.SPRING_SECURITY_FORM_CODE_KEY;
+    private String tmpCodeParameter = DingTalkMpAuthenticationProcessingFilter.SPRING_SECURITY_FORM_CODE_KEY;
     
     @NestedConfigurationProperty
 	private SecurityHeaderCorsProperties cros = new SecurityHeaderCorsProperties();

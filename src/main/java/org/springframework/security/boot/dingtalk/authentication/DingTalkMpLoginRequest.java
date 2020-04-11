@@ -3,7 +3,11 @@ package org.springframework.security.boot.dingtalk.authentication;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class DingTalkLoginRequest {
+/**
+ *	 微应用免登授权
+ * @author 		： <a href="https://github.com/hiwepy">wandl</a>
+ */
+public class DingTalkMpLoginRequest {
 	
 	/**
 	 * 	应用的唯一标识key
@@ -13,7 +17,7 @@ public class DingTalkLoginRequest {
     private String loginTmpCode;
     
     @JsonCreator
-    public DingTalkLoginRequest(@JsonProperty("key") String key, @JsonProperty("code") String code,  @JsonProperty("loginTmpCode") String loginTmpCode) {
+    public DingTalkMpLoginRequest(@JsonProperty("key") String key, @JsonProperty("code") String code,  @JsonProperty("loginTmpCode") String loginTmpCode) {
         this.key = key;
         this.code = code;
         this.loginTmpCode = loginTmpCode;
