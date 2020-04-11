@@ -41,11 +41,9 @@ public class DingTalkMaAuthenticationProcessingFilter extends AbstractAuthentica
 	protected MessageSourceAccessor messages = SpringSecurityBizMessageSource.getAccessor();
     public static final String SPRING_SECURITY_FORM_APP_KEY = "key";
     public static final String SPRING_SECURITY_FORM_CODE_KEY = "code";
-    public static final String SPRING_SECURITY_FORM_TMPCODE_KEY = "loginTmpCode";
 
     private String keyParameter = SPRING_SECURITY_FORM_APP_KEY;
     private String codeParameter = SPRING_SECURITY_FORM_CODE_KEY;
-    private String tmpCodeParameter = SPRING_SECURITY_FORM_TMPCODE_KEY;
     private boolean postOnly = false;
     private ObjectMapper objectMapper = new ObjectMapper();
     
@@ -80,7 +78,7 @@ public class DingTalkMaAuthenticationProcessingFilter extends AbstractAuthentica
 				logger.debug("Post && JSON");
 			}
 			
-			DingTalkMpLoginRequest loginRequest = objectMapper.readValue(request.getReader(), DingTalkMpLoginRequest.class);
+			DingTalkTmpCodeLoginRequest loginRequest = objectMapper.readValue(request.getReader(), DingTalkTmpCodeLoginRequest.class);
 			
 			if ( !StringUtils.hasText(loginRequest.getKey())) {
 				logger.debug("No key (appId or appKey) found in request.");
@@ -111,7 +109,7 @@ public class DingTalkMaAuthenticationProcessingFilter extends AbstractAuthentica
 				throw new DingTalkCodeNotFoundException("No loginTmpCode or Code found in request.");
 			}
 	        
-	        DingTalkMpLoginRequest loginRequest = new DingTalkMpLoginRequest(appId, code, loginTmpCode);
+	        DingTalkTmpCodeLoginRequest loginRequest = new DingTalkTmpCodeLoginRequest(appId, code, loginTmpCode);
 	        
 	        authRequest = this.authenticationToken( loginRequest);
 	        
@@ -150,8 +148,8 @@ public class DingTalkMaAuthenticationProcessingFilter extends AbstractAuthentica
 		authRequest.setDetails(authenticationDetailsSource.buildDetails(request));
 	}
 	
-	protected AbstractAuthenticationToken authenticationToken(DingTalkMpLoginRequest loginRequest) {
-		return new DingTalkMpAuthenticationToken(loginRequest);
+	protected AbstractAuthenticationToken authenticationToken(DingTalkTmpCodeLoginRequest loginRequest) {
+		return new DingTalkTmpCodeAuthenticationToken(loginRequest);
 	}
 	
 	public String getKeyParameter() {

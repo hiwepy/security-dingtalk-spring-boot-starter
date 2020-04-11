@@ -25,7 +25,7 @@ import org.springframework.security.core.GrantedAuthority;
 import com.dingtalk.api.response.OapiUserGetResponse.Roles;
 
 @SuppressWarnings("serial")
-public class DingTalkMpAuthenticationToken extends AbstractAuthenticationToken {
+public class DingTalkTmpCodeAuthenticationToken extends AbstractAuthenticationToken {
 
 	/**
 	 * 员工在当前企业内的唯一标识，也称staffId。可由企业在创建时指定，并代表一定含义比如工号，创建后不可修改
@@ -131,20 +131,20 @@ public class DingTalkMpAuthenticationToken extends AbstractAuthenticationToken {
 	 */
 	protected Map<String, String> extattr;
 
-	public DingTalkMpAuthenticationToken(Object principal) {
+	public DingTalkTmpCodeAuthenticationToken(Object principal) {
 		super(null);
 		this.principal = principal;
 		setAuthenticated(false);
 	}
 
-	public DingTalkMpAuthenticationToken(Object principal, String credentials) {
+	public DingTalkTmpCodeAuthenticationToken(Object principal, String credentials) {
 		super(null);
 		this.principal = principal;
 		this.credentials = credentials;
 		setAuthenticated(false);
 	}
 
-	public DingTalkMpAuthenticationToken(Object principal, Object credentials,
+	public DingTalkTmpCodeAuthenticationToken(Object principal, Object credentials,
 			Collection<? extends GrantedAuthority> authorities) {
 		super(authorities);
 		this.principal = principal;

@@ -55,7 +55,7 @@ public class DingTalkMaAuthenticationProvider implements AuthenticationProvider,
      * 
      * <p>完成匹配Token的认证，这里返回的对象最终会通过：SecurityContextHolder.getContext().setAuthentication(authResult); 放置在上下文中</p>
      * @author 		：<a href="https://github.com/hiwepy">wandl</a>
-     * @param authentication  {@link DingTalkMpAuthenticationToken IdentityCodeAuthenticationToken} 对象
+     * @param authentication  {@link DingTalkTmpCodeAuthenticationToken IdentityCodeAuthenticationToken} 对象
      * @return 认证结果{@link Authentication}对象
      * @throws AuthenticationException  认证失败会抛出异常
      */
@@ -68,7 +68,7 @@ public class DingTalkMaAuthenticationProvider implements AuthenticationProvider,
 			logger.debug("Processing authentication request : " + authentication);
 		}
  
-    	DingTalkMpLoginRequest loginRequest = (DingTalkMpLoginRequest) authentication.getPrincipal();
+    	DingTalkTmpCodeLoginRequest loginRequest = (DingTalkTmpCodeLoginRequest) authentication.getPrincipal();
 
 		if ( !StringUtils.hasText(loginRequest.getCode()) && !StringUtils.hasText(loginRequest.getLoginTmpCode())) {
 			logger.debug("No loginTmpCode or Code found in request.");
@@ -87,7 +87,7 @@ public class DingTalkMaAuthenticationProvider implements AuthenticationProvider,
 			// 获取access_token
 			String accessToken = dingTalkTemplate.getAccessToken(appKey, appSecret);
 			
-			DingTalkMpAuthenticationToken dingTalkToken = (DingTalkMpAuthenticationToken) authentication;
+			DingTalkTmpCodeAuthenticationToken dingTalkToken = (DingTalkTmpCodeAuthenticationToken) authentication;
 			
 			// 企业内部应用免登录：通过免登授权码和access_token获取用户信息
 			if(StringUtils.hasText(loginRequest.getCode())) {
@@ -103,15 +103,15 @@ public class DingTalkMaAuthenticationProvider implements AuthenticationProvider,
 	        // User Status Check
 	        getUserDetailsChecker().check(ud);
 	        
-	        DingTalkMpAuthenticationToken authenticationToken = null;
+	        DingTalkTmpCodeAuthenticationToken authenticationToken = null;
 	        if(SecurityPrincipal.class.isAssignableFrom(ud.getClass())) {
 	        	SecurityPrincipal principal = (SecurityPrincipal) ud;
 	        	if(!StringUtils.hasText(principal.getAlias())) {
 	        		principal.setAlias(dingTalkToken.getNick());
 	        	}
-	        	authenticationToken = new DingTalkMpAuthenticationToken(ud, ud.getPassword(), ud.getAuthorities());        	
+	        	authenticationToken = new DingTalkTmpCodeAuthenticationToken(ud, ud.getPassword(), ud.getAuthorities());        	
 	        } else {
-	        	authenticationToken = new DingTalkMpAuthenticationToken(ud.getUsername(), ud.getPassword(), ud.getAuthorities());
+	        	authenticationToken = new DingTalkTmpCodeAuthenticationToken(ud.getUsername(), ud.getPassword(), ud.getAuthorities());
 			}
 	        authenticationToken.setDetails(authentication.getDetails());
 	        
@@ -123,10 +123,10 @@ public class DingTalkMaAuthenticationProvider implements AuthenticationProvider,
 		}
     }
 
-    protected DingTalkMpAuthenticationToken doAuthenticationByCode(Authentication authentication, String accessToken, String code) throws ApiException{
+    protected DingTalkTmpCodeAuthenticationToken doAuthenticationByCode(Authentication authentication, String accessToken, String code) throws ApiException{
 
 
-		DingTalkMpAuthenticationToken dingTalkToken = (DingTalkMpAuthenticationToken) authentication;
+		DingTalkTmpCodeAuthenticationToken dingTalkToken = (DingTalkTmpCodeAuthenticationToken) authentication;
 			
 		OapiUserGetuserinfoResponse response = dingTalkTemplate.getUserinfoBycode(code, accessToken);
 		/*{
@@ -157,7 +157,7 @@ public class DingTalkMaAuthenticationProvider implements AuthenticationProvider,
 		return dingTalkToken;
     }
     
-	protected DingTalkMpAuthenticationToken doAuthenticationByTmpCode(Authentication authentication, String accessToken, String loginTmpCode, String appId, String appSecret) throws ApiException{
+	protected DingTalkTmpCodeAuthenticationToken doAuthenticationByTmpCode(Authentication authentication, String accessToken, String loginTmpCode, String appId, String appSecret) throws ApiException{
     	
     	// 第三方应用钉钉扫码登录：通过临时授权码Code获取用户信息，临时授权码只能使用一次
 		OapiSnsGetuserinfoBycodeResponse response = dingTalkTemplate.getSnsGetuserinfoBycode(loginTmpCode, appId, appSecret);
@@ -181,7 +181,7 @@ public class DingTalkMaAuthenticationProvider implements AuthenticationProvider,
 			
 		UserInfo userInfo = response.getUserInfo();
 		
-		DingTalkMpAuthenticationToken dingTalkToken = (DingTalkMpAuthenticationToken) authentication;
+		DingTalkTmpCodeAuthenticationToken dingTalkToken = (DingTalkTmpCodeAuthenticationToken) authentication;
 		
 		dingTalkToken.setNick(userInfo.getNick());
 		dingTalkToken.setOpenid(userInfo.getOpenid());
@@ -235,7 +235,7 @@ public class DingTalkMaAuthenticationProvider implements AuthenticationProvider,
 	} 
 	*/
     @SuppressWarnings("unchecked")
-	protected void extractRespone(DingTalkMpAuthenticationToken dingTalkToken, OapiUserGetResponse userInfoResponse) {
+	protected void extractRespone(DingTalkTmpCodeAuthenticationToken dingTalkToken, OapiUserGetResponse userInfoResponse) {
 
 		dingTalkToken.setActive(userInfoResponse.getActive());
 		dingTalkToken.setAdmin(userInfoResponse.getIsAdmin());
@@ -268,7 +268,7 @@ public class DingTalkMaAuthenticationProvider implements AuthenticationProvider,
     
     @Override
     public boolean supports(Class<?> authentication) {
-        return (DingTalkMpAuthenticationToken.class.isAssignableFrom(authentication));
+        return (DingTalkTmpCodeAuthenticationToken.class.isAssignableFrom(authentication));
     }
 
 	public void setUserDetailsChecker(UserDetailsChecker userDetailsChecker) {

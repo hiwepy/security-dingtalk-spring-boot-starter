@@ -40,25 +40,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *  微应用免登授权
  * @author 		： <a href="https://github.com/hiwepy">wandl</a>
  */
-public class DingTalkMpAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
+public class DingTalkTmpCodeAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
 
 	protected MessageSourceAccessor messages = SpringSecurityBizMessageSource.getAccessor();
     public static final String SPRING_SECURITY_FORM_APP_KEY = "key";
-    public static final String SPRING_SECURITY_FORM_CODE_KEY = "code";
     public static final String SPRING_SECURITY_FORM_TMPCODE_KEY = "loginTmpCode";
 
     private String keyParameter = SPRING_SECURITY_FORM_APP_KEY;
-    private String codeParameter = SPRING_SECURITY_FORM_CODE_KEY;
     private String tmpCodeParameter = SPRING_SECURITY_FORM_TMPCODE_KEY;
     private boolean postOnly = false;
     private ObjectMapper objectMapper = new ObjectMapper();
     
-    public DingTalkMpAuthenticationProcessingFilter(ObjectMapper objectMapper) {
-    	super(new AntPathRequestMatcher("/login/dingtalk"));
+    public DingTalkTmpCodeAuthenticationProcessingFilter(ObjectMapper objectMapper) {
+    	super(new AntPathRequestMatcher("/login/dingtalk/tmpcode"));
 		this.objectMapper = objectMapper;
 	}
 	
-	public DingTalkMpAuthenticationProcessingFilter(ObjectMapper objectMapper, AntPathRequestMatcher requestMatcher) {
+	public DingTalkTmpCodeAuthenticationProcessingFilter(ObjectMapper objectMapper, AntPathRequestMatcher requestMatcher) {
 		super(requestMatcher);
 		this.objectMapper = objectMapper;
 	}
@@ -84,13 +82,13 @@ public class DingTalkMpAuthenticationProcessingFilter extends AbstractAuthentica
 				logger.debug("Post && JSON");
 			}
 			
-			DingTalkMpLoginRequest loginRequest = objectMapper.readValue(request.getReader(), DingTalkMpLoginRequest.class);
+			DingTalkTmpCodeLoginRequest loginRequest = objectMapper.readValue(request.getReader(), DingTalkTmpCodeLoginRequest.class);
 			
 			if ( !StringUtils.hasText(loginRequest.getKey())) {
 				logger.debug("No key (appId or appKey) found in request.");
 				throw new DingTalkCodeNotFoundException("No key (appId or appKey) found in request.");
 			}
-			if ( !StringUtils.hasText(loginRequest.getCode()) && !StringUtils.hasText(loginRequest.getLoginTmpCode())) {
+			if (!StringUtils.hasText(loginRequest.getLoginTmpCode())) {
 				logger.debug("No loginTmpCode or Code found in request.");
 				throw new DingTalkCodeNotFoundException("No loginTmpCode or Code found in request.");
 			}
@@ -103,19 +101,18 @@ public class DingTalkMpAuthenticationProcessingFilter extends AbstractAuthentica
 			 * 	应用的唯一标识key
 			 */
 			String appId = obtainKey(request);;
-			String code = obtainCode(request);
 			String loginTmpCode = obtainTmpCode(request);
 			
 			if ( !StringUtils.hasText(appId)) {
 				logger.debug("No appId found in request.");
 				throw new DingTalkCodeNotFoundException("No appId found in request.");
 			}
-			if ( !StringUtils.hasText(code) && !StringUtils.hasText(loginTmpCode)) {
+			if ( !StringUtils.hasText(loginTmpCode)) {
 				logger.debug("No loginTmpCode or Code found in request.");
 				throw new DingTalkCodeNotFoundException("No loginTmpCode or Code found in request.");
 			}
 	        
-	        DingTalkMpLoginRequest loginRequest = new DingTalkMpLoginRequest(appId, code, loginTmpCode);
+	        DingTalkTmpCodeLoginRequest loginRequest = new DingTalkTmpCodeLoginRequest(appId, loginTmpCode);
 	        
 	        authRequest = this.authenticationToken( loginRequest);
 	        
@@ -131,10 +128,6 @@ public class DingTalkMpAuthenticationProcessingFilter extends AbstractAuthentica
 
     protected String obtainKey(HttpServletRequest request) {
         return request.getParameter(keyParameter);
-    }
-    
-    protected String obtainCode(HttpServletRequest request) {
-        return request.getParameter(codeParameter);
     }
     
     protected String obtainTmpCode(HttpServletRequest request) {
@@ -154,8 +147,8 @@ public class DingTalkMpAuthenticationProcessingFilter extends AbstractAuthentica
 		authRequest.setDetails(authenticationDetailsSource.buildDetails(request));
 	}
 	
-	protected AbstractAuthenticationToken authenticationToken(DingTalkMpLoginRequest loginRequest) {
-		return new DingTalkMpAuthenticationToken(loginRequest);
+	protected AbstractAuthenticationToken authenticationToken(DingTalkTmpCodeLoginRequest loginRequest) {
+		return new DingTalkTmpCodeAuthenticationToken(loginRequest);
 	}
 	
 	public String getKeyParameter() {
@@ -164,14 +157,6 @@ public class DingTalkMpAuthenticationProcessingFilter extends AbstractAuthentica
 
 	public void setKeyParameter(String keyParameter) {
 		this.keyParameter = keyParameter;
-	}
-
-	public String getCodeParameter() {
-		return codeParameter;
-	}
-
-	public void setCodeParameter(String codeParameter) {
-		this.codeParameter = codeParameter;
 	}
 
 	public String getTmpCodeParameter() {

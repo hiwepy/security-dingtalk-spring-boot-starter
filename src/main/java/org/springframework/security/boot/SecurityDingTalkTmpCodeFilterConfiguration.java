@@ -22,8 +22,8 @@ import org.springframework.security.boot.biz.authentication.nested.MatchedAuthen
 import org.springframework.security.boot.biz.property.SecurityLogoutProperties;
 import org.springframework.security.boot.biz.property.SecuritySessionMgtProperties;
 import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapter;
-import org.springframework.security.boot.dingtalk.authentication.DingTalkMpAuthenticationProcessingFilter;
-import org.springframework.security.boot.dingtalk.authentication.DingTalkMpAuthenticationProvider;
+import org.springframework.security.boot.dingtalk.authentication.DingTalkTmpCodeAuthenticationProcessingFilter;
+import org.springframework.security.boot.dingtalk.authentication.DingTalkTmpCodeAuthenticationProvider;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkMatchedAuthenticationEntryPoint;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkMatchedAuthenticationFailureHandler;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -46,8 +46,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Configuration
 @AutoConfigureBefore({ SecurityFilterAutoConfiguration.class })
-@EnableConfigurationProperties({ SecurityBizProperties.class, SecurityDingTalkProperties.class, SecurityDingTalkAuthcProperties.class })
-public class SecurityDingTalkFilterConfiguration {
+@EnableConfigurationProperties({ SecurityBizProperties.class, SecurityDingTalkProperties.class, SecurityDingTalkTmpCodeAuthcProperties.class })
+public class SecurityDingTalkTmpCodeFilterConfiguration {
 	
 	@Bean
 	public DingTalkMatchedAuthenticationEntryPoint dingtalkMatchedAuthenticationEntryPoint() {
@@ -60,19 +60,19 @@ public class SecurityDingTalkFilterConfiguration {
 	}
 	
 	@Bean
-	public DingTalkMpAuthenticationProvider dingtalkAuthenticationProvider(
+	public DingTalkTmpCodeAuthenticationProvider dingtalkAuthenticationProvider(
 			UserDetailsServiceAdapter userDetailsService, 
 			DingTalkTemplate dingtalkTemplate) {
-		return new DingTalkMpAuthenticationProvider(userDetailsService, dingtalkTemplate);
+		return new DingTalkTmpCodeAuthenticationProvider(userDetailsService, dingtalkTemplate);
 	}
 	
     @Configuration
     @ConditionalOnProperty(prefix = SecurityDingTalkProperties.PREFIX, value = "enabled", havingValue = "true")
-    @EnableConfigurationProperties({ SecurityBizProperties.class, SecurityDingTalkProperties.class, SecurityDingTalkAuthcProperties.class })
+    @EnableConfigurationProperties({ SecurityBizProperties.class, SecurityDingTalkProperties.class, SecurityDingTalkTmpCodeAuthcProperties.class })
     @Order(SecurityProperties.DEFAULT_FILTER_ORDER + 5)
    	static class DingTalkWebSecurityConfigurerAdapter extends SecurityBizConfigurerAdapter {
     	
-    	private final SecurityDingTalkAuthcProperties authcProperties;
+    	private final SecurityDingTalkTmpCodeAuthcProperties authcProperties;
     	
 	    private final AuthenticationEntryPoint authenticationEntryPoint;
 	    private final AuthenticationSuccessHandler authenticationSuccessHandler;
@@ -90,9 +90,9 @@ public class SecurityDingTalkFilterConfiguration {
    		public DingTalkWebSecurityConfigurerAdapter(
    			
    				SecurityBizProperties bizProperties,
-   				SecurityDingTalkAuthcProperties authcProperties,
+   				SecurityDingTalkTmpCodeAuthcProperties authcProperties,
    				
-   				ObjectProvider<DingTalkMpAuthenticationProvider> authenticationProvider,
+   				ObjectProvider<DingTalkTmpCodeAuthenticationProvider> authenticationProvider,
    				ObjectProvider<AuthenticationManager> authenticationManagerProvider,
    				ObjectProvider<AuthenticationListener> authenticationListenerProvider,
    				ObjectProvider<MatchedAuthenticationEntryPoint> authenticationEntryPointProvider,
@@ -125,9 +125,9 @@ public class SecurityDingTalkFilterConfiguration {
    			
    		}
    		
-   	    public DingTalkMpAuthenticationProcessingFilter authenticationProcessingFilter() throws Exception {
+   	    public DingTalkTmpCodeAuthenticationProcessingFilter authenticationProcessingFilter() throws Exception {
    	    	
-   			DingTalkMpAuthenticationProcessingFilter authenticationFilter = new DingTalkMpAuthenticationProcessingFilter(objectMapper);
+   			DingTalkTmpCodeAuthenticationProcessingFilter authenticationFilter = new DingTalkTmpCodeAuthenticationProcessingFilter(objectMapper);
    			
 			/**
 			 * 批量设置参数
@@ -140,7 +140,7 @@ public class SecurityDingTalkFilterConfiguration {
 			map.from(authenticationSuccessHandler).to(authenticationFilter::setAuthenticationSuccessHandler);
 			map.from(authenticationFailureHandler).to(authenticationFilter::setAuthenticationFailureHandler);
 			
-			map.from(authcProperties.getCodeParameter()).to(authenticationFilter::setCodeParameter);
+			map.from(authcProperties.getTmpCodeParameter()).to(authenticationFilter::setTmpCodeParameter);
 			map.from(authcProperties.getPathPattern()).to(authenticationFilter::setFilterProcessesUrl);
 			map.from(authcProperties.isPostOnly()).to(authenticationFilter::setPostOnly);
 			map.from(rememberMeServices).to(authenticationFilter::setRememberMeServices);

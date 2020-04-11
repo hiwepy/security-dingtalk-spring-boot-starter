@@ -23,28 +23,25 @@ import org.springframework.security.boot.biz.property.SecurityHeaderCsrfProperti
 import org.springframework.security.boot.biz.property.SecurityHeadersProperties;
 import org.springframework.security.boot.biz.property.SecurityLogoutProperties;
 import org.springframework.security.boot.biz.property.SecurityRedirectProperties;
-import org.springframework.security.boot.dingtalk.authentication.DingTalkMpAuthenticationProcessingFilter;
+import org.springframework.security.boot.dingtalk.authentication.DingTalkTmpCodeAuthenticationProcessingFilter;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@ConfigurationProperties(SecurityDingTalkAuthcProperties.PREFIX)
+@ConfigurationProperties(SecurityDingTalkTmpCodeAuthcProperties.PREFIX)
 @Getter
 @Setter
 @ToString
-public class SecurityDingTalkAuthcProperties extends SecurityAuthcProperties {
+public class SecurityDingTalkTmpCodeAuthcProperties extends SecurityAuthcProperties {
 
-	public static final String PREFIX = "spring.security.dingtalk.authc";
+	public static final String PREFIX = "spring.security.dingtalk.tmpcode.authc";
 	
 	/** Authorization Path Pattern */
-	private String pathPattern = "/login/dingtalk";
+	private String pathPattern = "/login/dingtalk/tmpcode";
 	
-	/** the code parameter name. Defaults to "code". */
-    private String codeParameter = DingTalkMpAuthenticationProcessingFilter.SPRING_SECURITY_FORM_CODE_KEY;
-    
     /** the code parameter name. Defaults to "loginTmpCode". */
-    private String tmpCodeParameter = DingTalkMpAuthenticationProcessingFilter.SPRING_SECURITY_FORM_CODE_KEY;
+    private String tmpCodeParameter = DingTalkTmpCodeAuthenticationProcessingFilter.SPRING_SECURITY_FORM_TMPCODE_KEY;
     
     @NestedConfigurationProperty
 	private SecurityHeaderCorsProperties cros = new SecurityHeaderCorsProperties();

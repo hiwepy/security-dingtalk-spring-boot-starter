@@ -1,6 +1,7 @@
 package org.springframework.security.boot.dingtalk.authentication;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -40,7 +41,8 @@ public class DingTalkMatchedAuthenticationFailureHandler implements MatchedAuthe
 			AuthenticationException e) throws IOException, ServletException {
 		
 		response.setStatus(HttpStatus.UNAUTHORIZED.value());
-		response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		
 		if (e instanceof DingTalkAuthenticationServiceException) {
 			JSONObject.writeJSONString(response.getWriter(), AuthResponse.of(AuthResponseCode.SC_AUTHZ_THIRD_PARTY_SERVICE.getCode(), 
