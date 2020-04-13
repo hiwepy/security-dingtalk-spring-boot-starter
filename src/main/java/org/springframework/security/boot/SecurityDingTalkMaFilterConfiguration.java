@@ -70,7 +70,7 @@ public class SecurityDingTalkMaFilterConfiguration {
     @ConditionalOnProperty(prefix = SecurityDingTalkProperties.PREFIX, value = "enabled", havingValue = "true")
     @EnableConfigurationProperties({ SecurityBizProperties.class, SecurityDingTalkProperties.class, SecurityDingTalkTmpCodeAuthcProperties.class })
     @Order(SecurityProperties.DEFAULT_FILTER_ORDER + 5)
-   	static class DingTalkWebSecurityConfigurerAdapter extends SecurityBizConfigurerAdapter {
+   	static class DingTalkMaWebSecurityConfigurerAdapter extends SecurityBizConfigurerAdapter {
     	
     	private final SecurityDingTalkTmpCodeAuthcProperties authcProperties;
     	
@@ -87,7 +87,7 @@ public class SecurityDingTalkMaFilterConfiguration {
 		private final SessionAuthenticationStrategy sessionAuthenticationStrategy;
 		private final SessionInformationExpiredStrategy sessionInformationExpiredStrategy;
    		
-   		public DingTalkWebSecurityConfigurerAdapter(
+   		public DingTalkMaWebSecurityConfigurerAdapter(
    			
    				SecurityBizProperties bizProperties,
    				SecurityDingTalkTmpCodeAuthcProperties authcProperties,
