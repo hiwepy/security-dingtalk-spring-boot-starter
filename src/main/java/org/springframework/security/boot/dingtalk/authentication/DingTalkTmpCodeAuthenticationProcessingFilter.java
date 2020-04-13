@@ -45,9 +45,19 @@ public class DingTalkTmpCodeAuthenticationProcessingFilter extends AbstractAuthe
 	protected MessageSourceAccessor messages = SpringSecurityBizMessageSource.getAccessor();
     public static final String SPRING_SECURITY_FORM_APP_KEY = "key";
     public static final String SPRING_SECURITY_FORM_TMPCODE_KEY = "loginTmpCode";
-
+    public static final String SPRING_SECURITY_FORM_USERID_KEY = "userid";
+    public static final String SPRING_SECURITY_FORM_UNIONID_KEY = "unionid";
+    public static final String SPRING_SECURITY_FORM_OPENID_KEY = "openid";
+    public static final String SPRING_SECURITY_FORM_USERNAME_KEY = "username";
+    public static final String SPRING_SECURITY_FORM_PASSWORD_KEY = "password";
+    
     private String keyParameter = SPRING_SECURITY_FORM_APP_KEY;
     private String tmpCodeParameter = SPRING_SECURITY_FORM_TMPCODE_KEY;
+    private String useridParameter = SPRING_SECURITY_FORM_USERID_KEY;
+    private String unionidParameter = SPRING_SECURITY_FORM_UNIONID_KEY;
+    private String openidParameter = SPRING_SECURITY_FORM_OPENID_KEY;
+    private String usernameParameter = SPRING_SECURITY_FORM_USERNAME_KEY;
+    private String passwordParameter = SPRING_SECURITY_FORM_PASSWORD_KEY;
     private boolean postOnly = false;
     private ObjectMapper objectMapper = new ObjectMapper();
     
@@ -102,7 +112,12 @@ public class DingTalkTmpCodeAuthenticationProcessingFilter extends AbstractAuthe
 			 */
 			String appId = obtainKey(request);;
 			String loginTmpCode = obtainTmpCode(request);
-			
+			String userId = obtainUserId(request);
+			String unionid = obtainUnionid(request);
+	        String openid = obtainOpenid(request);
+	        String username = obtainUsername(request); 
+	        String password = obtainPassword(request); 
+	        
 			if ( !StringUtils.hasText(appId)) {
 				logger.debug("No appId found in request.");
 				throw new DingTalkCodeNotFoundException("No appId found in request.");
@@ -111,8 +126,24 @@ public class DingTalkTmpCodeAuthenticationProcessingFilter extends AbstractAuthe
 				logger.debug("No loginTmpCode or Code found in request.");
 				throw new DingTalkCodeNotFoundException("No loginTmpCode or Code found in request.");
 			}
+			if (userId == null) {
+				userId = "";
+	        }
+			if (unionid == null) {
+	        	unionid = "";
+	        }
+	        if (openid == null) {
+	        	openid = "";
+	        }
+	        if (username == null) {
+	        	username = "";
+	        }
+	        if (password == null) {
+	        	password = "";
+	        }
 	        
-	        DingTalkTmpCodeLoginRequest loginRequest = new DingTalkTmpCodeLoginRequest(appId, loginTmpCode);
+	        DingTalkTmpCodeLoginRequest loginRequest = new DingTalkTmpCodeLoginRequest(appId, loginTmpCode, userId,
+	        		unionid, openid, username, password, null);
 	        
 	        authRequest = this.authenticationToken( loginRequest);
 	        
@@ -133,7 +164,27 @@ public class DingTalkTmpCodeAuthenticationProcessingFilter extends AbstractAuthe
     protected String obtainTmpCode(HttpServletRequest request) {
         return request.getParameter(tmpCodeParameter);
     }
+    
+    protected String obtainUserId(HttpServletRequest request) {
+        return request.getParameter(useridParameter);
+    }
 
+    protected String obtainUnionid(HttpServletRequest request) {
+        return request.getParameter(unionidParameter);
+    }
+    
+    protected String obtainOpenid(HttpServletRequest request) {
+        return request.getParameter(openidParameter);
+    }
+    
+    protected String obtainUsername(HttpServletRequest request) {
+        return request.getParameter(usernameParameter);
+    }
+    
+    protected String obtainPassword(HttpServletRequest request) {
+        return request.getParameter(passwordParameter);
+    }
+    
     /**
 	 * Provided so that subclasses may configure what is put into the authentication
 	 * request's details property.
@@ -165,6 +216,38 @@ public class DingTalkTmpCodeAuthenticationProcessingFilter extends AbstractAuthe
 
 	public void setTmpCodeParameter(String tmpCodeParameter) {
 		this.tmpCodeParameter = tmpCodeParameter;
+	}
+	
+	public String getUnionidParameter() {
+		return unionidParameter;
+	}
+
+	public void setUnionidParameter(String unionidParameter) {
+		this.unionidParameter = unionidParameter;
+	}
+
+	public String getOpenidParameter() {
+		return openidParameter;
+	}
+
+	public void setOpenidParameter(String openidParameter) {
+		this.openidParameter = openidParameter;
+	}
+
+	public String getUsernameParameter() {
+		return usernameParameter;
+	}
+
+	public void setUsernameParameter(String usernameParameter) {
+		this.usernameParameter = usernameParameter;
+	}
+
+	public String getPasswordParameter() {
+		return passwordParameter;
+	}
+
+	public void setPasswordParameter(String passwordParameter) {
+		this.passwordParameter = passwordParameter;
 	}
 
 	public boolean isPostOnly() {

@@ -1,6 +1,6 @@
 package org.springframework.security.boot.dingtalk.authentication;
 
-import java.util.Map;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,7 @@ public class DingTalkTmpCodeAuthenticationProvider implements AuthenticationProv
  
     	DingTalkTmpCodeLoginRequest loginRequest = (DingTalkTmpCodeLoginRequest) authentication.getPrincipal();
 
-		if ( !StringUtils.hasText(loginRequest.getLoginTmpCode())) {
+		if ( !StringUtils.hasText(loginRequest.getUserid()) && !StringUtils.hasText(loginRequest.getLoginTmpCode())) {
 			logger.debug("No loginTmpCode or Code found in request.");
 			throw new DingTalkCodeNotFoundException("No loginTmpCode or Code found in request.");
 		}
@@ -86,8 +86,65 @@ public class DingTalkTmpCodeAuthenticationProvider implements AuthenticationProv
 			
 			DingTalkTmpCodeAuthenticationToken dingTalkToken = (DingTalkTmpCodeAuthenticationToken) authentication;
 			
-			// 第三方应用钉钉扫码登录：通过临时授权码Code获取用户信息，临时授权码只能使用一次
-				dingTalkToken = doAuthenticationByTmpCode(authentication, accessToken, loginRequest.getLoginTmpCode(), appKey, appSecret);
+			if ( !StringUtils.hasText(loginRequest.getUserid()) && StringUtils.hasText(loginRequest.getLoginTmpCode())) {
+				
+				// 第三方应用钉钉扫码登录：通过临时授权码Code获取用户信息，临时授权码只能使用一次
+				OapiSnsGetuserinfoBycodeResponse response = dingTalkTemplate.getSnsGetuserinfoBycode(loginRequest.getLoginTmpCode(), appKey, appSecret);
+				/*{ 
+				    "errcode": 0,
+				    "errmsg": "ok",
+				    "user_info": {
+				        "nick": "张三",
+				        "openid": "liSii8KCxxxxx",
+				        "unionid": "7Huu46kk"
+				    }
+				}*/
+				if(!response.isSuccess()) {
+					logger.error(response.getBody());
+					throw new DingTalkAuthenticationServiceException(response.getErrmsg());
+				}
+					
+				UserInfo userInfo = response.getUserInfo();
+				
+				dingTalkToken.setUnionid(userInfo.getUnionid());
+				dingTalkToken.setOpenid(userInfo.getOpenid());
+				loginRequest.setUnionid(userInfo.getUnionid());
+				loginRequest.setOpenid(userInfo.getOpenid());
+				
+			}
+
+			if(Objects.isNull(loginRequest.getUserInfo()) && !Objects.isNull(loginRequest.getUserid()) ) {
+				
+				// 根据UserId 获取用户信息
+				OapiUserGetResponse userInfoResponse = dingTalkTemplate.getUserByUserid(loginRequest.getUserid(), accessToken);
+				if(!userInfoResponse.isSuccess()) {
+					logger.error(JSONObject.toJSONString(AuthResponse.of(userInfoResponse.getErrorCode(), userInfoResponse.getErrmsg())));
+					throw new DingTalkAuthenticationServiceException(userInfoResponse.getErrmsg());
+				}
+				
+				dingTalkToken.setUserInfo(userInfoResponse);
+				
+			}
+
+			if(Objects.isNull(loginRequest.getUserInfo()) && !Objects.isNull(loginRequest.getUnionid()) ) {
+				
+				// 根据unionid获取userid
+				OapiUserGetUseridByUnionidResponse unionidResponse = dingTalkTemplate.getUseridByUnionid(loginRequest.getUnionid(), accessToken);
+				if(!unionidResponse.isSuccess()) {
+					logger.error(JSONObject.toJSONString(AuthResponse.of(unionidResponse.getErrorCode(), unionidResponse.getErrmsg())));
+					throw new DingTalkAuthenticationServiceException(unionidResponse.getErrmsg());
+				}
+				
+				// 根据UserId 获取用户信息
+				OapiUserGetResponse userInfoResponse = dingTalkTemplate.getUserByUserid(unionidResponse.getUserid(), accessToken);
+				if(!userInfoResponse.isSuccess()) {
+					logger.error(JSONObject.toJSONString(AuthResponse.of(userInfoResponse.getErrorCode(), userInfoResponse.getErrmsg())));
+					throw new DingTalkAuthenticationServiceException(userInfoResponse.getErrmsg());
+				}
+				
+				dingTalkToken.setUserInfo(userInfoResponse);
+				
+			}
 			
 			UserDetails ud = getUserDetailsService().loadUserDetails(dingTalkToken);
 	        
@@ -96,10 +153,6 @@ public class DingTalkTmpCodeAuthenticationProvider implements AuthenticationProv
 	        
 	        DingTalkTmpCodeAuthenticationToken authenticationToken = null;
 	        if(SecurityPrincipal.class.isAssignableFrom(ud.getClass())) {
-	        	SecurityPrincipal principal = (SecurityPrincipal) ud;
-	        	if(!StringUtils.hasText(principal.getAlias())) {
-	        		principal.setAlias(dingTalkToken.getNick());
-	        	}
 	        	authenticationToken = new DingTalkTmpCodeAuthenticationToken(ud, ud.getPassword(), ud.getAuthorities());        	
 	        } else {
 	        	authenticationToken = new DingTalkTmpCodeAuthenticationToken(ud.getUsername(), ud.getPassword(), ud.getAuthorities());
@@ -111,115 +164,6 @@ public class DingTalkTmpCodeAuthenticationProvider implements AuthenticationProv
 			throw new DingTalkAuthenticationServiceException(e.getErrMsg(), e);
 		}
     }
-
-	protected DingTalkTmpCodeAuthenticationToken doAuthenticationByTmpCode(Authentication authentication, String accessToken, String loginTmpCode, String appId, String appSecret) throws ApiException{
-    	
-    	// 第三方应用钉钉扫码登录：通过临时授权码Code获取用户信息，临时授权码只能使用一次
-		OapiSnsGetuserinfoBycodeResponse response = dingTalkTemplate.getSnsGetuserinfoBycode(loginTmpCode, appId, appSecret);
-		/*{ 
-		    "errcode": 0,
-		    "errmsg": "ok",
-		    "user_info": {
-		        "nick": "张三",
-		        "openid": "liSii8KCxxxxx",
-		        "unionid": "7Huu46kk"
-		    }
-		}*/
-		if (logger.isDebugEnabled()) {
-			logger.debug(response.getCode());
-		}
-
-		if(!response.isSuccess()) {
-			logger.error(JSONObject.toJSONString(AuthResponse.of(response.getErrorCode(), response.getErrmsg())));
-			throw new DingTalkAuthenticationServiceException(response.getErrmsg());
-		}
-			
-		UserInfo userInfo = response.getUserInfo();
-		
-		DingTalkTmpCodeAuthenticationToken dingTalkToken = (DingTalkTmpCodeAuthenticationToken) authentication;
-		
-		dingTalkToken.setNick(userInfo.getNick());
-		dingTalkToken.setOpenid(userInfo.getOpenid());
-		dingTalkToken.setUnionid(userInfo.getUnionid());
-		
-		// 根据unionid获取userid
-		OapiUserGetUseridByUnionidResponse unionidResponse = dingTalkTemplate.getUseridByUnionid(userInfo.getUnionid(), accessToken);
-		if(!unionidResponse.isSuccess()) {
-			logger.error(JSONObject.toJSONString(AuthResponse.of(unionidResponse.getErrorCode(), unionidResponse.getErrmsg())));
-			throw new DingTalkAuthenticationServiceException(unionidResponse.getErrmsg());
-		}
-		
-		// 根据UserId 获取用户信息
-		OapiUserGetResponse userInfoResponse = dingTalkTemplate.getUserByUserid(unionidResponse.getUserid(), accessToken);
-		if(!userInfoResponse.isSuccess()) {
-			logger.error(JSONObject.toJSONString(AuthResponse.of(userInfoResponse.getErrorCode(), userInfoResponse.getErrmsg())));
-			throw new DingTalkAuthenticationServiceException(userInfoResponse.getErrmsg());
-		}
-		// 解析钉钉用户信息到Token对象
-		this.extractRespone(dingTalkToken, userInfoResponse);
-		return dingTalkToken;
-    }
-
-    /*    
-	 {
-	    "active":true,
-	    "avatar":"https://static.dingtalk.com/media/lADPBbCc1dSekr_NAczNAcw_460_460.jpg",
-	    "body":"{"errcode":0,"unionid":"DhoiSf4ug6KuOpAY95CytZwiEiE","userid":"061955121419944345","isLeaderInDepts":"{110421538:false}","isBoss":false,"isSenior":false,"department":[110421538],"orderInDepts":"{110421538:176362815343598512}","errmsg":"ok","active":true,"avatar":"https://static.dingtalk.com/media/lADPBbCc1dSekr_NAczNAcw_460_460.jpg","isAdmin":false,"tags":{},"isHide":false,"jobnumber":"","name":"万大龙","position":"高级JAVA开发"}",
-	    "department":[
-	        110421538
-	    ],
-	    "errcode":0,
-	    "errmsg":"ok",
-	    "errorCode":"0",
-	    "isAdmin":false,
-	    "isBoss":false,
-	    "isHide":false,
-	    "isLeaderInDepts":"{110421538:false}",
-	    "isSenior":false,
-	    "jobnumber":"",
-	    "msg":"ok",
-	    "name":"",
-	    "orderInDepts":"{110421538:176362815343598512}",
-	    "params":{
-	        "userid":"061955121419944345"
-	    },
-	    "position":"高级JAVA开发",
-	    "success":true,
-	    "unionid":"DhoiSf4ug6KuOpAY95CytZwiEiE",
-	    "userid":"061955121419944345"
-	} 
-	*/
-    @SuppressWarnings("unchecked")
-	protected void extractRespone(DingTalkTmpCodeAuthenticationToken dingTalkToken, OapiUserGetResponse userInfoResponse) {
-
-		dingTalkToken.setActive(userInfoResponse.getActive());
-		dingTalkToken.setAdmin(userInfoResponse.getIsAdmin());
-		dingTalkToken.setAvatar(userInfoResponse.getAvatar());
-		dingTalkToken.setBoss(userInfoResponse.getIsBoss());
-		dingTalkToken.setDepts(userInfoResponse.getDepartment());
-		dingTalkToken.setEmail(userInfoResponse.getEmail());
-		if(StringUtils.hasText(userInfoResponse.getExtattr())) {
-			dingTalkToken.setExtattr(JSONObject.parseObject(userInfoResponse.getExtattr(), Map.class));
-		}
-		dingTalkToken.setHide(userInfoResponse.getIsHide());
-		dingTalkToken.setHiredDate(userInfoResponse.getHiredDate());
-		dingTalkToken.setInviteMobile(userInfoResponse.getInviteMobile());
-		dingTalkToken.setJobnumber(userInfoResponse.getJobnumber());
-		dingTalkToken.setMobile(userInfoResponse.getMobile());
-		dingTalkToken.setName(userInfoResponse.getName());
-		dingTalkToken.setNick(userInfoResponse.getNickname());
-		dingTalkToken.setOrgEmail(userInfoResponse.getOrgEmail());
-		dingTalkToken.setPosition(userInfoResponse.getPosition());
-		dingTalkToken.setPrincipal(userInfoResponse.getUserid());
-		dingTalkToken.setRemark(userInfoResponse.getRemark());
-		dingTalkToken.setRoles(userInfoResponse.getRoles());
-		dingTalkToken.setSenior(userInfoResponse.getIsSenior());
-		dingTalkToken.setStateCode(userInfoResponse.getStateCode());
-		dingTalkToken.setTel(userInfoResponse.getTel());
-		dingTalkToken.setWorkPlace(userInfoResponse.getWorkPlace());
-		
-	}
-    
     
     @Override
     public boolean supports(Class<?> authentication) {
