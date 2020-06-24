@@ -70,7 +70,7 @@ public class SecurityDingTalkTmpCodeFilterConfiguration {
     @ConditionalOnProperty(prefix = SecurityDingTalkProperties.PREFIX, value = "enabled", havingValue = "true")
     @EnableConfigurationProperties({ SecurityBizProperties.class, SecurityDingTalkProperties.class, SecurityDingTalkTmpCodeAuthcProperties.class })
     @Order(SecurityProperties.DEFAULT_FILTER_ORDER + 6)
-   	static class DingTalkTmpCodeWebSecurityConfigurerAdapter extends SecurityBizConfigurerAdapter {
+   	static class DingTalkTmpCodeWebSecurityConfigurerAdapter extends AbstractSecurityConfigurerAdapter {
     	
     	private final SecurityDingTalkTmpCodeAuthcProperties authcProperties;
     	
