@@ -23,12 +23,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.boot.biz.SpringSecurityBizMessageSource;
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationSuccessHandler;
+import org.springframework.security.boot.biz.exception.AuthResponse;
+import org.springframework.security.boot.biz.exception.AuthResponseCode;
 import org.springframework.security.boot.biz.userdetails.JwtPayloadRepository;
 import org.springframework.security.boot.biz.userdetails.SecurityPrincipal;
 import org.springframework.security.boot.utils.SubjectUtils;
@@ -64,13 +67,15 @@ public class DingTalkMatchedAuthenticationSuccessJwtHandler implements MatchedAu
 			tokenString = getPayloadRepository().issueJwt((AbstractAuthenticationToken) authentication);
 		} 
     	
-		Map<String, Object> tokenMap = SubjectUtils.tokenMap(authentication, tokenString);
-		
+		// 设置状态码和响应头
 		response.setStatus(HttpStatus.OK.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-		
-		JSONObject.writeJSONString(response.getWriter(), tokenMap);
+		// 国际化后的异常信息
+		String message = messages.getMessage(AuthResponseCode.SC_AUTHC_SUCCESS.getMsgKey(), LocaleContextHolder.getLocale());
+		// 写出JSON
+		Map<String, Object> tokenMap = SubjectUtils.tokenMap(authentication, tokenString);
+		JSONObject.writeJSONString(response.getWriter(), AuthResponse.success(message, tokenMap));
 
 	}
 
