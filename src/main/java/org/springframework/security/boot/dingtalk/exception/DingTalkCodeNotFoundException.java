@@ -16,13 +16,14 @@
 package org.springframework.security.boot.dingtalk.exception;
 
 
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.boot.biz.exception.AuthResponseCode;
+import org.springframework.security.boot.biz.exception.AuthenticationExceptionAdapter;
 
 /**
  *
  */
 @SuppressWarnings("serial")
-public class DingTalkCodeNotFoundException extends AuthenticationException {
+public class DingTalkCodeNotFoundException extends AuthenticationExceptionAdapter {
 	// ~ Constructors
 	// ===================================================================================================
 
@@ -33,7 +34,7 @@ public class DingTalkCodeNotFoundException extends AuthenticationException {
 	 * @param msg the detail message
 	 */
 	public DingTalkCodeNotFoundException(String msg) {
-		super(msg);
+		super(AuthResponseCode.SC_AUTHZ_DINGTALK_REQUIRED, msg);
 	}
 
 	/**
@@ -44,6 +45,6 @@ public class DingTalkCodeNotFoundException extends AuthenticationException {
 	 * @param t root cause
 	 */
 	public DingTalkCodeNotFoundException(String msg, Throwable t) {
-		super(msg, t);
+		super(AuthResponseCode.SC_AUTHZ_DINGTALK_REQUIRED, msg, t);
 	}
 }

@@ -15,21 +15,22 @@
  */
 package org.springframework.security.boot.dingtalk.exception;
 
-import org.springframework.security.boot.biz.exception.ExternalAuthenticationServiceException;
+import org.springframework.security.boot.biz.exception.AuthResponseCode;
+import org.springframework.security.boot.biz.exception.AuthenticationServiceExceptionAdapter;
 
 /**
  * DingTalk 服务端认证异常
  * @author 		： <a href="https://github.com/hiwepy">wandl</a>
  */
 @SuppressWarnings("serial")
-public class DingTalkAuthenticationServiceException extends ExternalAuthenticationServiceException {
+public class DingTalkAuthenticationServiceException extends AuthenticationServiceExceptionAdapter {
 
 	public DingTalkAuthenticationServiceException( String msg) {
-		super(msg);
+		super(AuthResponseCode.SC_AUTHZ_THIRD_PARTY_SERVICE, msg);
 	}
 	
 	public DingTalkAuthenticationServiceException( String msg, Throwable t) {
-		super(msg, t);
+		super(AuthResponseCode.SC_AUTHZ_THIRD_PARTY_SERVICE,msg, t);
 	}
 	
 }
