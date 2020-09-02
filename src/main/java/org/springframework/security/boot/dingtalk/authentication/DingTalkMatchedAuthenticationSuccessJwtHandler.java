@@ -22,7 +22,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -62,7 +61,7 @@ public class DingTalkMatchedAuthenticationSuccessJwtHandler implements MatchedAu
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		// 国际化后的异常信息
-		String message = messages.getMessage(AuthResponseCode.SC_AUTHC_SUCCESS.getMsgKey(), LocaleContextHolder.getLocale());
+		String message = messages.getMessage(AuthResponseCode.SC_AUTHC_SUCCESS.getMsgKey());
 		// 写出JSON
 		UserProfilePayload profilePayload = getPayloadRepository().getProfilePayload((AbstractAuthenticationToken) authentication, isCheckExpiry());
 		JSONObject.writeJSONString(response.getWriter(), AuthResponse.success(message, profilePayload));
