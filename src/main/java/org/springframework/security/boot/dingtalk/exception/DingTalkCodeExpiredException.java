@@ -7,11 +7,11 @@ import org.springframework.security.boot.biz.exception.AuthenticationExceptionAd
 public class DingTalkCodeExpiredException extends AuthenticationExceptionAdapter {
 
 	public DingTalkCodeExpiredException(String msg) {
-		super(AuthResponseCode.SC_AUTHZ_DINGTALK_EXPIRED, msg);
+		super(AuthResponseCode.SC_AUTHZ_CODE_EXPIRED, msg);
 	}
 	
 	public DingTalkCodeExpiredException(String msg, Throwable t) {
-		super(AuthResponseCode.SC_AUTHZ_DINGTALK_EXPIRED, msg, t);
+		super(AuthResponseCode.SC_AUTHZ_CODE_EXPIRED, msg, t);
 	}
 
 }

@@ -7,11 +7,11 @@ import org.springframework.security.boot.biz.exception.AuthenticationExceptionAd
 public class DingTalkCodeIncorrectException extends AuthenticationExceptionAdapter {
 
 	public DingTalkCodeIncorrectException(String msg) {
-		super(AuthResponseCode.SC_AUTHZ_DINGTALK_INCORRECT, msg);
+		super(AuthResponseCode.SC_AUTHZ_CODE_INCORRECT, msg);
 	}
 	
 	public DingTalkCodeIncorrectException(String msg, Throwable t) {
-		super(AuthResponseCode.SC_AUTHZ_DINGTALK_INCORRECT, msg, t);
+		super(AuthResponseCode.SC_AUTHZ_CODE_INCORRECT, msg, t);
 	}
 	
 }

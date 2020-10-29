@@ -375,7 +375,7 @@
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
 		<maven-nexus-staging-plugin.version>1.6.8</maven-nexus-staging-plugin.version>
-		<spring-security-biz.version>1.0.0-SNAPSHOT</spring-security-biz.version>
+		<spring-security-biz.version>1.0.3-SNAPSHOT</spring-security-biz.version>
 		<spring-boot-starter-dingtalk.version>1.0.0-SNAPSHOT</spring-boot-starter-dingtalk.version>
 	</properties>
 	
@@ -530,8 +530,9 @@
 		<dependency>
 			<groupId>com.dingtalk</groupId>
 			<artifactId>dingtalk-sdk</artifactId>
-			<version>20190704</version>
-			<scope>provided</scope>
+			<version>20200617</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/dingtalk-sdk-20200617.jar</systemPath>
 		</dependency>
 		
 	</dependencies>

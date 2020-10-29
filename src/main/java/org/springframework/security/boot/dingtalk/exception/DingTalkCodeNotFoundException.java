@@ -34,7 +34,7 @@ public class DingTalkCodeNotFoundException extends AuthenticationExceptionAdapte
 	 * @param msg the detail message
 	 */
 	public DingTalkCodeNotFoundException(String msg) {
-		super(AuthResponseCode.SC_AUTHZ_DINGTALK_REQUIRED, msg);
+		super(AuthResponseCode.SC_AUTHZ_CODE_REQUIRED, msg);
 	}
 
 	/**
@@ -45,6 +45,6 @@ public class DingTalkCodeNotFoundException extends AuthenticationExceptionAdapte
 	 * @param t root cause
 	 */
 	public DingTalkCodeNotFoundException(String msg, Throwable t) {
-		super(AuthResponseCode.SC_AUTHZ_DINGTALK_REQUIRED, msg, t);
+		super(AuthResponseCode.SC_AUTHZ_CODE_REQUIRED, msg, t);
 	}
 }
