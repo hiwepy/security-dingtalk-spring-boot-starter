@@ -24,19 +24,17 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.boot.biz.SpringSecurityBizMessageSource;
-import org.springframework.security.boot.biz.exception.AuthResponseCode;
-import org.springframework.security.boot.biz.exception.AuthenticationMethodNotSupportedException;
+import org.springframework.security.boot.biz.authentication.PostOnlyAuthenticationProcessingFilter;
 import org.springframework.security.boot.dingtalk.exception.DingTalkCodeNotFoundException;
 import org.springframework.security.boot.utils.WebUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class DingTalkMaAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
+public class DingTalkMaAuthenticationProcessingFilter extends PostOnlyAuthenticationProcessingFilter {
 
 	protected MessageSourceAccessor messages = SpringSecurityBizMessageSource.getAccessor();
     public static final String SPRING_SECURITY_FORM_APP_KEY = "key";
@@ -55,7 +53,6 @@ public class DingTalkMaAuthenticationProcessingFilter extends AbstractAuthentica
     private String usernameParameter = SPRING_SECURITY_FORM_USERNAME_KEY;
     private String passwordParameter = SPRING_SECURITY_FORM_PASSWORD_KEY;
     
-    private boolean postOnly = false;
     private ObjectMapper objectMapper = new ObjectMapper();
     
     public DingTalkMaAuthenticationProcessingFilter(ObjectMapper objectMapper) {
@@ -69,16 +66,8 @@ public class DingTalkMaAuthenticationProcessingFilter extends AbstractAuthentica
 	}
 	
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+    public Authentication doAttemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException, IOException, ServletException {
-
-        if (isPostOnly() && !WebUtils.isPostRequest(request) ) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Authentication method not supported. Request method: " + request.getMethod());
-			}
-			throw new AuthenticationMethodNotSupportedException(messages.getMessage(AuthResponseCode.SC_AUTHC_METHOD_NOT_ALLOWED.getMsgKey(), new Object[] { request.getMethod() }, 
-					"Authentication method not supported. Request method:" + request.getMethod()));
-		}
         
         AbstractAuthenticationToken authRequest;
         
@@ -253,14 +242,6 @@ public class DingTalkMaAuthenticationProcessingFilter extends AbstractAuthentica
 
 	public void setPasswordParameter(String passwordParameter) {
 		this.passwordParameter = passwordParameter;
-	}
-
-	public boolean isPostOnly() {
-		return postOnly;
-	}
-
-	public void setPostOnly(boolean postOnly) {
-		this.postOnly = postOnly;
 	}
 
 }
