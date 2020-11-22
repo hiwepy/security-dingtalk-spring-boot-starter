@@ -109,7 +109,7 @@ public class DingTalkPrincipal extends SecurityPrincipal {
 	 */
 	protected String jobnumber;
 	/**
-	 * 扩展属性，可以设置多种属性（但手机上最多只能显示10个扩展属性，具体显示哪些属性，请到OA管理后台->设置->通讯录信息设置和OA管理后台->设置->手机端显示信息设置）
+	 * 扩展属性，可以设置多种属性（但手机上最多只能显示10个扩展属性，具体显示哪些属性，请到OA管理后台-&gt;设置-&gt;通讯录信息设置和OA管理后台-&gt;设置-&gt;手机端显示信息设置）
 	 */
 	protected String extattr;
 	/**
