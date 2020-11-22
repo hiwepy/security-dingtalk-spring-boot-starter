@@ -365,8 +365,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<commons-io.version>2.5</commons-io.version>
-		<guava.version>28.2-jre</guava.version>
-		<fastjson.version>1.2.73</fastjson.version>
+		<guava.version>30.0-jre</guava.version>
+		<fastjson.version>1.2.75</fastjson.version>
 		<jwt-issuer.version>1.0.6.RELEASE</jwt-issuer.version>
 		<maven.version>3.0</maven.version>
        	<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
