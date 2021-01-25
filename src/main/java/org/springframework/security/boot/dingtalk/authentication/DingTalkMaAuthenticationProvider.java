@@ -84,7 +84,7 @@ public class DingTalkMaAuthenticationProvider implements AuthenticationProvider,
 			
 			if(StringUtils.hasText(loginRequest.getCode()) && !StringUtils.hasText(loginRequest.getUserid()) ) {
 				
-				OapiUserGetuserinfoResponse response = dingTalkTemplate.getUserinfoBycode(loginRequest.getCode(), accessToken);
+				OapiUserGetuserinfoResponse response = dingTalkTemplate.opsForAccount().getUserinfoBycode(loginRequest.getCode(), accessToken);
 				/*{
 				    "userid": "****",
 				    "sys_level": 1,
@@ -108,7 +108,7 @@ public class DingTalkMaAuthenticationProvider implements AuthenticationProvider,
 			DingTalkTmpCodeAuthenticationToken dingTalkToken = (DingTalkTmpCodeAuthenticationToken) authentication;
 			
 			if(Objects.isNull(loginRequest.getUserInfo()) && !Objects.isNull(loginRequest.getUserid()) ) {
-				OapiUserGetResponse userInfoResponse = dingTalkTemplate.getUserByUserid(loginRequest.getUserid(), accessToken);
+				OapiUserGetResponse userInfoResponse = dingTalkTemplate.opsForAccount().getUserByUserid(loginRequest.getUserid(), accessToken);
 				if(!userInfoResponse.isSuccess()) {
 					logger.error(JSONObject.toJSONString(AuthResponse.of(userInfoResponse.getErrorCode(), userInfoResponse.getErrmsg())));
 					throw new DingTalkAuthenticationServiceException(userInfoResponse.getErrmsg());

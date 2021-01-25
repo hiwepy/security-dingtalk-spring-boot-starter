@@ -89,7 +89,7 @@ public class DingTalkTmpCodeAuthenticationProvider implements AuthenticationProv
 			if ( !StringUtils.hasText(loginRequest.getUserid()) && StringUtils.hasText(loginRequest.getLoginTmpCode())) {
 				
 				// 第三方应用钉钉扫码登录：通过临时授权码Code获取用户信息，临时授权码只能使用一次
-				OapiSnsGetuserinfoBycodeResponse response = dingTalkTemplate.getSnsGetuserinfoBycode(loginRequest.getLoginTmpCode(), appKey, appSecret);
+				OapiSnsGetuserinfoBycodeResponse response = dingTalkTemplate.opsForSns().getUserinfoByTmpCode(loginRequest.getLoginTmpCode(), appKey, appSecret);
 				/*{ 
 				    "errcode": 0,
 				    "errmsg": "ok",
@@ -116,7 +116,7 @@ public class DingTalkTmpCodeAuthenticationProvider implements AuthenticationProv
 			if(Objects.isNull(loginRequest.getUserInfo()) && !Objects.isNull(loginRequest.getUserid()) ) {
 				
 				// 根据UserId 获取用户信息
-				OapiUserGetResponse userInfoResponse = dingTalkTemplate.getUserByUserid(loginRequest.getUserid(), accessToken);
+				OapiUserGetResponse userInfoResponse = dingTalkTemplate.opsForAccount().getUserByUserid(loginRequest.getUserid(), accessToken);
 				if(!userInfoResponse.isSuccess()) {
 					logger.error(JSONObject.toJSONString(AuthResponse.of(userInfoResponse.getErrorCode(), userInfoResponse.getErrmsg())));
 					throw new DingTalkAuthenticationServiceException(userInfoResponse.getErrmsg());
@@ -129,14 +129,14 @@ public class DingTalkTmpCodeAuthenticationProvider implements AuthenticationProv
 			if(Objects.isNull(loginRequest.getUserInfo()) && !Objects.isNull(loginRequest.getUnionid()) ) {
 				
 				// 根据unionid获取userid
-				OapiUserGetUseridByUnionidResponse unionidResponse = dingTalkTemplate.getUseridByUnionid(loginRequest.getUnionid(), accessToken);
+				OapiUserGetUseridByUnionidResponse unionidResponse = dingTalkTemplate.opsForAccount().getUseridByUnionid(loginRequest.getUnionid(), accessToken);
 				if(!unionidResponse.isSuccess()) {
 					logger.error(JSONObject.toJSONString(AuthResponse.of(unionidResponse.getErrorCode(), unionidResponse.getErrmsg())));
 					throw new DingTalkAuthenticationServiceException(unionidResponse.getErrmsg());
 				}
 				
 				// 根据UserId 获取用户信息
-				OapiUserGetResponse userInfoResponse = dingTalkTemplate.getUserByUserid(unionidResponse.getUserid(), accessToken);
+				OapiUserGetResponse userInfoResponse = dingTalkTemplate.opsForAccount().getUserByUserid(unionidResponse.getUserid(), accessToken);
 				if(!userInfoResponse.isSuccess()) {
 					logger.error(JSONObject.toJSONString(AuthResponse.of(userInfoResponse.getErrorCode(), userInfoResponse.getErrmsg())));
 					throw new DingTalkAuthenticationServiceException(userInfoResponse.getErrmsg());
