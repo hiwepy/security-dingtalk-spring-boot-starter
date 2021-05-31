@@ -90,6 +90,7 @@ public class SecurityDingTalkMaFilterConfiguration {
    		public DingTalkMaWebSecurityConfigurerAdapter(
    			
    				SecurityBizProperties bizProperties,
+   				SecuritySessionMgtProperties sessionMgtProperties,
    				SecurityDingTalkTmpCodeAuthcProperties authcProperties,
    				
    				ObjectProvider<DingTalkTmpCodeAuthenticationProvider> authenticationProvider,
@@ -104,7 +105,7 @@ public class SecurityDingTalkMaFilterConfiguration {
    				
 			) {
    			
-   			super(bizProperties, authcProperties, authenticationProvider.stream().collect(Collectors.toList()),
+   			super(bizProperties, authcProperties, sessionMgtProperties, authenticationProvider.stream().collect(Collectors.toList()),
 					authenticationManagerProvider.getIfAvailable());
    			
    			this.authcProperties = authcProperties;
