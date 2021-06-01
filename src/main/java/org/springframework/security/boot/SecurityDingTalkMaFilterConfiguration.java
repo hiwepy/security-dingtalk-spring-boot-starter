@@ -62,6 +62,43 @@ public class SecurityDingTalkMaFilterConfiguration {
 		return new DingTalkTmpCodeAuthenticationProvider(userDetailsService, dingtalkTemplate);
 	}
 	
+	@Order(SecurityProperties.DEFAULT_FILTER_ORDER + 5)
+	@Bean
+	public DingTalkTmpCodeAuthenticationProcessingFilter dingTalkTmpCodeAuthenticationProcessingFilter(
+				SecuritySessionMgtProperties sessionMgtProperties,
+				SecurityDingTalkTmpCodeAuthcProperties authcProperties) throws Exception {
+	    	
+		AuthenticationSuccessHandler authenticationSuccessHandler;
+		AuthenticationFailureHandler authenticationFailureHandler;
+		RememberMeServices rememberMeServices;
+		SessionAuthenticationStrategy sessionAuthenticationStrategy;
+		
+		DingTalkTmpCodeAuthenticationProcessingFilter authenticationFilter = new DingTalkTmpCodeAuthenticationProcessingFilter(objectMapper);
+			
+		/**
+		 * 批量设置参数
+		 */
+		PropertyMapper map = PropertyMapper.get().alwaysApplyingWhenNonNull();
+		
+		map.from(sessionMgtProperties.isAllowSessionCreation()).to(authenticationFilter::setAllowSessionCreation);
+		
+		map.from(authenticationManagerBean()).to(authenticationFilter::setAuthenticationManager);
+		map.from(authenticationSuccessHandler).to(authenticationFilter::setAuthenticationSuccessHandler);
+		map.from(authenticationFailureHandler).to(authenticationFilter::setAuthenticationFailureHandler);
+		
+		map.from(authcProperties.getTmpCodeParameter()).to(authenticationFilter::setTmpCodeParameter);
+		map.from(authcProperties.getPathPattern()).to(authenticationFilter::setFilterProcessesUrl);
+		map.from(authcProperties.isPostOnly()).to(authenticationFilter::setPostOnly);
+		map.from(rememberMeServices).to(authenticationFilter::setRememberMeServices);
+		map.from(sessionAuthenticationStrategy).to(authenticationFilter::setSessionAuthenticationStrategy);
+		map.from(authcProperties.isContinueChainBeforeSuccessfulAuthentication()).to(authenticationFilter::setContinueChainBeforeSuccessfulAuthentication);
+			
+	        return authenticationFilter;
+	    }
+	
+	
+	
+	
     @Configuration
     @ConditionalOnProperty(prefix = SecurityDingTalkProperties.PREFIX, value = "enabled", havingValue = "true")
     @EnableConfigurationProperties({ SecurityBizProperties.class, SecuritySessionMgtProperties.class, SecurityDingTalkProperties.class, SecurityDingTalkTmpCodeAuthcProperties.class })
@@ -116,30 +153,7 @@ public class SecurityDingTalkMaFilterConfiguration {
    			
    		}
    		
-   	    public DingTalkTmpCodeAuthenticationProcessingFilter authenticationProcessingFilter() throws Exception {
-   	    	
-   			DingTalkTmpCodeAuthenticationProcessingFilter authenticationFilter = new DingTalkTmpCodeAuthenticationProcessingFilter(objectMapper);
-   			
-			/**
-			 * 批量设置参数
-			 */
-			PropertyMapper map = PropertyMapper.get().alwaysApplyingWhenNonNull();
-			
-			map.from(getSessionMgtProperties().isAllowSessionCreation()).to(authenticationFilter::setAllowSessionCreation);
-			
-			map.from(authenticationManagerBean()).to(authenticationFilter::setAuthenticationManager);
-			map.from(authenticationSuccessHandler).to(authenticationFilter::setAuthenticationSuccessHandler);
-			map.from(authenticationFailureHandler).to(authenticationFilter::setAuthenticationFailureHandler);
-			
-			map.from(authcProperties.getTmpCodeParameter()).to(authenticationFilter::setTmpCodeParameter);
-			map.from(authcProperties.getPathPattern()).to(authenticationFilter::setFilterProcessesUrl);
-			map.from(authcProperties.isPostOnly()).to(authenticationFilter::setPostOnly);
-			map.from(rememberMeServices).to(authenticationFilter::setRememberMeServices);
-			map.from(sessionAuthenticationStrategy).to(authenticationFilter::setSessionAuthenticationStrategy);
-			map.from(authcProperties.isContinueChainBeforeSuccessfulAuthentication()).to(authenticationFilter::setContinueChainBeforeSuccessfulAuthentication);
-   			
-   	        return authenticationFilter;
-   	    }
+   	    
 
    	    @Override
 		public void configure(HttpSecurity http) throws Exception {
