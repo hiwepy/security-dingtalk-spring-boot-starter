@@ -19,7 +19,6 @@ import org.springframework.security.boot.biz.authentication.captcha.CaptchaResol
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationEntryPoint;
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationFailureHandler;
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationSuccessHandler;
-import org.springframework.security.boot.biz.property.SecurityLogoutProperties;
 import org.springframework.security.boot.biz.property.SecuritySessionMgtProperties;
 import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapter;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkMatchedAuthenticationEntryPoint;
@@ -28,18 +27,14 @@ import org.springframework.security.boot.dingtalk.authentication.DingTalkTmpCode
 import org.springframework.security.boot.dingtalk.authentication.DingTalkTmpCodeAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.savedrequest.RequestCache;
-import org.springframework.security.web.session.InvalidSessionStrategy;
-import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
 import com.dingtalk.spring.boot.DingTalkTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -77,15 +72,10 @@ public class SecurityDingTalkTmpCodeFilterConfiguration {
 	    private final AuthenticationEntryPoint authenticationEntryPoint;
 	    private final AuthenticationSuccessHandler authenticationSuccessHandler;
 	    private final AuthenticationFailureHandler authenticationFailureHandler;
-	    private final InvalidSessionStrategy invalidSessionStrategy;
-	    private final LogoutSuccessHandler logoutSuccessHandler;
-	    private final LogoutHandler logoutHandler;
 	    private final ObjectMapper objectMapper;
     	private final RequestCache requestCache;
     	private final RememberMeServices rememberMeServices;
-    	private final SessionRegistry sessionRegistry;
 		private final SessionAuthenticationStrategy sessionAuthenticationStrategy;
-		private final SessionInformationExpiredStrategy sessionInformationExpiredStrategy;
    		
    		public DingTalkTmpCodeWebSecurityConfigurerAdapter(
    			
@@ -101,7 +91,8 @@ public class SecurityDingTalkTmpCodeFilterConfiguration {
    				ObjectProvider<MatchedAuthenticationFailureHandler> authenticationFailureHandlerProvider,
    				ObjectProvider<CaptchaResolver> captchaResolverProvider,
    				ObjectProvider<LogoutHandler> logoutHandlerProvider,
-   				ObjectProvider<ObjectMapper> objectMapperProvider
+   				ObjectProvider<ObjectMapper> objectMapperProvider,
+   				ObjectProvider<RememberMeServices> rememberMeServicesProvider
    				
 			) {
    			
@@ -114,15 +105,10 @@ public class SecurityDingTalkTmpCodeFilterConfiguration {
    			this.authenticationEntryPoint = super.authenticationEntryPoint(authenticationEntryPointProvider.stream().collect(Collectors.toList()));
    			this.authenticationSuccessHandler = super.authenticationSuccessHandler(authenticationListeners, authenticationSuccessHandlerProvider.stream().collect(Collectors.toList()));
    			this.authenticationFailureHandler = super.authenticationFailureHandler(authenticationListeners, authenticationFailureHandlerProvider.stream().collect(Collectors.toList()));
-   			this.invalidSessionStrategy = super.invalidSessionStrategy();
-   			this.logoutSuccessHandler = super.logoutSuccessHandler();
-   			this.logoutHandler = super.logoutHandler(logoutHandlerProvider.stream().collect(Collectors.toList()));
    			this.objectMapper = objectMapperProvider.getIfAvailable();
    			this.requestCache = super.requestCache();
-   			this.rememberMeServices = super.rememberMeServices();
-   			this.sessionRegistry = super.sessionRegistry();
+   			this.rememberMeServices = rememberMeServicesProvider.getIfAvailable();
    			this.sessionAuthenticationStrategy = super.sessionAuthenticationStrategy();
-   			this.sessionInformationExpiredStrategy = super.sessionInformationExpiredStrategy();
    			
    		}
    		
@@ -135,7 +121,7 @@ public class SecurityDingTalkTmpCodeFilterConfiguration {
 			 */
 			PropertyMapper map = PropertyMapper.get().alwaysApplyingWhenNonNull();
 			
-			map.from(authcProperties.getSessionMgt().isAllowSessionCreation()).to(authenticationFilter::setAllowSessionCreation);
+			map.from(getSessionMgtProperties().isAllowSessionCreation()).to(authenticationFilter::setAllowSessionCreation);
 			
 			map.from(authenticationManagerBean()).to(authenticationFilter::setAuthenticationManager);
 			map.from(authenticationSuccessHandler).to(authenticationFilter::setAuthenticationSuccessHandler);
@@ -154,49 +140,15 @@ public class SecurityDingTalkTmpCodeFilterConfiguration {
    	    @Override
 		public void configure(HttpSecurity http) throws Exception {
    	    	
-   	    	// Session 管理器配置参数
-   	    	SecuritySessionMgtProperties sessionMgt = authcProperties.getSessionMgt();
-   	    	// Session 注销配置参数
-   	    	SecurityLogoutProperties logout = authcProperties.getLogout();
-   	    	
-   	    	http.csrf().disable(); // We don't need CSRF for JWT based authentication
-	    	http.headers().cacheControl(); // 禁用缓存
-	    	
-   		    // Session 管理器配置
-   	    	http.sessionManagement()
-   	    		.enableSessionUrlRewriting(sessionMgt.isEnableSessionUrlRewriting())
-   	    		.invalidSessionStrategy(invalidSessionStrategy)
-   	    		.invalidSessionUrl(logout.getLogoutUrl())
-   	    		.maximumSessions(sessionMgt.getMaximumSessions())
-   	    		.maxSessionsPreventsLogin(sessionMgt.isMaxSessionsPreventsLogin())
-   	    		.expiredSessionStrategy(sessionInformationExpiredStrategy)
-   				.expiredUrl(logout.getLogoutUrl())
-   				.sessionRegistry(sessionRegistry)
-   				.and()
-   	    		.sessionAuthenticationErrorUrl(sessionMgt.getFailureUrl())
-   	    		.sessionAuthenticationFailureHandler(authenticationFailureHandler)
-   	    		.sessionAuthenticationStrategy(sessionAuthenticationStrategy)
-   	    		.sessionCreationPolicy(sessionMgt.getCreationPolicy())
-   	    		// Session 注销配置
-   	    		.and()
-   	    		.logout()
-   	    		.logoutUrl(logout.getPathPatterns())
-   	    		.logoutSuccessHandler(logoutSuccessHandler)
-   	    		.addLogoutHandler(logoutHandler)
-   	    		.clearAuthentication(logout.isClearAuthentication())
-   	    		.invalidateHttpSession(logout.isInvalidateHttpSession())
-   	        	// Request 缓存配置
-   	        	.and()
-   	    		.requestCache()
-   	        	.requestCache(requestCache)
-   	        	// 异常处理
-   	        	.and()
-   	        	.exceptionHandling()
-   	        	.authenticationEntryPoint(authenticationEntryPoint)
-   	        	.and()
-   	        	.httpBasic()
-   	        	.authenticationEntryPoint(authenticationEntryPoint)
-   	        	.and()
+   	    	http.requestCache()
+	        	.requestCache(requestCache)
+	        	.and()
+	   	    	.exceptionHandling()
+	        	.authenticationEntryPoint(authenticationEntryPoint)
+	        	.and()
+	        	.httpBasic()
+	        	.authenticationEntryPoint(authenticationEntryPoint)
+	        	.and()
    	        	.antMatcher(authcProperties.getPathPattern())
    	        	.addFilterBefore(authenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class); 
    	    	
