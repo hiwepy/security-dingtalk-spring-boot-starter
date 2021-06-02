@@ -14,9 +14,8 @@ import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.boot.biz.authentication.AuthenticationListener;
-import org.springframework.security.boot.biz.authentication.captcha.CaptchaResolver;
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationEntryPoint;
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationFailureHandler;
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationSuccessHandler;
@@ -26,6 +25,7 @@ import org.springframework.security.boot.dingtalk.authentication.DingTalkMatched
 import org.springframework.security.boot.dingtalk.authentication.DingTalkMatchedAuthenticationFailureHandler;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkTmpCodeAuthenticationProcessingFilter;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkTmpCodeAuthenticationProvider;
+import org.springframework.security.boot.utils.WebSecurityUtils;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -33,9 +33,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
-import org.springframework.security.web.savedrequest.RequestCache;
 
 import com.dingtalk.spring.boot.DingTalkTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -69,13 +67,12 @@ public class SecurityDingTalkMaFilterConfiguration {
    	static class DingTalkMaWebSecurityConfigurerAdapter extends WebSecurityBizConfigurerAdapter {
     	
     	private final SecurityDingTalkTmpCodeAuthcProperties authcProperties;
-
+    	
     	private final LocaleContextFilter localeContextFilter;
 	    private final AuthenticationEntryPoint authenticationEntryPoint;
 	    private final AuthenticationSuccessHandler authenticationSuccessHandler;
 	    private final AuthenticationFailureHandler authenticationFailureHandler;
 	    private final ObjectMapper objectMapper;
-    	private final RequestCache requestCache;
     	private final RememberMeServices rememberMeServices;
 		private final SessionAuthenticationStrategy sessionAuthenticationStrategy;
    		
@@ -86,33 +83,29 @@ public class SecurityDingTalkMaFilterConfiguration {
    				SecurityDingTalkTmpCodeAuthcProperties authcProperties,
    				
    				ObjectProvider<LocaleContextFilter> localeContextProvider,
-   				ObjectProvider<DingTalkTmpCodeAuthenticationProvider> authenticationProvider,
-   				ObjectProvider<AuthenticationManager> authenticationManagerProvider,
+   				ObjectProvider<AuthenticationProvider> authenticationProvider,
    				ObjectProvider<AuthenticationListener> authenticationListenerProvider,
    				ObjectProvider<MatchedAuthenticationEntryPoint> authenticationEntryPointProvider,
    				ObjectProvider<MatchedAuthenticationSuccessHandler> authenticationSuccessHandlerProvider,
    				ObjectProvider<MatchedAuthenticationFailureHandler> authenticationFailureHandlerProvider,
-   				ObjectProvider<CaptchaResolver> captchaResolverProvider,
-   				ObjectProvider<LogoutHandler> logoutHandlerProvider,
    				ObjectProvider<ObjectMapper> objectMapperProvider,
-   				ObjectProvider<RememberMeServices> rememberMeServicesProvider
+   				ObjectProvider<RememberMeServices> rememberMeServicesProvider,
+   				ObjectProvider<SessionAuthenticationStrategy> sessionAuthenticationStrategyProvider
    				
 			) {
    			
-   			super(bizProperties, authcProperties, sessionMgtProperties, authenticationProvider.stream().collect(Collectors.toList()),
-					authenticationManagerProvider.getIfAvailable());
+   			super(bizProperties, sessionMgtProperties, authenticationProvider.stream().collect(Collectors.toList()));
    			
    			this.authcProperties = authcProperties;
 
 			this.localeContextFilter = localeContextProvider.getIfAvailable();
    			List<AuthenticationListener> authenticationListeners = authenticationListenerProvider.stream().collect(Collectors.toList());
-   			this.authenticationEntryPoint = super.authenticationEntryPoint(authenticationEntryPointProvider.stream().collect(Collectors.toList()));
-   			this.authenticationSuccessHandler = super.authenticationSuccessHandler(authenticationListeners, authenticationSuccessHandlerProvider.stream().collect(Collectors.toList()));
-   			this.authenticationFailureHandler = super.authenticationFailureHandler(authenticationListeners, authenticationFailureHandlerProvider.stream().collect(Collectors.toList()));
+   			this.authenticationEntryPoint = WebSecurityUtils.authenticationEntryPoint(authcProperties, sessionMgtProperties, authenticationEntryPointProvider.stream().collect(Collectors.toList()));
+   			this.authenticationSuccessHandler = WebSecurityUtils.authenticationSuccessHandler(authcProperties, sessionMgtProperties, authenticationListeners, authenticationSuccessHandlerProvider.stream().collect(Collectors.toList()));
+   			this.authenticationFailureHandler = WebSecurityUtils.authenticationFailureHandler(authcProperties, sessionMgtProperties, authenticationListeners, authenticationFailureHandlerProvider.stream().collect(Collectors.toList()));
    			this.objectMapper = objectMapperProvider.getIfAvailable();
-   			this.requestCache = super.requestCache();
    			this.rememberMeServices = rememberMeServicesProvider.getIfAvailable();
-   			this.sessionAuthenticationStrategy = super.sessionAuthenticationStrategy();
+   			this.sessionAuthenticationStrategy = sessionAuthenticationStrategyProvider.getIfAvailable();
    			
    		}
    		
@@ -140,19 +133,16 @@ public class SecurityDingTalkMaFilterConfiguration {
    			
    	        return authenticationFilter;
    	    }
-
+   	    
    	    @Override
 		public void configure(HttpSecurity http) throws Exception {
 	    	
-   	    	http.requestCache()
-	        	.requestCache(requestCache)
-	        	.and()
-	   	    	.exceptionHandling()
+   	    	http.antMatcher(authcProperties.getPathPattern())
+				.exceptionHandling()
 	        	.authenticationEntryPoint(authenticationEntryPoint)
 	        	.and()
 	        	.httpBasic()
 	        	.disable()
-   	        	.antMatcher(authcProperties.getPathPattern())
    	        	.addFilterBefore(localeContextFilter, UsernamePasswordAuthenticationFilter.class)
    	        	.addFilterBefore(authenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class); 
    	    	
