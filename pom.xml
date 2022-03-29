@@ -360,8 +360,8 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<commons-io.version>2.11.0</commons-io.version>
 		<dingtalk-sdk.version>2.0.0</dingtalk-sdk.version>
-		<guava.version>31.1-jre</guava.version>
-		<fastjson.version>1.2.80</fastjson.version>
+		<guava.version>31.0.1-jre</guava.version>
+		<fastjson.version>1.2.79</fastjson.version>
 		<jwt-issuer.version>1.0.6.RELEASE</jwt-issuer.version>
 		<maven.version>3.0</maven.version>
        	<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
