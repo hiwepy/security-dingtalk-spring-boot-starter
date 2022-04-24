@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * 第三方系统钉钉扫码登录授权
+ * 企业内部应用免登、第三方企业应用免登、应用管理后台免登
  * @author 		： <a href="https://github.com/hiwepy">wandl</a>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -19,50 +19,18 @@ public class DingTalkTmpCodeLoginRequest {
 	/**
 	 * 临时登录凭证code
 	 */
-	protected String loginTmpCode;
+	protected String code;
 	/**
-	 * 用户ID
+	 * Access Token
 	 */
-	protected String userid;
-    /**
-	 * 第三方平台UnionID（通常指第三方账号体系下用户的唯一ID）
-	 */
-	protected String unionid;
-	/**
-	 * 第三方平台OpenID（通常指第三方账号体系下某应用中用户的唯一ID）
-	 */
-	protected String openid;
-	/**
-	 * 用户信息
-	 */
-	protected OapiUserGetResponse userInfo;
-	/**
-	 * 绑定的账号
-	 */
-	protected String username;
-	/**
-	 * 绑定的账号密码
-	 */
-	protected String password;
+	protected String accessToken;
     
 	@JsonIgnoreProperties(ignoreUnknown = true)
     @JsonCreator
     public DingTalkTmpCodeLoginRequest(@JsonProperty("key") String key, 
-    		@JsonProperty("loginTmpCode") String loginTmpCode,
-    		@JsonProperty("userid") String userid,
-    		@JsonProperty("unionid") String unionid,
-			@JsonProperty("openid") String openid , 
-			@JsonProperty("username") String username ,
-			@JsonProperty("password") String password,
-			@JsonProperty("userInfo") OapiUserGetResponse userInfo) {
+    		@JsonProperty("code") String code) {
         this.key = key;
-        this.loginTmpCode = loginTmpCode;
-        this.userid = userid;
-        this.unionid = unionid;
-		this.openid = openid;
-		this.username = username;
-		this.password = password;
-		this.userInfo = userInfo;
+        this.code = code;
     }
 
 	public String getKey() {
@@ -73,60 +41,20 @@ public class DingTalkTmpCodeLoginRequest {
 		this.key = key;
 	}
 
-	public String getLoginTmpCode() {
-		return loginTmpCode;
+	public String getCode() {
+		return code;
 	}
 
-	public void setLoginTmpCode(String loginTmpCode) {
-		this.loginTmpCode = loginTmpCode;
-	}
-	
-	public String getUserid() {
-		return userid;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
-	public void setUserid(String userid) {
-		this.userid = userid;
+	public String getAccessToken() {
+		return accessToken;
 	}
 
-	public String getUnionid() {
-		return unionid;
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
 	}
 
-	public void setUnionid(String unionid) {
-		this.unionid = unionid;
-	}
-
-	public String getOpenid() {
-		return openid;
-	}
-
-	public void setOpenid(String openid) {
-		this.openid = openid;
-	}
-
-	public OapiUserGetResponse getUserInfo() {
-		return userInfo;
-	}
-
-	public void setUserInfo(OapiUserGetResponse userInfo) {
-		this.userInfo = userInfo;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
 }

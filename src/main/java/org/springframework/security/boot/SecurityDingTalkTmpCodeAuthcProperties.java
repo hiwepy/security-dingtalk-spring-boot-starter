@@ -41,7 +41,7 @@ public class SecurityDingTalkTmpCodeAuthcProperties extends SecurityAuthcPropert
 	private String pathPattern = "/login/dingtalk/tmpcode";
 	
     /** the code parameter name. Defaults to "loginTmpCode". */
-    private String tmpCodeParameter = DingTalkTmpCodeAuthenticationProcessingFilter.SPRING_SECURITY_FORM_TMPCODE_KEY;
+    private String codeParameter = DingTalkTmpCodeAuthenticationProcessingFilter.SPRING_SECURITY_FORM_CODE_KEY;
     
     @NestedConfigurationProperty
 	private SecurityHeaderCorsProperties cros = new SecurityHeaderCorsProperties();

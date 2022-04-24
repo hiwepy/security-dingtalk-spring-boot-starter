@@ -44,20 +44,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class SecurityDingTalkTmpCodeFilterConfiguration {
 	
 	@Bean
-	public DingTalkMatchedAuthenticationEntryPoint dingtalkMatchedAuthenticationEntryPoint() {
-		return new DingTalkMatchedAuthenticationEntryPoint();
-	}
-	
-	@Bean
-	public DingTalkMatchedAuthenticationFailureHandler dingtalkMatchedAuthenticationFailureHandler() {
-		return new DingTalkMatchedAuthenticationFailureHandler();
-	}
-	
-	@Bean
-	public DingTalkTmpCodeAuthenticationProvider dingtalkAuthenticationProvider(
+	public DingTalkTmpCodeAuthenticationProvider dingTalkTmpCodeAuthenticationProvider(
 			UserDetailsServiceAdapter userDetailsService, 
-			DingTalkTemplate dingtalkTemplate) {
-		return new DingTalkTmpCodeAuthenticationProvider(userDetailsService, dingtalkTemplate);
+			DingTalkTemplate dingtalkTemplate,
+			SecurityDingTalkProperties dingtalkProperties) {
+		return new DingTalkTmpCodeAuthenticationProvider(userDetailsService, dingtalkTemplate, dingtalkProperties);
 	}
 	
     @Configuration
@@ -124,7 +115,7 @@ public class SecurityDingTalkTmpCodeFilterConfiguration {
 			map.from(authenticationSuccessHandler).to(authenticationFilter::setAuthenticationSuccessHandler);
 			map.from(authenticationFailureHandler).to(authenticationFilter::setAuthenticationFailureHandler);
 			
-			map.from(authcProperties.getTmpCodeParameter()).to(authenticationFilter::setTmpCodeParameter);
+			map.from(authcProperties.getCodeParameter()).to(authenticationFilter::setCodeParameter);
 			map.from(authcProperties.getPathPattern()).to(authenticationFilter::setFilterProcessesUrl);
 			map.from(authcProperties.isPostOnly()).to(authenticationFilter::setPostOnly);
 			map.from(rememberMeServices).to(authenticationFilter::setRememberMeServices);

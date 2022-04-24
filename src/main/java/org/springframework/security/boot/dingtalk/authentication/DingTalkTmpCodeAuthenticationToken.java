@@ -29,27 +29,6 @@ public class DingTalkTmpCodeAuthenticationToken extends AbstractAuthenticationTo
 	 */
 	private Object principal;
 	private Object credentials;
-	/**
-	 * 第三方平台UnionID（通常指第三方账号体系下用户的唯一ID）
-	 */
-	protected String unionid;
-	/**
-	 * 第三方平台OpenID（通常指第三方账号体系下某应用中用户的唯一ID）
-	 */
-	protected String openid;
-	/**
-	 * 用户信息
-	 */
-	protected OapiUserGetResponse userInfo;
-	/**
-	 * 绑定的账号
-	 */
-	protected String username;
-	/**
-	 * 绑定的账号密码
-	 */
-	protected String password;
-	
 
 	public DingTalkTmpCodeAuthenticationToken(Object principal) {
 		super(null);
@@ -75,10 +54,12 @@ public class DingTalkTmpCodeAuthenticationToken extends AbstractAuthenticationTo
 	// ~ Methods
 	// ========================================================================================================
 
+	@Override
 	public Object getCredentials() {
 		return this.credentials;
 	}
 
+	@Override
 	public Object getPrincipal() {
 		return this.principal;
 	}
@@ -87,6 +68,7 @@ public class DingTalkTmpCodeAuthenticationToken extends AbstractAuthenticationTo
 		this.principal = principal;
 	}
 
+	@Override
 	public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
 		if (isAuthenticated) {
 			throw new IllegalArgumentException(
@@ -102,44 +84,4 @@ public class DingTalkTmpCodeAuthenticationToken extends AbstractAuthenticationTo
 		credentials = null;
 	}
 
-	public String getUnionid() {
-		return unionid;
-	}
-
-	public void setUnionid(String unionid) {
-		this.unionid = unionid;
-	}
-
-	public String getOpenid() {
-		return openid;
-	}
-
-	public void setOpenid(String openid) {
-		this.openid = openid;
-	}
-
-	public OapiUserGetResponse getUserInfo() {
-		return userInfo;
-	}
-
-	public void setUserInfo(OapiUserGetResponse userInfo) {
-		this.userInfo = userInfo;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
 }
