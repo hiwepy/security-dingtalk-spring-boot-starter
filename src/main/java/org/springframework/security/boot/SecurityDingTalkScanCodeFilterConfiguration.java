@@ -49,8 +49,8 @@ public class SecurityDingTalkScanCodeFilterConfiguration {
     @Configuration
     @ConditionalOnProperty(prefix = SecurityDingTalkProperties.PREFIX, value = "enabled", havingValue = "true")
     @EnableConfigurationProperties({ SecurityBizProperties.class, SecurityDingTalkProperties.class, SecurityDingTalkScanCodeAuthcProperties.class })
-    @Order(SecurityProperties.DEFAULT_FILTER_ORDER + 6)
-   	static class DingTalkTmpCodeWebSecurityConfigurerAdapter extends WebSecurityBizConfigurerAdapter {
+    @Order(SecurityProperties.DEFAULT_FILTER_ORDER + 7)
+   	static class DingTalkScanCodeWebSecurityConfigurerAdapter extends WebSecurityBizConfigurerAdapter {
     	
     	private final SecurityDingTalkScanCodeAuthcProperties authcProperties;
     	
@@ -62,7 +62,7 @@ public class SecurityDingTalkScanCodeFilterConfiguration {
     	private final RememberMeServices rememberMeServices;
 		private final SessionAuthenticationStrategy sessionAuthenticationStrategy;
    		
-   		public DingTalkTmpCodeWebSecurityConfigurerAdapter(
+   		public DingTalkScanCodeWebSecurityConfigurerAdapter(
    			
    				SecurityBizProperties bizProperties,
    				SecuritySessionMgtProperties sessionMgtProperties,

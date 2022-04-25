@@ -2,4 +2,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.springframework.security.boot.SecurityDingTalkAutoConfiguration,\
 org.springframework.security.boot.SecurityDingTalkMaFilterConfiguration,\
+org.springframework.security.boot.SecurityDingTalkScanCodeFilterConfiguration,\
 org.springframework.security.boot.SecurityDingTalkTmpCodeFilterConfiguration
