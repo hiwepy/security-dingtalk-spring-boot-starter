@@ -18,6 +18,10 @@ public class DingTalkScanCodeLoginRequest {
 	 */
 	protected String key;
 	/**
+	 * 	当前请求使用的token，用于绑定用户
+	 */
+	protected String token;
+	/**
 	 * 临时登录凭证code
 	 */
 	protected String loginTmpCode;
@@ -25,8 +29,10 @@ public class DingTalkScanCodeLoginRequest {
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	@JsonCreator
 	public DingTalkScanCodeLoginRequest(@JsonProperty("key") String key,
-									   @JsonProperty("loginTmpCode") String loginTmpCode) {
+										@JsonProperty("token") String token,
+									    @JsonProperty("loginTmpCode") String loginTmpCode) {
 		this.key = key;
+		this.token = token;
 		this.loginTmpCode = loginTmpCode;
 	}
 
@@ -36,6 +42,14 @@ public class DingTalkScanCodeLoginRequest {
 
 	public void setKey(String key) {
 		this.key = key;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 	public String getLoginTmpCode() {

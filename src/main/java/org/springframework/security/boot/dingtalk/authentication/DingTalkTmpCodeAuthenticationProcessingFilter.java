@@ -46,9 +46,11 @@ public class DingTalkTmpCodeAuthenticationProcessingFilter extends AbstractAuthe
 
 	protected MessageSourceAccessor messages = SpringSecurityBizMessageSource.getAccessor();
     public static final String SPRING_SECURITY_FORM_APP_KEY = "key";
+	public static final String SPRING_SECURITY_FORM_TOKEN_KEY = "token";
     public static final String SPRING_SECURITY_FORM_CODE_KEY = "code";
 
     private String keyParameter = SPRING_SECURITY_FORM_APP_KEY;
+	private String tokenParameter = SPRING_SECURITY_FORM_TOKEN_KEY;
     private String codeParameter = SPRING_SECURITY_FORM_CODE_KEY;
 
     private boolean postOnly = false;
@@ -103,7 +105,8 @@ public class DingTalkTmpCodeAuthenticationProcessingFilter extends AbstractAuthe
 			/**
 			 * 	应用的唯一标识key
 			 */
-			String appId = obtainKey(request);;
+			String appId = obtainKey(request);
+			String token = obtainToken(request);
 			String code = obtainCode(request);
 	        
 			if ( !StringUtils.hasText(appId)) {
@@ -115,7 +118,7 @@ public class DingTalkTmpCodeAuthenticationProcessingFilter extends AbstractAuthe
 				throw new DingTalkCodeNotFoundException("No Code found in request.");
 			}
 
-			DingTalkTmpCodeLoginRequest loginRequest = new DingTalkTmpCodeLoginRequest(appId, code);
+			DingTalkTmpCodeLoginRequest loginRequest = new DingTalkTmpCodeLoginRequest(appId, token, code);
 	        
 	        authRequest = this.authenticationToken( loginRequest);
 	        
@@ -132,7 +135,11 @@ public class DingTalkTmpCodeAuthenticationProcessingFilter extends AbstractAuthe
     protected String obtainKey(HttpServletRequest request) {
         return request.getParameter(keyParameter);
     }
-    
+
+	protected String obtainToken(HttpServletRequest request) {
+		return request.getParameter(tokenParameter);
+	}
+
     protected String obtainCode(HttpServletRequest request) {
         return request.getParameter(codeParameter);
     }
@@ -160,6 +167,14 @@ public class DingTalkTmpCodeAuthenticationProcessingFilter extends AbstractAuthe
 
 	public void setKeyParameter(String keyParameter) {
 		this.keyParameter = keyParameter;
+	}
+
+	public void setTokenParameter(String tokenParameter) {
+		this.tokenParameter = tokenParameter;
+	}
+
+	public String getTokenParameter() {
+		return tokenParameter;
 	}
 
 	public String getCodeParameter() {

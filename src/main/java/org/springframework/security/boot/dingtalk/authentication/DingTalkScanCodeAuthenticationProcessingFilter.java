@@ -42,9 +42,11 @@ public class DingTalkScanCodeAuthenticationProcessingFilter extends AbstractAuth
 
 	protected MessageSourceAccessor messages = SpringSecurityBizMessageSource.getAccessor();
     public static final String SPRING_SECURITY_FORM_APP_KEY = "key";
+	public static final String SPRING_SECURITY_FORM_TOKEN_KEY = "token";
     public static final String SPRING_SECURITY_FORM_TMPCODE_KEY = "loginTmpCode";
 
     private String keyParameter = SPRING_SECURITY_FORM_APP_KEY;
+	private String tokenParameter = SPRING_SECURITY_FORM_TOKEN_KEY;
     private String codeParameter = SPRING_SECURITY_FORM_TMPCODE_KEY;
     private boolean postOnly = false;
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -99,8 +101,9 @@ public class DingTalkScanCodeAuthenticationProcessingFilter extends AbstractAuth
 			 * 	应用的唯一标识key
 			 */
 			String appId = obtainKey(request);;
+			String token = obtainToken(request);
 			String loginTmpCode = obtainTmpCode(request);
-	        
+
 			if ( !StringUtils.hasText(appId)) {
 				logger.debug("No appId found in request.");
 				throw new DingTalkCodeNotFoundException("No appId found in request.");
@@ -110,7 +113,7 @@ public class DingTalkScanCodeAuthenticationProcessingFilter extends AbstractAuth
 				throw new DingTalkCodeNotFoundException("No loginTmpCode or Code found in request.");
 			}
 
-			DingTalkScanCodeLoginRequest loginRequest = new DingTalkScanCodeLoginRequest(appId, loginTmpCode);
+			DingTalkScanCodeLoginRequest loginRequest = new DingTalkScanCodeLoginRequest(appId, token, loginTmpCode);
 	        
 	        authRequest = this.authenticationToken( loginRequest);
 	        
@@ -127,10 +130,15 @@ public class DingTalkScanCodeAuthenticationProcessingFilter extends AbstractAuth
     protected String obtainKey(HttpServletRequest request) {
         return request.getParameter(keyParameter);
     }
-    
+
+	protected String obtainToken(HttpServletRequest request) {
+		return request.getParameter(tokenParameter);
+	}
+
     protected String obtainTmpCode(HttpServletRequest request) {
         return request.getParameter(codeParameter);
     }
+
 
     /**
 	 * Provided so that subclasses may configure what is put into the authentication
@@ -157,6 +165,13 @@ public class DingTalkScanCodeAuthenticationProcessingFilter extends AbstractAuth
 		this.keyParameter = keyParameter;
 	}
 
+	public void setTokenParameter(String tokenParameter) {
+		this.tokenParameter = tokenParameter;
+	}
+
+	public String getTokenParameter() {
+		return tokenParameter;
+	}
 
 	public String getCodeParameter() {
 		return codeParameter;

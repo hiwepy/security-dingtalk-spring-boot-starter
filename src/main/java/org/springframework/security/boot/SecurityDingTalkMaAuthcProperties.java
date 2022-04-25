@@ -28,6 +28,7 @@ import org.springframework.security.boot.dingtalk.authentication.DingTalkMaAuthe
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.security.boot.dingtalk.authentication.DingTalkTmpCodeAuthenticationProcessingFilter;
 
 @ConfigurationProperties(SecurityDingTalkMaAuthcProperties.PREFIX)
 @Getter
@@ -39,7 +40,9 @@ public class SecurityDingTalkMaAuthcProperties extends SecurityAuthcProperties {
 	
 	/** Authorization Path Pattern */
 	private String pathPattern = "/login/dingtalk/ma";
-	
+
+	private String tokenParameter = DingTalkMaAuthenticationProcessingFilter.SPRING_SECURITY_FORM_TOKEN_KEY;
+
 	/** the authCode parameter name. Defaults to "authCode". */
     private String authCodeParameter = DingTalkMaAuthenticationProcessingFilter.SPRING_SECURITY_FORM_CODE_KEY;
     

@@ -110,7 +110,8 @@ public class SecurityDingTalkMaFilterConfiguration {
 			map.from(authenticationManagerBean()).to(authenticationFilter::setAuthenticationManager);
 			map.from(authenticationSuccessHandler).to(authenticationFilter::setAuthenticationSuccessHandler);
 			map.from(authenticationFailureHandler).to(authenticationFilter::setAuthenticationFailureHandler);
-			
+
+			map.from(authcProperties.getTokenParameter()).to(authenticationFilter::setTokenParameter);
 			map.from(authcProperties.getAuthCodeParameter()).to(authenticationFilter::setAuthCodeParameter);
 			map.from(authcProperties.getPathPattern()).to(authenticationFilter::setFilterProcessesUrl);
 			map.from(authcProperties.isPostOnly()).to(authenticationFilter::setPostOnly);

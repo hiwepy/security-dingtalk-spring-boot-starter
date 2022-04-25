@@ -23,6 +23,7 @@ import org.springframework.security.boot.biz.property.SecurityHeaderCsrfProperti
 import org.springframework.security.boot.biz.property.SecurityHeadersProperties;
 import org.springframework.security.boot.biz.property.SecurityLogoutProperties;
 import org.springframework.security.boot.biz.property.SecurityRedirectProperties;
+import org.springframework.security.boot.dingtalk.authentication.DingTalkScanCodeAuthenticationProcessingFilter;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkTmpCodeAuthenticationProcessingFilter;
 
 import lombok.Getter;
@@ -39,7 +40,9 @@ public class SecurityDingTalkTmpCodeAuthcProperties extends SecurityAuthcPropert
 	
 	/** Authorization Path Pattern */
 	private String pathPattern = "/login/dingtalk/tmpcode";
-	
+
+	private String tokenParameter = DingTalkTmpCodeAuthenticationProcessingFilter.SPRING_SECURITY_FORM_TOKEN_KEY;
+
     /** the code parameter name. Defaults to "loginTmpCode". */
     private String codeParameter = DingTalkTmpCodeAuthenticationProcessingFilter.SPRING_SECURITY_FORM_CODE_KEY;
     

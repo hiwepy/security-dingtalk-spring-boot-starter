@@ -33,7 +33,9 @@ public class SecurityDingTalkScanCodeAuthcProperties extends SecurityAuthcProper
 	
 	/** Authorization Path Pattern */
 	private String pathPattern = "/login/dingtalk/scancode";
-	
+
+	private String tokenParameter = DingTalkScanCodeAuthenticationProcessingFilter.SPRING_SECURITY_FORM_TOKEN_KEY;
+
     /** the code parameter name. Defaults to "loginTmpCode". */
     private String tmpCodeParameter = DingTalkScanCodeAuthenticationProcessingFilter.SPRING_SECURITY_FORM_TMPCODE_KEY;
     

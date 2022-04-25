@@ -38,9 +38,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class DingTalkMaAuthenticationProcessingFilter extends PostOnlyAuthenticationProcessingFilter {
 
     public static final String SPRING_SECURITY_FORM_APP_KEY = "key";
+	public static final String SPRING_SECURITY_FORM_TOKEN_KEY = "token";
     public static final String SPRING_SECURITY_FORM_CODE_KEY = "authCode";
     
     private String keyParameter = SPRING_SECURITY_FORM_APP_KEY;
+	private String tokenParameter = SPRING_SECURITY_FORM_TOKEN_KEY;
     private String authCodeParameter = SPRING_SECURITY_FORM_CODE_KEY;
     
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -86,7 +88,8 @@ public class DingTalkMaAuthenticationProcessingFilter extends PostOnlyAuthentica
 			/**
 			 * 	应用的唯一标识key
 			 */
-			String appId = obtainKey(request);;
+			String appId = obtainKey(request);
+			String token = obtainToken(request);
 			String authCode = obtainAuthCode(request);
 	        
 			if ( !StringUtils.hasText(appId)) {
@@ -98,7 +101,7 @@ public class DingTalkMaAuthenticationProcessingFilter extends PostOnlyAuthentica
 				throw new DingTalkCodeNotFoundException("No authCode found in request.");
 			}
 	        
-			DingTalkMaLoginRequest loginRequest = new DingTalkMaLoginRequest(appId, authCode);
+			DingTalkMaLoginRequest loginRequest = new DingTalkMaLoginRequest(appId, token, authCode);
 	        
 	        authRequest = this.authenticationToken( loginRequest);
 	        
@@ -115,6 +118,10 @@ public class DingTalkMaAuthenticationProcessingFilter extends PostOnlyAuthentica
     protected String obtainKey(HttpServletRequest request) {
         return request.getParameter(keyParameter);
     }
+
+	protected String obtainToken(HttpServletRequest request) {
+		return request.getParameter(tokenParameter);
+	}
 
     protected String obtainAuthCode(HttpServletRequest request) {
         return request.getParameter(authCodeParameter);
@@ -144,6 +151,14 @@ public class DingTalkMaAuthenticationProcessingFilter extends PostOnlyAuthentica
 
 	public void setKeyParameter(String keyParameter) {
 		this.keyParameter = keyParameter;
+	}
+
+	public void setTokenParameter(String tokenParameter) {
+		this.tokenParameter = tokenParameter;
+	}
+
+	public String getTokenParameter() {
+		return tokenParameter;
 	}
 
 	public String getAuthCodeParameter() {
