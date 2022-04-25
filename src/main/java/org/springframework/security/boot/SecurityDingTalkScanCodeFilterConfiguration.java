@@ -49,7 +49,7 @@ public class SecurityDingTalkScanCodeFilterConfiguration {
     @Configuration
     @ConditionalOnProperty(prefix = SecurityDingTalkProperties.PREFIX, value = "enabled", havingValue = "true")
     @EnableConfigurationProperties({ SecurityBizProperties.class, SecurityDingTalkProperties.class, SecurityDingTalkScanCodeAuthcProperties.class })
-    @Order(SecurityProperties.DEFAULT_FILTER_ORDER + 7)
+    @Order(SecurityProperties.DEFAULT_FILTER_ORDER + 12)
    	static class DingTalkScanCodeWebSecurityConfigurerAdapter extends WebSecurityBizConfigurerAdapter {
     	
     	private final SecurityDingTalkScanCodeAuthcProperties authcProperties;

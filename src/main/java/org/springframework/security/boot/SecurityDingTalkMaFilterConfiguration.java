@@ -50,7 +50,7 @@ public class SecurityDingTalkMaFilterConfiguration {
     @Configuration
     @ConditionalOnProperty(prefix = SecurityDingTalkProperties.PREFIX, value = "enabled", havingValue = "true")
     @EnableConfigurationProperties({ SecurityBizProperties.class, SecuritySessionMgtProperties.class, SecurityDingTalkProperties.class, SecurityDingTalkMaAuthcProperties.class })
-    @Order(SecurityProperties.DEFAULT_FILTER_ORDER + 5)
+    @Order(SecurityProperties.DEFAULT_FILTER_ORDER + 11)
    	static class DingTalkMaWebSecurityConfigurerAdapter extends WebSecurityBizConfigurerAdapter {
     	
     	private final SecurityDingTalkMaAuthcProperties authcProperties;
