@@ -14,7 +14,7 @@ public class DingTalkMaLoginRequest {
 	/**
 	 * 临时登录凭证code
 	 */
-	protected String code;
+	protected String authCode;
 	/**
 	 * Access Token
 	 */
@@ -23,9 +23,9 @@ public class DingTalkMaLoginRequest {
 	@JsonIgnoreProperties(ignoreUnknown = true)
     @JsonCreator
     public DingTalkMaLoginRequest(@JsonProperty("key") String key,
-    		@JsonProperty("code") String code) {
+    		@JsonProperty("authCode") String authCode) {
         this.key = key;
-        this.code = code;
+        this.authCode = authCode;
     }
 
 	public String getKey() {
@@ -36,12 +36,12 @@ public class DingTalkMaLoginRequest {
 		this.key = key;
 	}
 
-	public String getCode() {
-		return code;
+	public String getAuthCode() {
+		return authCode;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setAuthCode(String authCode) {
+		this.authCode = authCode;
 	}
 
 	public String getAccessToken() {

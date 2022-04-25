@@ -40,8 +40,8 @@ public class SecurityDingTalkMaAuthcProperties extends SecurityAuthcProperties {
 	/** Authorization Path Pattern */
 	private String pathPattern = "/login/dingtalk/ma";
 	
-	/** the code parameter name. Defaults to "code". */
-    private String codeParameter = DingTalkMaAuthenticationProcessingFilter.SPRING_SECURITY_FORM_APP_KEY;
+	/** the authCode parameter name. Defaults to "authCode". */
+    private String authCodeParameter = DingTalkMaAuthenticationProcessingFilter.SPRING_SECURITY_FORM_CODE_KEY;
     
     @NestedConfigurationProperty
 	private SecurityHeaderCorsProperties cros = new SecurityHeaderCorsProperties();

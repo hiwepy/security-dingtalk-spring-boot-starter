@@ -56,9 +56,9 @@ public class DingTalkMaAuthenticationProvider implements AuthenticationProvider,
  
     	DingTalkMaLoginRequest loginRequest = (DingTalkMaLoginRequest) authentication.getPrincipal();
 
-    	if (!StringUtils.hasText(loginRequest.getCode())) {
-			logger.debug("No Code found in request.");
-			throw new DingTalkCodeNotFoundException("No Code found in request.");
+    	if (!StringUtils.hasText(loginRequest.getAuthCode())) {
+			logger.debug("No authCode found in request.");
+			throw new DingTalkCodeNotFoundException("No authCode found in request.");
 		}
 
 		if(!dingTalkTemplate.hasAppKey(loginRequest.getKey())) {
@@ -68,7 +68,7 @@ public class DingTalkMaAuthenticationProvider implements AuthenticationProvider,
 
 		DingTalkMaAuthenticationToken dingTalkToken = (DingTalkMaAuthenticationToken) authentication;
 		try {
-			if (StringUtils.hasText(loginRequest.getCode())) {
+			if (StringUtils.hasText(loginRequest.getAuthCode())) {
 
 				String appKey = loginRequest.getKey();
 				String appSecret = dingTalkTemplate.getAppSecret(loginRequest.getKey());

@@ -32,13 +32,16 @@ import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * https://open.dingtalk.com/document/orgapp-client/mini-program-free-login
+ */
 public class DingTalkMaAuthenticationProcessingFilter extends PostOnlyAuthenticationProcessingFilter {
 
     public static final String SPRING_SECURITY_FORM_APP_KEY = "key";
-    public static final String SPRING_SECURITY_FORM_CODE_KEY = "code";
+    public static final String SPRING_SECURITY_FORM_CODE_KEY = "authCode";
     
     private String keyParameter = SPRING_SECURITY_FORM_APP_KEY;
-    private String codeParameter = SPRING_SECURITY_FORM_CODE_KEY;
+    private String authCodeParameter = SPRING_SECURITY_FORM_CODE_KEY;
     
     private ObjectMapper objectMapper = new ObjectMapper();
     
@@ -71,9 +74,9 @@ public class DingTalkMaAuthenticationProcessingFilter extends PostOnlyAuthentica
 				logger.debug("No key (appId or appKey) found in request.");
 				throw new DingTalkCodeNotFoundException("No key (appId or appKey) found in request.");
 			}
-			if ( !StringUtils.hasText(loginRequest.getCode())) {
-				logger.debug("No Code found in request.");
-				throw new DingTalkCodeNotFoundException("No Code found in request.");
+			if ( !StringUtils.hasText(loginRequest.getAuthCode())) {
+				logger.debug("No AuthCode found in request.");
+				throw new DingTalkCodeNotFoundException("No AuthCode found in request.");
 			}
 			
 			authRequest = this.authenticationToken( loginRequest );
@@ -84,18 +87,18 @@ public class DingTalkMaAuthenticationProcessingFilter extends PostOnlyAuthentica
 			 * 	应用的唯一标识key
 			 */
 			String appId = obtainKey(request);;
-			String code = obtainCode(request);
+			String authCode = obtainAuthCode(request);
 	        
 			if ( !StringUtils.hasText(appId)) {
 				logger.debug("No appId found in request.");
 				throw new DingTalkCodeNotFoundException("No appId found in request.");
 			}
-			if ( !StringUtils.hasText(code)) {
-				logger.debug("No Code found in request.");
-				throw new DingTalkCodeNotFoundException("No Code found in request.");
+			if ( !StringUtils.hasText(authCode)) {
+				logger.debug("No authCode found in request.");
+				throw new DingTalkCodeNotFoundException("No authCode found in request.");
 			}
 	        
-			DingTalkMaLoginRequest loginRequest = new DingTalkMaLoginRequest(appId, code);
+			DingTalkMaLoginRequest loginRequest = new DingTalkMaLoginRequest(appId, authCode);
 	        
 	        authRequest = this.authenticationToken( loginRequest);
 	        
@@ -113,8 +116,8 @@ public class DingTalkMaAuthenticationProcessingFilter extends PostOnlyAuthentica
         return request.getParameter(keyParameter);
     }
 
-    protected String obtainCode(HttpServletRequest request) {
-        return request.getParameter(codeParameter);
+    protected String obtainAuthCode(HttpServletRequest request) {
+        return request.getParameter(authCodeParameter);
     }
 
     /**
@@ -125,8 +128,9 @@ public class DingTalkMaAuthenticationProcessingFilter extends PostOnlyAuthentica
 	 * @param authRequest the authentication request object that should have its details
 	 * set
 	 */
+	@Override
 	protected void setDetails(HttpServletRequest request,
-			AbstractAuthenticationToken authRequest) {
+							  AbstractAuthenticationToken authRequest) {
 		authRequest.setDetails(authenticationDetailsSource.buildDetails(request));
 	}
 	
@@ -142,12 +146,12 @@ public class DingTalkMaAuthenticationProcessingFilter extends PostOnlyAuthentica
 		this.keyParameter = keyParameter;
 	}
 
-	public String getCodeParameter() {
-		return codeParameter;
+	public String getAuthCodeParameter() {
+		return authCodeParameter;
 	}
 
-	public void setCodeParameter(String codeParameter) {
-		this.codeParameter = codeParameter;
+	public void setAuthCodeParameter(String authCodeParameter) {
+		this.authCodeParameter = authCodeParameter;
 	}
 
 }
