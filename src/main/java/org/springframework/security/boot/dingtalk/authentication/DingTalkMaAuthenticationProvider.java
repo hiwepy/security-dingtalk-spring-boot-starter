@@ -1,5 +1,6 @@
 package org.springframework.security.boot.dingtalk.authentication;
 
+import com.taobao.api.ApiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -7,6 +8,7 @@ import org.springframework.security.authentication.AccountStatusUserDetailsCheck
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.boot.biz.userdetails.SecurityPrincipal;
 import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapter;
+import org.springframework.security.boot.dingtalk.exception.DingTalkAuthenticationServiceException;
 import org.springframework.security.boot.dingtalk.exception.DingTalkCodeNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -65,6 +67,18 @@ public class DingTalkMaAuthenticationProvider implements AuthenticationProvider,
 		}
 
 		DingTalkMaAuthenticationToken dingTalkToken = (DingTalkMaAuthenticationToken) authentication;
+		try {
+			if (StringUtils.hasText(loginRequest.getCode())) {
+
+				String appKey = loginRequest.getKey();
+				String appSecret = dingTalkTemplate.getAppSecret(loginRequest.getKey());
+				// 获取access_token
+				String accessToken = dingTalkTemplate.getAccessToken(appKey, appSecret);
+				loginRequest.setAccessToken(accessToken);
+			}
+		} catch (ApiException e) {
+			throw new DingTalkAuthenticationServiceException(e.getErrMsg(), e);
+		}
 
 		UserDetails ud = getUserDetailsService().loadUserDetails(dingTalkToken);
 
