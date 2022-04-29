@@ -16,6 +16,7 @@
 package org.springframework.security.boot.dingtalk.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.boot.biz.SpringSecurityBizMessageSource;
@@ -38,6 +39,7 @@ import java.io.IOException;
  * 扫码登录第三方网站: https://open.dingtalk.com/document/orgapp-server/scan-qr-code-to-log-on-to-third-party-websites
  * @author 		： <a href="https://github.com/hiwepy">wandl</a>
  */
+@Slf4j
 public class DingTalkScanCodeAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
 
 	protected MessageSourceAccessor messages = SpringSecurityBizMessageSource.getAccessor();
@@ -66,37 +68,37 @@ public class DingTalkScanCodeAuthenticationProcessingFilter extends AbstractAuth
             throws AuthenticationException, IOException, ServletException {
 
         if (isPostOnly() && !WebUtils.isPostRequest(request) ) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Authentication method not supported. Request method: " + request.getMethod());
+			if (log.isDebugEnabled()) {
+				log.debug("Authentication method not supported. Request method: " + request.getMethod());
 			}
-			throw new AuthenticationMethodNotSupportedException(messages.getMessage(AuthResponseCode.SC_AUTHC_METHOD_NOT_ALLOWED.getMsgKey(), new Object[] { request.getMethod() }, 
+			throw new AuthenticationMethodNotSupportedException(messages.getMessage(AuthResponseCode.SC_AUTHC_METHOD_NOT_ALLOWED.getMsgKey(), new Object[] { request.getMethod() },
 					"Authentication method not supported. Request method:" + request.getMethod()));
 		}
-        
+
         AbstractAuthenticationToken authRequest;
-        
+
         // Post && JSON
 		if(WebUtils.isObjectRequest(request)) {
-			
-			if (logger.isDebugEnabled()) {
-				logger.debug("Post && JSON");
+
+			if (log.isDebugEnabled()) {
+				log.debug("Post && JSON");
 			}
 
 			DingTalkScanCodeLoginRequest loginRequest = objectMapper.readValue(request.getReader(), DingTalkScanCodeLoginRequest.class);
-			
+
 			if ( !StringUtils.hasText(loginRequest.getKey())) {
-				logger.debug("No key (appId or appKey) found in request.");
+				log.debug("No key (appId or appKey) found in request.");
 				throw new DingTalkCodeNotFoundException("No key (appId or appKey) found in request.");
 			}
 			if (!StringUtils.hasText(loginRequest.getLoginTmpCode())) {
-				logger.debug("No loginTmpCode or Code found in request.");
+				log.debug("No loginTmpCode or Code found in request.");
 				throw new DingTalkCodeNotFoundException("No loginTmpCode or Code found in request.");
 			}
-			
+
 			authRequest = this.authenticationToken( loginRequest );
-			
+
 		} else {
-			
+
 			/**
 			 * 	应用的唯一标识key
 			 */
@@ -105,20 +107,20 @@ public class DingTalkScanCodeAuthenticationProcessingFilter extends AbstractAuth
 			String loginTmpCode = obtainTmpCode(request);
 
 			if ( !StringUtils.hasText(appId)) {
-				logger.debug("No appId found in request.");
+				log.debug("No appId found in request.");
 				throw new DingTalkCodeNotFoundException("No appId found in request.");
 			}
 			if ( !StringUtils.hasText(loginTmpCode)) {
-				logger.debug("No loginTmpCode or Code found in request.");
+				log.debug("No loginTmpCode or Code found in request.");
 				throw new DingTalkCodeNotFoundException("No loginTmpCode or Code found in request.");
 			}
 
 			DingTalkScanCodeLoginRequest loginRequest = new DingTalkScanCodeLoginRequest(appId, token, loginTmpCode);
-	        
+
 	        authRequest = this.authenticationToken( loginRequest);
-	        
+
 		}
-        
+
 
 		// Allow subclasses to set the "details" property
 		setDetails(request, authRequest);
@@ -152,11 +154,11 @@ public class DingTalkScanCodeAuthenticationProcessingFilter extends AbstractAuth
 			AbstractAuthenticationToken authRequest) {
 		authRequest.setDetails(authenticationDetailsSource.buildDetails(request));
 	}
-	
+
 	protected AbstractAuthenticationToken authenticationToken(DingTalkScanCodeLoginRequest loginRequest) {
 		return new DingTalkScanCodeAuthenticationToken(loginRequest);
 	}
-	
+
 	public String getKeyParameter() {
 		return keyParameter;
 	}

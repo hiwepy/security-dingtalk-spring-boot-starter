@@ -1,6 +1,7 @@
 package org.springframework.security.boot.dingtalk.authentication;
 
 import com.taobao.api.ApiException;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -19,13 +20,13 @@ import org.springframework.util.StringUtils;
 
 import com.dingtalk.spring.boot.DingTalkTemplate;
 
+@Slf4j
 public class DingTalkMaAuthenticationProvider implements AuthenticationProvider, InitializingBean {
-	
+
 	private UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
-	private final Logger logger = LoggerFactory.getLogger(getClass());
     private final UserDetailsServiceAdapter userDetailsService;
     private final DingTalkTemplate dingTalkTemplate;
-    
+
     public DingTalkMaAuthenticationProvider(final UserDetailsServiceAdapter userDetailsService,
     		final DingTalkTemplate dingTalkTemplate) {
         this.userDetailsService = userDetailsService;
@@ -34,11 +35,11 @@ public class DingTalkMaAuthenticationProvider implements AuthenticationProvider,
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		
+
 	}
-    
+
     /**
-     * 
+     *
      * <p>完成匹配Token的认证，这里返回的对象最终会通过：SecurityContextHolder.getContext().setAuthentication(authResult); 放置在上下文中</p>
      * @author 		：<a href="https://github.com/hiwepy">wandl</a>
      * @param authentication  {@link DingTalkMaAuthenticationToken IdentityCodeAuthenticationToken} 对象
@@ -47,22 +48,22 @@ public class DingTalkMaAuthenticationProvider implements AuthenticationProvider,
      */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        
+
     	Assert.notNull(authentication, "No authentication data provided");
-    	
-    	if (logger.isDebugEnabled()) {
-			logger.debug("Processing authentication request : " + authentication);
+
+    	if (log.isDebugEnabled()) {
+			log.debug("Processing authentication request : " + authentication);
 		}
- 
+
     	DingTalkMaLoginRequest loginRequest = (DingTalkMaLoginRequest) authentication.getPrincipal();
 
     	if (!StringUtils.hasText(loginRequest.getAuthCode())) {
-			logger.debug("No authCode found in request.");
+			log.debug("No authCode found in request.");
 			throw new DingTalkCodeNotFoundException("No authCode found in request.");
 		}
 
 		if(!dingTalkTemplate.hasAppKey(loginRequest.getKey())) {
-			logger.debug("Invalid App Key {} .", loginRequest.getKey());
+			log.debug("Invalid App Key {} .", loginRequest.getKey());
 			throw new DingTalkCodeNotFoundException("Invalid App Key.");
 		}
 
@@ -95,7 +96,7 @@ public class DingTalkMaAuthenticationProvider implements AuthenticationProvider,
 
 		return authenticationToken;
     }
-    
+
     @Override
     public boolean supports(Class<?> authentication) {
         return (DingTalkMaAuthenticationToken.class.isAssignableFrom(authentication));
@@ -112,5 +113,5 @@ public class DingTalkMaAuthenticationProvider implements AuthenticationProvider,
 	public UserDetailsServiceAdapter getUserDetailsService() {
 		return userDetailsService;
 	}
-    
+
 }
