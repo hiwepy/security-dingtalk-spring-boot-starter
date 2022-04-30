@@ -20,6 +20,7 @@ security dingtalk starter for spring boot
 </dependency>
 ```
 
+
 ##### 2、在`application.yml`文件中增加如下配置
 
 ```yaml
