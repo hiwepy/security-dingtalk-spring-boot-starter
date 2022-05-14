@@ -13,7 +13,7 @@
 	<groupId>com.github.hiwepy</groupId>
 	<artifactId>security-dingtalk-spring-boot-starter</artifactId>
 	<description>Spring Boot Starter For Spring Security With DingTalk </description>
-	<version>1.0.4-SNAPSHOT</version>
+	<version>1.0.4.RELEASE</version>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<url>https://github.com/hiwepy/${project.artifactId}</url>
 	<packaging>jar</packaging>
@@ -372,7 +372,7 @@
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
 		<maven-nexus-staging-plugin.version>1.6.8</maven-nexus-staging-plugin.version>
 		<spring-security-biz.version>1.1.0.RELEASE</spring-security-biz.version>
-		<spring-boot-starter-dingtalk.version>1.0.8.RELEASE</spring-boot-starter-dingtalk.version>
+		<spring-boot-starter-dingtalk.version>1.0.9.RELEASE</spring-boot-starter-dingtalk.version>
 	</properties>
 
 	<dependencyManagement>
