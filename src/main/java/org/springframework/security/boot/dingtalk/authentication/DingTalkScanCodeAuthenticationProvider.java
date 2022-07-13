@@ -70,13 +70,13 @@ public class DingTalkScanCodeAuthenticationProvider implements AuthenticationPro
 		
 		try {
 
-			if(!dingTalkTemplate.hasAppKey(loginRequest.getKey())) {
+			if(!dingTalkTemplate.hasAppKey(loginRequest.getCorpId(), loginRequest.getKey())) {
 				logger.debug("Invalid App Key {} .", loginRequest.getKey());
 				throw new DingTalkCodeNotFoundException("Invalid App Key.");
 			}
 			
 			String appKey = loginRequest.getKey();
-			String appSecret = dingTalkTemplate.getAppSecret(loginRequest.getKey());
+			String appSecret = dingTalkTemplate.getAppSecret(loginRequest.getCorpId(), loginRequest.getKey());
 			
 			DingTalkScanCodeAuthenticationToken dingTalkToken = (DingTalkScanCodeAuthenticationToken) authentication;
 			

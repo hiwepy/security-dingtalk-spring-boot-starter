@@ -37,10 +37,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class DingTalkMaAuthenticationProcessingFilter extends PostOnlyAuthenticationProcessingFilter {
 
+	public static final String SPRING_SECURITY_FORM_CROPID_KEY = "cropId";
     public static final String SPRING_SECURITY_FORM_APP_KEY = "key";
 	public static final String SPRING_SECURITY_FORM_TOKEN_KEY = "token";
     public static final String SPRING_SECURITY_FORM_CODE_KEY = "authCode";
-    
+
+	private String cropIdParameter = SPRING_SECURITY_FORM_CROPID_KEY;
     private String keyParameter = SPRING_SECURITY_FORM_APP_KEY;
 	private String tokenParameter = SPRING_SECURITY_FORM_TOKEN_KEY;
     private String authCodeParameter = SPRING_SECURITY_FORM_CODE_KEY;
@@ -85,9 +87,7 @@ public class DingTalkMaAuthenticationProcessingFilter extends PostOnlyAuthentica
 			
 		} else {
 			
-			/**
-			 * 	应用的唯一标识key
-			 */
+			String corpId = obtainCropId(request);
 			String appId = obtainKey(request);
 			String token = obtainToken(request);
 			String authCode = obtainAuthCode(request);
@@ -101,7 +101,7 @@ public class DingTalkMaAuthenticationProcessingFilter extends PostOnlyAuthentica
 				throw new DingTalkCodeNotFoundException("No authCode found in request.");
 			}
 	        
-			DingTalkMaLoginRequest loginRequest = new DingTalkMaLoginRequest(appId, token, authCode);
+			DingTalkMaLoginRequest loginRequest = new DingTalkMaLoginRequest(corpId, appId, token, authCode);
 	        
 	        authRequest = this.authenticationToken( loginRequest);
 	        
@@ -114,6 +114,10 @@ public class DingTalkMaAuthenticationProcessingFilter extends PostOnlyAuthentica
 		return this.getAuthenticationManager().authenticate(authRequest);
 
     }
+
+	protected String obtainCropId(HttpServletRequest request) {
+		return request.getParameter(cropIdParameter);
+	}
 
     protected String obtainKey(HttpServletRequest request) {
         return request.getParameter(keyParameter);
@@ -144,7 +148,15 @@ public class DingTalkMaAuthenticationProcessingFilter extends PostOnlyAuthentica
 	protected AbstractAuthenticationToken authenticationToken(DingTalkMaLoginRequest loginRequest) {
 		return new DingTalkMaAuthenticationToken(loginRequest);
 	}
-	
+
+	public String getCropIdParameter() {
+		return cropIdParameter;
+	}
+
+	public void setCropIdParameter(String cropIdParameter) {
+		this.cropIdParameter = cropIdParameter;
+	}
+
 	public String getKeyParameter() {
 		return keyParameter;
 	}

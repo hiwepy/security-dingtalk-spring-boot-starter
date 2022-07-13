@@ -71,7 +71,7 @@ public class DingTalkTmpCodeAuthenticationProvider implements AuthenticationProv
 		}
 		
 
-		if(!dingTalkTemplate.hasAppKey(loginRequest.getKey())) {
+		if(!dingTalkTemplate.hasAppKey(loginRequest.getCorpId(), loginRequest.getKey())) {
 			logger.debug("Invalid App Key {} .", loginRequest.getKey());
 			throw new DingTalkCodeNotFoundException("Invalid App Key.");
 		}
@@ -81,7 +81,7 @@ public class DingTalkTmpCodeAuthenticationProvider implements AuthenticationProv
 			if (StringUtils.hasText(loginRequest.getCode())) {
 
 				String appKey = loginRequest.getKey();
-				String appSecret = dingTalkTemplate.getAppSecret(loginRequest.getKey());
+				String appSecret = dingTalkTemplate.getAppSecret(loginRequest.getCorpId(), loginRequest.getKey());
 				// 获取access_token
 				String accessToken = dingTalkTemplate.getAccessToken(appKey, appSecret);
 				loginRequest.setAccessToken(accessToken);

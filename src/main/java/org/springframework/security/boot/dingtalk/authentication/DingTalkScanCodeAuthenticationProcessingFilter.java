@@ -43,10 +43,12 @@ import java.io.IOException;
 public class DingTalkScanCodeAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
 
 	protected MessageSourceAccessor messages = SpringSecurityBizMessageSource.getAccessor();
+	public static final String SPRING_SECURITY_FORM_CROPID_KEY = "cropId";
     public static final String SPRING_SECURITY_FORM_APP_KEY = "key";
 	public static final String SPRING_SECURITY_FORM_TOKEN_KEY = "token";
     public static final String SPRING_SECURITY_FORM_TMPCODE_KEY = "loginTmpCode";
 
+	private String cropIdParameter = SPRING_SECURITY_FORM_CROPID_KEY;
     private String keyParameter = SPRING_SECURITY_FORM_APP_KEY;
 	private String tokenParameter = SPRING_SECURITY_FORM_TOKEN_KEY;
     private String codeParameter = SPRING_SECURITY_FORM_TMPCODE_KEY;
@@ -99,9 +101,8 @@ public class DingTalkScanCodeAuthenticationProcessingFilter extends AbstractAuth
 
 		} else {
 
-			/**
-			 * 	应用的唯一标识key
-			 */
+
+			String corpId = obtainCropId(request);
 			String appId = obtainKey(request);;
 			String token = obtainToken(request);
 			String loginTmpCode = obtainTmpCode(request);
@@ -115,7 +116,7 @@ public class DingTalkScanCodeAuthenticationProcessingFilter extends AbstractAuth
 				throw new DingTalkCodeNotFoundException("No loginTmpCode or Code found in request.");
 			}
 
-			DingTalkScanCodeLoginRequest loginRequest = new DingTalkScanCodeLoginRequest(appId, token, loginTmpCode);
+			DingTalkScanCodeLoginRequest loginRequest = new DingTalkScanCodeLoginRequest(corpId, appId, token, loginTmpCode);
 
 	        authRequest = this.authenticationToken( loginRequest);
 
@@ -128,6 +129,10 @@ public class DingTalkScanCodeAuthenticationProcessingFilter extends AbstractAuth
 		return this.getAuthenticationManager().authenticate(authRequest);
 
     }
+
+	protected String obtainCropId(HttpServletRequest request) {
+		return request.getParameter(cropIdParameter);
+	}
 
     protected String obtainKey(HttpServletRequest request) {
         return request.getParameter(keyParameter);
@@ -157,6 +162,14 @@ public class DingTalkScanCodeAuthenticationProcessingFilter extends AbstractAuth
 
 	protected AbstractAuthenticationToken authenticationToken(DingTalkScanCodeLoginRequest loginRequest) {
 		return new DingTalkScanCodeAuthenticationToken(loginRequest);
+	}
+
+	public String getCropIdParameter() {
+		return cropIdParameter;
+	}
+
+	public void setCropIdParameter(String cropIdParameter) {
+		this.cropIdParameter = cropIdParameter;
 	}
 
 	public String getKeyParameter() {

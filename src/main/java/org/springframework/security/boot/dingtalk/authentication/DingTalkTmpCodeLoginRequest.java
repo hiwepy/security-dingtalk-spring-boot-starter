@@ -11,7 +11,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DingTalkTmpCodeLoginRequest {
-	
+
+	/**
+	 * 	企业的corpid
+	 */
+	protected String corpId;
 	/**
 	 * 	应用的唯一标识key
 	 */
@@ -31,13 +35,23 @@ public class DingTalkTmpCodeLoginRequest {
     
 	@JsonIgnoreProperties(ignoreUnknown = true)
     @JsonCreator
-    public DingTalkTmpCodeLoginRequest(@JsonProperty("key") String key,
+    public DingTalkTmpCodeLoginRequest(@JsonProperty("corpId") String corpId,
+									   @JsonProperty("key") String key,
 									   @JsonProperty("token") String token,
 									   @JsonProperty("code") String code) {
-        this.key = key;
+        this.corpId = corpId;
+		this.key = key;
 		this.token = token;
 		this.code = code;
     }
+
+	public String getCorpId() {
+		return corpId;
+	}
+
+	public void setCorpId(String corpId) {
+		this.corpId = corpId;
+	}
 
 	public String getKey() {
 		return key;
