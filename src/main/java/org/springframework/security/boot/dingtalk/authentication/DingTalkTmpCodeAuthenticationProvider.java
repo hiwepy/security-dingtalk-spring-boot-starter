@@ -71,7 +71,7 @@ public class DingTalkTmpCodeAuthenticationProvider implements AuthenticationProv
 		}
 		
 
-		if(!dingTalkTemplate.hasAppKey(loginRequest.getCorpId(), loginRequest.getKey())) {
+		if(!dingTalkTemplate.hasAppKey(loginRequest.getKey())) {
 			logger.debug("Invalid App Key {} .", loginRequest.getKey());
 			throw new DingTalkCodeNotFoundException("Invalid App Key.");
 		}

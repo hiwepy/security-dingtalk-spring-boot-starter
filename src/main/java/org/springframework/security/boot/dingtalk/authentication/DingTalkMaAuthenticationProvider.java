@@ -62,7 +62,7 @@ public class DingTalkMaAuthenticationProvider implements AuthenticationProvider,
 			throw new DingTalkCodeNotFoundException("No authCode found in request.");
 		}
 
-		if(!dingTalkTemplate.hasAppKey(loginRequest.getCorpId(), loginRequest.getKey())) {
+		if(!dingTalkTemplate.hasAppKey(loginRequest.getKey())) {
 			log.debug("Invalid App Key {} .", loginRequest.getKey());
 			throw new DingTalkCodeNotFoundException("Invalid App Key.");
 		}
