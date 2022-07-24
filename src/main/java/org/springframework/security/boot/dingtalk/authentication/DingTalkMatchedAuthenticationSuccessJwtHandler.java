@@ -42,21 +42,21 @@ public class DingTalkMatchedAuthenticationSuccessJwtHandler implements MatchedAu
 	protected MessageSourceAccessor messages = SpringSecurityBizMessageSource.getAccessor();
 	private JwtPayloadRepository payloadRepository;
 	private boolean checkExpiry = false;
-	
+
 	public DingTalkMatchedAuthenticationSuccessJwtHandler(JwtPayloadRepository payloadRepository) {
 		this.setPayloadRepository(payloadRepository);
 	}
-	
+
 	@Override
 	public boolean supports(Authentication authentication) {
 		return SubjectUtils.isAssignableFrom(authentication.getClass(), DingTalkMaAuthenticationToken.class
 				, DingTalkScanCodeAuthenticationToken.class, DingTalkTmpCodeAuthenticationToken.class);
 	}
-	
+
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
-		
+
 		// 设置状态码和响应头
 		response.setStatus(HttpStatus.OK.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -65,7 +65,7 @@ public class DingTalkMatchedAuthenticationSuccessJwtHandler implements MatchedAu
 		String message = messages.getMessage(AuthResponseCode.SC_AUTHC_SUCCESS.getMsgKey());
 		// 写出JSON
 		UserProfilePayload profilePayload = getPayloadRepository().getProfilePayload((AbstractAuthenticationToken) authentication, isCheckExpiry());
-		JSONObject.writeJSONString(response.getWriter(), AuthResponse.success(message, profilePayload));
+		JSONObject.writeJSONString(response.getOutputStream(), AuthResponse.success(message, profilePayload));
 
 	}
 

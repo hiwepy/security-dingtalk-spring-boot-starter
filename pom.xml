@@ -361,9 +361,8 @@
 		<commons-io.version>2.11.0</commons-io.version>
 		<dingtalk-sdk.version>2.0.0</dingtalk-sdk.version>
 		<guava.version>31.0.1-jre</guava.version>
-		<fastjson.version>1.2.79</fastjson.version>
 		<json-smart.version>2.4.8</json-smart.version>
-		<jwt-issuer.version>1.0.6.RELEASE</jwt-issuer.version>
+		<jwt-issuer.version>1.0.7.RELEASE</jwt-issuer.version>
 		<maven.version>3.0</maven.version>
        	<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
@@ -371,8 +370,8 @@
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
 		<maven-nexus-staging-plugin.version>1.6.8</maven-nexus-staging-plugin.version>
-		<spring-security-biz.version>1.1.0.RELEASE</spring-security-biz.version>
-		<spring-boot-starter-dingtalk.version>1.1.0-SNAPSHOT</spring-boot-starter-dingtalk.version>
+		<spring-security-biz.version>1.1.3.RELEASE</spring-security-biz.version>
+		<spring-boot-starter-dingtalk.version>1.1.0.RELEASE</spring-boot-starter-dingtalk.version>
 	</properties>
 
 	<dependencyManagement>
@@ -398,12 +397,6 @@
 			    <version>${guava.version}</version>
 			</dependency>
 
-			<!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
-			<dependency>
-			    <groupId>com.alibaba</groupId>
-			    <artifactId>fastjson</artifactId>
-			    <version>${fastjson.version}</version>
-			</dependency>
 			<dependency>
 				<groupId>com.github.hiwepy</groupId>
 				<artifactId>jwt-issuer-api</artifactId>
@@ -508,12 +501,6 @@
 		<dependency>
 			<groupId>com.github.hiwepy</groupId>
 			<artifactId>security-biz-spring-boot-starter</artifactId>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
-		<dependency>
-		    <groupId>com.alibaba</groupId>
-		    <artifactId>fastjson</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.hiwepy</groupId>
