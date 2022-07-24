@@ -16,7 +16,7 @@ security dingtalk starter for spring boot
 <dependency>
 	<groupId>com.github.hiwepy</groupId>
 	<artifactId>security-dingtalk-spring-boot-starter</artifactId>
-	<version>${project.version}</version>
+	<version>2.0.0.RELEASE</version>
 </dependency>
 ```
 
