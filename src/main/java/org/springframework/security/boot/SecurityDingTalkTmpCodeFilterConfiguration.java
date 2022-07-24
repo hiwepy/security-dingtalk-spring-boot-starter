@@ -14,18 +14,15 @@ import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.boot.biz.authentication.AuthenticationListener;
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationEntryPoint;
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationFailureHandler;
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationSuccessHandler;
-import org.springframework.security.boot.biz.property.SecuritySessionMgtProperties;
 import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapter;
-import org.springframework.security.boot.dingtalk.authentication.DingTalkMatchedAuthenticationEntryPoint;
-import org.springframework.security.boot.dingtalk.authentication.DingTalkMatchedAuthenticationFailureHandler;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkTmpCodeAuthenticationProcessingFilter;
 import org.springframework.security.boot.dingtalk.authentication.DingTalkTmpCodeAuthenticationProvider;
-import org.springframework.security.boot.utils.WebSecurityUtils;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -42,23 +39,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @AutoConfigureBefore({ SecurityFilterAutoConfiguration.class })
 @EnableConfigurationProperties({ SecurityBizProperties.class, SecurityDingTalkProperties.class, SecurityDingTalkTmpCodeAuthcProperties.class })
 public class SecurityDingTalkTmpCodeFilterConfiguration {
-	
+
 	@Bean
 	public DingTalkTmpCodeAuthenticationProvider dingTalkTmpCodeAuthenticationProvider(
-			UserDetailsServiceAdapter userDetailsService, 
-			DingTalkTemplate dingtalkTemplate,
+			ObjectProvider<UserDetailsServiceAdapter> userDetailsServiceProvider,
+			ObjectProvider<DingTalkTemplate> dingtalkTemplateProvider,
 			SecurityDingTalkProperties dingtalkProperties) {
-		return new DingTalkTmpCodeAuthenticationProvider(userDetailsService, dingtalkTemplate, dingtalkProperties);
+		return new DingTalkTmpCodeAuthenticationProvider(userDetailsServiceProvider.getIfAvailable(), dingtalkTemplateProvider.getIfAvailable(), dingtalkProperties);
 	}
-	
+
     @Configuration
     @ConditionalOnProperty(prefix = SecurityDingTalkProperties.PREFIX, value = "enabled", havingValue = "true")
     @EnableConfigurationProperties({ SecurityBizProperties.class, SecurityDingTalkProperties.class, SecurityDingTalkTmpCodeAuthcProperties.class })
     @Order(SecurityProperties.DEFAULT_FILTER_ORDER + 13)
    	static class DingTalkTmpCodeWebSecurityConfigurerAdapter extends WebSecurityBizConfigurerAdapter {
-    	
+
     	private final SecurityDingTalkTmpCodeAuthcProperties authcProperties;
-    	
+
     	private final LocaleContextFilter localeContextFilter;
 	    private final AuthenticationEntryPoint authenticationEntryPoint;
 	    private final AuthenticationSuccessHandler authenticationSuccessHandler;
@@ -66,51 +63,51 @@ public class SecurityDingTalkTmpCodeFilterConfiguration {
 	    private final ObjectMapper objectMapper;
     	private final RememberMeServices rememberMeServices;
 		private final SessionAuthenticationStrategy sessionAuthenticationStrategy;
-   		
+
    		public DingTalkTmpCodeWebSecurityConfigurerAdapter(
-   			
+
    				SecurityBizProperties bizProperties,
-   				SecuritySessionMgtProperties sessionMgtProperties,
    				SecurityDingTalkTmpCodeAuthcProperties authcProperties,
 
    				ObjectProvider<LocaleContextFilter> localeContextProvider,
    				ObjectProvider<AuthenticationProvider> authenticationProvider,
    				ObjectProvider<AuthenticationListener> authenticationListenerProvider,
+				ObjectProvider<AuthenticationManager> authenticationManagerProvider,
    				ObjectProvider<MatchedAuthenticationEntryPoint> authenticationEntryPointProvider,
    				ObjectProvider<MatchedAuthenticationSuccessHandler> authenticationSuccessHandlerProvider,
    				ObjectProvider<MatchedAuthenticationFailureHandler> authenticationFailureHandlerProvider,
    				ObjectProvider<ObjectMapper> objectMapperProvider,
    				ObjectProvider<RememberMeServices> rememberMeServicesProvider,
    				ObjectProvider<SessionAuthenticationStrategy> sessionAuthenticationStrategyProvider
-   				
+
 			) {
-   			
-   			super(bizProperties, sessionMgtProperties, authenticationProvider.stream().collect(Collectors.toList()));
-   			
+
+   			super(bizProperties, authcProperties, authenticationProvider.stream().collect(Collectors.toList()), authenticationManagerProvider.getIfAvailable());
+
    			this.authcProperties = authcProperties;
-   			
+
    			this.localeContextFilter = localeContextProvider.getIfAvailable();
    			List<AuthenticationListener> authenticationListeners = authenticationListenerProvider.stream().collect(Collectors.toList());
-   			this.authenticationEntryPoint = WebSecurityUtils.authenticationEntryPoint(authcProperties, sessionMgtProperties, authenticationEntryPointProvider.stream().collect(Collectors.toList()));
-   			this.authenticationSuccessHandler = WebSecurityUtils.authenticationSuccessHandler(authcProperties, sessionMgtProperties, authenticationListeners, authenticationSuccessHandlerProvider.stream().collect(Collectors.toList()));
-   			this.authenticationFailureHandler = WebSecurityUtils.authenticationFailureHandler(authcProperties, sessionMgtProperties, authenticationListeners, authenticationFailureHandlerProvider.stream().collect(Collectors.toList()));
+   			this.authenticationEntryPoint = super.authenticationEntryPoint(authenticationEntryPointProvider.stream().collect(Collectors.toList()));
+   			this.authenticationSuccessHandler = super.authenticationSuccessHandler(authenticationListeners, authenticationSuccessHandlerProvider.stream().collect(Collectors.toList()));
+   			this.authenticationFailureHandler = super.authenticationFailureHandler(authenticationListeners, authenticationFailureHandlerProvider.stream().collect(Collectors.toList()));
    			this.objectMapper = objectMapperProvider.getIfAvailable();
    			this.rememberMeServices = rememberMeServicesProvider.getIfAvailable();
    			this.sessionAuthenticationStrategy = sessionAuthenticationStrategyProvider.getIfAvailable();
-   			
+
    		}
-   		
+
    	    public DingTalkTmpCodeAuthenticationProcessingFilter authenticationProcessingFilter() throws Exception {
-   	    	
+
    			DingTalkTmpCodeAuthenticationProcessingFilter authenticationFilter = new DingTalkTmpCodeAuthenticationProcessingFilter(objectMapper);
-   			
+
 			/**
 			 * 批量设置参数
 			 */
 			PropertyMapper map = PropertyMapper.get().alwaysApplyingWhenNonNull();
-			
-			map.from(getSessionMgtProperties().isAllowSessionCreation()).to(authenticationFilter::setAllowSessionCreation);
-			
+
+			map.from(authcProperties.getSessionMgt().isAllowSessionCreation()).to(authenticationFilter::setAllowSessionCreation);
+
 			map.from(authenticationManagerBean()).to(authenticationFilter::setAuthenticationManager);
 			map.from(authenticationSuccessHandler).to(authenticationFilter::setAuthenticationSuccessHandler);
 			map.from(authenticationFailureHandler).to(authenticationFilter::setAuthenticationFailureHandler);
@@ -122,13 +119,13 @@ public class SecurityDingTalkTmpCodeFilterConfiguration {
 			map.from(rememberMeServices).to(authenticationFilter::setRememberMeServices);
 			map.from(sessionAuthenticationStrategy).to(authenticationFilter::setSessionAuthenticationStrategy);
 			map.from(authcProperties.isContinueChainBeforeSuccessfulAuthentication()).to(authenticationFilter::setContinueChainBeforeSuccessfulAuthentication);
-   			
+
    	        return authenticationFilter;
    	    }
 
    	    @Override
 		public void configure(HttpSecurity http) throws Exception {
-   	    	
+
    	    	http.antMatcher(authcProperties.getPathPattern())
 				.exceptionHandling()
 	        	.authenticationEntryPoint(authenticationEntryPoint)
@@ -136,15 +133,15 @@ public class SecurityDingTalkTmpCodeFilterConfiguration {
 	        	.httpBasic()
 	        	.disable()
 	        	.addFilterBefore(localeContextFilter, UsernamePasswordAuthenticationFilter.class)
-   	        	.addFilterBefore(authenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class); 
-   	    	
+   	        	.addFilterBefore(authenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
+
    	    	super.configure(http, authcProperties.getCros());
    	    	super.configure(http, authcProperties.getCsrf());
    	    	super.configure(http, authcProperties.getHeaders());
 	    	super.configure(http);
-	    	
+
    	    }
-   	    
+
    	    @Override
 	    public void configure(WebSecurity web) throws Exception {
 	    	super.configure(web);
