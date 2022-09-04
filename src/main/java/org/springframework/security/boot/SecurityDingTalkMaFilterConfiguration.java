@@ -24,8 +24,6 @@ import org.springframework.security.boot.biz.property.SecuritySessionMgtProperti
 import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapter;
 import org.springframework.security.boot.dingtalk.authentication.*;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -39,8 +37,6 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import com.dingtalk.spring.boot.DingTalkTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.web.savedrequest.RequestCache;
-import org.springframework.security.web.session.InvalidSessionStrategy;
-import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
 @Configuration
 @ConditionalOnProperty(prefix = SecurityDingTalkProperties.PREFIX, value = "enabled", havingValue = "true")
@@ -65,16 +61,13 @@ public class SecurityDingTalkMaFilterConfiguration {
 		private final AuthenticationEntryPoint authenticationEntryPoint;
 		private final AuthenticationSuccessHandler authenticationSuccessHandler;
 		private final AuthenticationFailureHandler authenticationFailureHandler;
-		private final InvalidSessionStrategy invalidSessionStrategy;
 		private final LocaleContextFilter localeContextFilter;
 		private final LogoutHandler logoutHandler;
 		private final LogoutSuccessHandler logoutSuccessHandler;
 		private final ObjectMapper objectMapper;
 		private final RequestCache requestCache;
 		private final RememberMeServices rememberMeServices;
-		private final SessionRegistry sessionRegistry;
 		private final SessionAuthenticationStrategy sessionAuthenticationStrategy;
-		private final SessionInformationExpiredStrategy sessionInformationExpiredStrategy;
 
    		public DingTalkMaWebSecurityConfigurerAdapter(
 
@@ -103,16 +96,13 @@ public class SecurityDingTalkMaFilterConfiguration {
 			this.authenticationEntryPoint = super.authenticationEntryPoint(authenticationEntryPointProvider.stream().collect(Collectors.toList()));
 			this.authenticationSuccessHandler = super.authenticationSuccessHandler(authenticationListeners, authenticationSuccessHandlerProvider.stream().collect(Collectors.toList()));
 			this.authenticationFailureHandler = super.authenticationFailureHandler(authenticationListeners, authenticationFailureHandlerProvider.stream().collect(Collectors.toList()));
-			this.invalidSessionStrategy = super.invalidSessionStrategy();
 			this.localeContextFilter = localeContextProvider.getIfAvailable();
 			this.logoutHandler = super.logoutHandler(logoutHandlerProvider.stream().collect(Collectors.toList()));
 			this.logoutSuccessHandler = logoutSuccessHandlerProvider.getIfAvailable();
 			this.objectMapper = objectMapperProvider.getIfAvailable();
 			this.requestCache = super.requestCache();
 			this.rememberMeServices = rememberMeServicesProvider.getIfAvailable();
-			this.sessionRegistry = super.sessionRegistry();
 			this.sessionAuthenticationStrategy = super.sessionAuthenticationStrategy();
-			this.sessionInformationExpiredStrategy = super.sessionInformationExpiredStrategy();
 
    		}
 
@@ -159,10 +149,6 @@ public class SecurityDingTalkMaFilterConfiguration {
 					.headers(this.headersCustomizer(authcProperties.getHeaders()))
 					// Request 缓存配置
 					.requestCache((request) -> request.requestCache(requestCache))
-					// Session 管理器配置参数
-					.sessionManagement(this.sessionManagementCustomizer(authcProperties.getSessionMgt(), authcProperties.getLogout(),
-							invalidSessionStrategy, sessionRegistry, sessionInformationExpiredStrategy,
-							authenticationFailureHandler, sessionAuthenticationStrategy))
 					// Session 注销配置
 					.logout(this.logoutCustomizer(authcProperties.getLogout(), logoutHandler, logoutSuccessHandler))
 					// 禁用 Http Basic
