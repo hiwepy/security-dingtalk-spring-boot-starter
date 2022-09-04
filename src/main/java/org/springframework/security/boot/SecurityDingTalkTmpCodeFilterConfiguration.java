@@ -57,6 +57,7 @@ public class SecurityDingTalkTmpCodeFilterConfiguration {
 	}
 
     @Configuration
+	@ConditionalOnProperty(prefix = SecurityDingTalkProperties.PREFIX, value = "enabled", havingValue = "true")
     @EnableConfigurationProperties({ SecurityBizProperties.class, SecurityDingTalkProperties.class, SecurityDingTalkTmpCodeAuthcProperties.class })
    	static class DingTalkTmpCodeWebSecurityConfigurerAdapter extends SecurityFilterChainConfigurer {
 
@@ -141,7 +142,7 @@ public class SecurityDingTalkTmpCodeFilterConfiguration {
 
    	        return authenticationFilter;
    	    }
-		   
+
 		@Bean
 		@Order(SecurityProperties.DEFAULT_FILTER_ORDER + 13)
 		public SecurityFilterChain dingTalkTmpCodeSecurityFilterChain(HttpSecurity http) throws Exception {
