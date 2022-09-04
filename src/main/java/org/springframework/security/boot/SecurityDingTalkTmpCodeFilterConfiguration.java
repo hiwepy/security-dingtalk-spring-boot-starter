@@ -43,6 +43,7 @@ import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
 @Configuration
+@ConditionalOnProperty(prefix = SecurityDingTalkProperties.PREFIX, value = "enabled", havingValue = "true")
 @AutoConfigureBefore({ SecurityFilterAutoConfiguration.class })
 @EnableConfigurationProperties({ SecurityBizProperties.class, SecurityDingTalkProperties.class, SecurityDingTalkTmpCodeAuthcProperties.class })
 public class SecurityDingTalkTmpCodeFilterConfiguration {
@@ -56,9 +57,7 @@ public class SecurityDingTalkTmpCodeFilterConfiguration {
 	}
 
     @Configuration
-    @ConditionalOnProperty(prefix = SecurityDingTalkProperties.PREFIX, value = "enabled", havingValue = "true")
     @EnableConfigurationProperties({ SecurityBizProperties.class, SecurityDingTalkProperties.class, SecurityDingTalkTmpCodeAuthcProperties.class })
-    @Order(SecurityProperties.DEFAULT_FILTER_ORDER + 13)
    	static class DingTalkTmpCodeWebSecurityConfigurerAdapter extends SecurityFilterChainConfigurer {
 
     	private final SecurityDingTalkTmpCodeAuthcProperties authcProperties;
@@ -144,6 +143,7 @@ public class SecurityDingTalkTmpCodeFilterConfiguration {
    	    }
 		   
 		@Bean
+		@Order(SecurityProperties.DEFAULT_FILTER_ORDER + 13)
 		public SecurityFilterChain dingTalkTmpCodeSecurityFilterChain(HttpSecurity http) throws Exception {
 			// new DefaultSecurityFilterChain(new AntPathRequestMatcher(authcProperties.getPathPattern()), localeContextFilter, authenticationProcessingFilter());
 			http.antMatcher(authcProperties.getPathPattern())

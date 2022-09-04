@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Configuration
+@ConditionalOnProperty(prefix = SecurityDingTalkProperties.PREFIX, value = "enabled", havingValue = "true")
 @AutoConfigureBefore({ SecurityFilterAutoConfiguration.class })
 @EnableConfigurationProperties({ SecurityBizProperties.class, SecurityDingTalkProperties.class, SecurityDingTalkScanCodeAuthcProperties.class })
 public class SecurityDingTalkScanCodeFilterConfiguration {
@@ -54,10 +55,8 @@ public class SecurityDingTalkScanCodeFilterConfiguration {
 	}
 
     @Configuration
-    @ConditionalOnProperty(prefix = SecurityDingTalkProperties.PREFIX, value = "enabled", havingValue = "true")
     @EnableConfigurationProperties({ SecurityBizProperties.class, SecurityDingTalkProperties.class, SecurityDingTalkScanCodeAuthcProperties.class })
-    @Order(SecurityProperties.DEFAULT_FILTER_ORDER + 12)
-   	static class DingTalkScanCodeWebSecurityConfigurerAdapter extends SecurityFilterChainConfigurer {
+     	static class DingTalkScanCodeWebSecurityConfigurerAdapter extends SecurityFilterChainConfigurer {
 
     	private final SecurityDingTalkScanCodeAuthcProperties authcProperties;
 
@@ -141,6 +140,7 @@ public class SecurityDingTalkScanCodeFilterConfiguration {
    	    }
 
 		@Bean
+		@Order(SecurityProperties.DEFAULT_FILTER_ORDER + 12)
 		public SecurityFilterChain dingTalkScanCodeSecurityFilterChain(HttpSecurity http) throws Exception {
 			// new DefaultSecurityFilterChain(new AntPathRequestMatcher(authcProperties.getPathPattern()), localeContextFilter, authenticationProcessingFilter());
 			http.antMatcher(authcProperties.getPathPattern())
