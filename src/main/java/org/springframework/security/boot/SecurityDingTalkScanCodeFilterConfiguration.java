@@ -13,6 +13,7 @@ import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.boot.biz.authentication.AuthenticationListener;
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationEntryPoint;
@@ -22,6 +23,7 @@ import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapt
 import org.springframework.security.boot.dingtalk.authentication.*;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -53,16 +55,17 @@ public class SecurityDingTalkScanCodeFilterConfiguration {
     @EnableConfigurationProperties({ SecurityBizProperties.class, SecurityDingTalkProperties.class, SecurityDingTalkScanCodeAuthcProperties.class })
      	static class DingTalkScanCodeWebSecurityConfigurerAdapter extends SecurityFilterChainConfigurer {
 
+		private final SecurityBizProperties bizProperties;
     	private final SecurityDingTalkScanCodeAuthcProperties authcProperties;
 
 		private final AuthenticationEntryPoint authenticationEntryPoint;
 		private final AuthenticationSuccessHandler authenticationSuccessHandler;
 		private final AuthenticationFailureHandler authenticationFailureHandler;
+		private final AuthenticationManager authenticationManager;
 		private final LocaleContextFilter localeContextFilter;
 		private final LogoutHandler logoutHandler;
 		private final LogoutSuccessHandler logoutSuccessHandler;
 		private final ObjectMapper objectMapper;
-		private final RequestCache requestCache;
 		private final RememberMeServices rememberMeServices;
 		private final SessionAuthenticationStrategy sessionAuthenticationStrategy;
 
@@ -71,8 +74,8 @@ public class SecurityDingTalkScanCodeFilterConfiguration {
    				SecurityBizProperties bizProperties,
    				SecurityDingTalkScanCodeAuthcProperties authcProperties,
 
-   				ObjectProvider<AuthenticationProvider> authenticationProvider,
    				ObjectProvider<AuthenticationListener> authenticationListenerProvider,
+				ObjectProvider<AuthenticationManager> authenticationManagerProvider,
    				ObjectProvider<MatchedAuthenticationEntryPoint> authenticationEntryPointProvider,
    				ObjectProvider<MatchedAuthenticationSuccessHandler> authenticationSuccessHandlerProvider,
    				ObjectProvider<MatchedAuthenticationFailureHandler> authenticationFailureHandlerProvider,
@@ -80,25 +83,29 @@ public class SecurityDingTalkScanCodeFilterConfiguration {
 				ObjectProvider<LogoutHandler> logoutHandlerProvider,
 				ObjectProvider<LogoutSuccessHandler> logoutSuccessHandlerProvider,
    				ObjectProvider<ObjectMapper> objectMapperProvider,
-   				ObjectProvider<RememberMeServices> rememberMeServicesProvider
+				ObjectProvider<RedirectStrategy> redirectStrategyProvider,
+				ObjectProvider<RequestCache> requestCacheProvider,
+   				ObjectProvider<RememberMeServices> rememberMeServicesProvider,
+				ObjectProvider<SessionAuthenticationStrategy> sessionAuthenticationStrategyProvider
 
 			) {
 
-   			super(bizProperties, authcProperties, authenticationProvider.stream().collect(Collectors.toList()));
+			super(bizProperties, redirectStrategyProvider.getIfAvailable(), requestCacheProvider.getIfAvailable());
 
-   			this.authcProperties = authcProperties;
+			this.authcProperties = authcProperties;
+			this.bizProperties = bizProperties;
 
    			List<AuthenticationListener> authenticationListeners = authenticationListenerProvider.stream().collect(Collectors.toList());
-   			this.authenticationEntryPoint = super.authenticationEntryPoint(authenticationEntryPointProvider.stream().collect(Collectors.toList()));
-   			this.authenticationSuccessHandler = super.authenticationSuccessHandler(authenticationListeners, authenticationSuccessHandlerProvider.stream().collect(Collectors.toList()));
-   			this.authenticationFailureHandler = super.authenticationFailureHandler(authenticationListeners, authenticationFailureHandlerProvider.stream().collect(Collectors.toList()));
+			this.authenticationEntryPoint = super.authenticationEntryPoint(authcProperties.getPathPattern(), authenticationEntryPointProvider.stream().collect(Collectors.toList()));
+			this.authenticationSuccessHandler = super.authenticationSuccessHandler(authcProperties, authenticationListeners, authenticationSuccessHandlerProvider.stream().collect(Collectors.toList()));
+			this.authenticationFailureHandler = super.authenticationFailureHandler(authenticationListeners, authenticationFailureHandlerProvider.stream().collect(Collectors.toList()));
+			this.authenticationManager = authenticationManagerProvider.getIfAvailable();
 			this.localeContextFilter = localeContextProvider.getIfAvailable();
 			this.logoutHandler = super.logoutHandler(logoutHandlerProvider.stream().collect(Collectors.toList()));
 			this.logoutSuccessHandler = logoutSuccessHandlerProvider.getIfAvailable();
 			this.objectMapper = objectMapperProvider.getIfAvailable();
-			this.requestCache = super.requestCache();
 			this.rememberMeServices = rememberMeServicesProvider.getIfAvailable();
-			this.sessionAuthenticationStrategy = super.sessionAuthenticationStrategy();
+			this.sessionAuthenticationStrategy = sessionAuthenticationStrategyProvider.getIfAvailable();
 
    		}
 
@@ -111,9 +118,9 @@ public class SecurityDingTalkScanCodeFilterConfiguration {
 			 */
 			PropertyMapper map = PropertyMapper.get().alwaysApplyingWhenNonNull();
 
-			map.from(authcProperties.getSessionMgt().isAllowSessionCreation()).to(authenticationFilter::setAllowSessionCreation);
+			map.from(bizProperties.getSession().isAllowSessionCreation()).to(authenticationFilter::setAllowSessionCreation);
 
-			map.from(authenticationManagerBean()).to(authenticationFilter::setAuthenticationManager);
+			map.from(authenticationManager).to(authenticationFilter::setAuthenticationManager);
 			map.from(authenticationSuccessHandler).to(authenticationFilter::setAuthenticationSuccessHandler);
 			map.from(authenticationFailureHandler).to(authenticationFilter::setAuthenticationFailureHandler);
 
@@ -135,16 +142,12 @@ public class SecurityDingTalkScanCodeFilterConfiguration {
 			http.antMatcher(authcProperties.getPathPattern())
 					// 请求鉴权配置
 					.authorizeRequests(this.authorizeRequestsCustomizer())
-					// 跨站请求配置
-					.csrf(this.csrfCustomizer(authcProperties.getCsrf()))
-					// 跨域配置
-					.cors(this.corsCustomizer(authcProperties.getCors()))
 					// 异常处理
 					.exceptionHandling((configurer) -> configurer.authenticationEntryPoint(authenticationEntryPoint))
 					// 请求头配置
 					.headers(this.headersCustomizer(authcProperties.getHeaders()))
 					// Request 缓存配置
-					.requestCache((request) -> request.requestCache(requestCache))
+					.requestCache(this.requestCacheCustomizer())
 					// Session 注销配置
 					.logout(this.logoutCustomizer(authcProperties.getLogout(), logoutHandler, logoutSuccessHandler))
 					// 禁用 Http Basic
