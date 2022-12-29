@@ -45,20 +45,5 @@ public class SecurityDingTalkTmpCodeAuthcProperties extends SecurityAuthcPropert
 
     /** the code parameter name. Defaults to "loginTmpCode". */
     private String codeParameter = DingTalkTmpCodeAuthenticationProcessingFilter.SPRING_SECURITY_FORM_CODE_KEY;
-    
-    @NestedConfigurationProperty
-	private SecurityHeaderCorsProperties cros = new SecurityHeaderCorsProperties();
-	
-	@NestedConfigurationProperty
-	private SecurityHeaderCsrfProperties csrf = new SecurityHeaderCsrfProperties();
-	
-	@NestedConfigurationProperty
-	private SecurityHeadersProperties headers = new SecurityHeadersProperties();
-	
-	@NestedConfigurationProperty
-	private SecurityRedirectProperties redirect = new SecurityRedirectProperties();
-	
-	@NestedConfigurationProperty
-	private SecurityLogoutProperties logout = new SecurityLogoutProperties();
-	
+
 }

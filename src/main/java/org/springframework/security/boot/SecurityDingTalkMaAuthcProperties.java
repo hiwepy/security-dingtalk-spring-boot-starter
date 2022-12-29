@@ -45,20 +45,6 @@ public class SecurityDingTalkMaAuthcProperties extends SecurityAuthcProperties {
 
 	/** the authCode parameter name. Defaults to "authCode". */
     private String authCodeParameter = DingTalkMaAuthenticationProcessingFilter.SPRING_SECURITY_FORM_CODE_KEY;
-    
-    @NestedConfigurationProperty
-	private SecurityHeaderCorsProperties cros = new SecurityHeaderCorsProperties();
-	
-	@NestedConfigurationProperty
-	private SecurityHeaderCsrfProperties csrf = new SecurityHeaderCsrfProperties();
-	
-	@NestedConfigurationProperty
-	private SecurityHeadersProperties headers = new SecurityHeadersProperties();
-	
-	@NestedConfigurationProperty
-	private SecurityRedirectProperties redirect = new SecurityRedirectProperties();
-	
-	@NestedConfigurationProperty
-	private SecurityLogoutProperties logout = new SecurityLogoutProperties();
+
 	
 }

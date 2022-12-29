@@ -150,11 +150,11 @@ public class SecurityDingTalkTmpCodeFilterConfiguration {
 					// 异常处理
 					.exceptionHandling((configurer) -> configurer.authenticationEntryPoint(authenticationEntryPoint))
 					// 请求头配置
-					.headers(this.headersCustomizer(authcProperties.getHeaders()))
+					.headers(this.headersCustomizer(bizProperties.getHeaders()))
 					// Request 缓存配置
 					.requestCache(this.requestCacheCustomizer())
 					// Session 注销配置
-					.logout(this.logoutCustomizer(authcProperties.getLogout(), logoutHandler, logoutSuccessHandler))
+					.logout(this.logoutCustomizer(bizProperties.getLogout(), logoutHandler, logoutSuccessHandler))
 					// 禁用 Http Basic
 					.httpBasic((basic) -> basic.disable())
 					// Filter 配置
