@@ -3,7 +3,9 @@ package org.springframework.security.boot.dingtalk.authentication;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
+@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DingTalkMaLoginRequest {
 
@@ -40,44 +42,4 @@ public class DingTalkMaLoginRequest {
         this.authCode = authCode;
     }
 
-	public String getCorpId() {
-		return corpId;
-	}
-
-	public void setCorpId(String corpId) {
-		this.corpId = corpId;
-	}
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
-
-	public String getAuthCode() {
-		return authCode;
-	}
-
-	public void setAuthCode(String authCode) {
-		this.authCode = authCode;
-	}
-
-	public String getAccessToken() {
-		return accessToken;
-	}
-
-	public void setAccessToken(String accessToken) {
-		this.accessToken = accessToken;
-	}
-	
 }
