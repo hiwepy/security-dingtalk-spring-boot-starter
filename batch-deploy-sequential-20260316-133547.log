@@ -1,0 +1,404 @@
+[security-dingtalk-spring-boot-starter/2.3.x] 失败 - 分支切换失败
+[security-dingtalk-spring-boot-starter/2.7.x] 失败 - 分支切换失败
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------< [0;36mio.github.hiwepy:security-dingtalk-spring-boot-starter[0;1m >-------[m
+[[1;34mINFO[m] [1mBuilding io.github.hiwepy:security-dingtalk-spring-boot-starter 4.0.x.20251227-SNAPSHOT[m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+Downloading from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/com/github/hiwepy/security-biz-spring-boot-starter/3.3.x.20241003.RELEASE/security-biz-spring-boot-starter-3.3.x.20241003.RELEASE.pom
+Downloaded from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/com/github/hiwepy/security-biz-spring-boot-starter/3.3.x.20241003.RELEASE/security-biz-spring-boot-starter-3.3.x.20241003.RELEASE.pom (0 B at 0 B/s)
+Downloading from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/com/github/hiwepy/jwt-issuer-with-jjwt/1.1.4.1.RELEASE/jwt-issuer-with-jjwt-1.1.4.1.RELEASE.pom
+Downloaded from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/com/github/hiwepy/jwt-issuer-with-jjwt/1.1.4.1.RELEASE/jwt-issuer-with-jjwt-1.1.4.1.RELEASE.pom (0 B at 0 B/s)
+Downloading from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/io/jsonwebtoken/jjwt-api/0.12.6/jjwt-api-0.12.6.pom
+Progress (1): 1.8 kB
+                    
+Downloaded from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/io/jsonwebtoken/jjwt-api/0.12.6/jjwt-api-0.12.6.pom (1.8 kB at 988 B/s)
+Downloading from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/io/jsonwebtoken/jjwt-root/0.12.6/jjwt-root-0.12.6.pom
+Progress (1): 2.6 kB
+Progress (1): 6.7 kB
+Progress (1): 11 kB 
+Progress (1): 14 kB
+Progress (1): 16 kB
+Progress (1): 19 kB
+Progress (1): 22 kB
+Progress (1): 25 kB
+Progress (1): 29 kB
+Progress (1): 33 kB
+Progress (1): 37 kB
+                   
+Downloaded from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/io/jsonwebtoken/jjwt-root/0.12.6/jjwt-root-0.12.6.pom (37 kB at 129 kB/s)
+Downloading from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/io/jsonwebtoken/jjwt-impl/0.12.6/jjwt-impl-0.12.6.pom
+Progress (1): 2.5 kB
+                    
+Downloaded from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/io/jsonwebtoken/jjwt-impl/0.12.6/jjwt-impl-0.12.6.pom (2.5 kB at 9.5 kB/s)
+Downloading from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/io/jsonwebtoken/jjwt-jackson/0.12.6/jjwt-jackson-0.12.6.pom
+Progress (1): 2.6 kB
+Progress (1): 2.9 kB
+                    
+Downloaded from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/io/jsonwebtoken/jjwt-jackson/0.12.6/jjwt-jackson-0.12.6.pom (2.9 kB at 10.0 kB/s)
+Downloading from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/com/github/hiwepy/jwt-issuer-with-nimbus/1.1.4.1.RELEASE/jwt-issuer-with-nimbus-1.1.4.1.RELEASE.pom
+Downloaded from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/com/github/hiwepy/jwt-issuer-with-nimbus/1.1.4.1.RELEASE/jwt-issuer-with-nimbus-1.1.4.1.RELEASE.pom (0 B at 0 B/s)
+Downloading from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/com/nimbusds/nimbus-jose-jwt/9.41.2/nimbus-jose-jwt-9.41.2.pom
+Downloaded from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/com/nimbusds/nimbus-jose-jwt/9.41.2/nimbus-jose-jwt-9.41.2.pom (0 B at 0 B/s)
+Downloading from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/com/github/hiwepy/dingtalk-spring-boot-starter/3.3.x.20241003.RELEASE/dingtalk-spring-boot-starter-3.3.x.20241003.RELEASE.pom
+Downloaded from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/com/github/hiwepy/dingtalk-spring-boot-starter/3.3.x.20241003.RELEASE/dingtalk-spring-boot-starter-3.3.x.20241003.RELEASE.pom (0 B at 0 B/s)
+Downloading from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/com/github/hiwepy/security-biz-spring-boot-starter/3.3.x.20241003.RELEASE/security-biz-spring-boot-starter-3.3.x.20241003.RELEASE.jar
+Downloading from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/io/jsonwebtoken/jjwt-jackson/0.12.6/jjwt-jackson-0.12.6.jar
+Downloading from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/io/jsonwebtoken/jjwt-impl/0.12.6/jjwt-impl-0.12.6.jar
+Downloading from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/io/jsonwebtoken/jjwt-api/0.12.6/jjwt-api-0.12.6.jar
+Downloading from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/com/github/hiwepy/jwt-issuer-with-jjwt/1.1.4.1.RELEASE/jwt-issuer-with-jjwt-1.1.4.1.RELEASE.jar
+Progress (1): 4.0 kB
+Progress (1): 8.1 kB
+Progress (1): 12 kB 
+Progress (2): 12 kB | 4.1 kB
+Progress (2): 12 kB | 6.9 kB
+Progress (2): 12 kB | 11 kB 
+Progress (3): 12 kB | 11 kB | 2.6 kB
+Progress (3): 12 kB | 11 kB | 5.3 kB
+Progress (3): 12 kB | 11 kB | 8.2 kB
+Progress (3): 12 kB | 11 kB | 9.4 kB
+Progress (3): 16 kB | 11 kB | 9.4 kB
+Progress (3): 20 kB | 11 kB | 9.4 kB
+Progress (3): 24 kB | 11 kB | 9.4 kB
+Progress (3): 28 kB | 11 kB | 9.4 kB
+Progress (3): 33 kB | 11 kB | 9.4 kB
+Progress (3): 37 kB | 11 kB | 9.4 kB
+Progress (3): 37 kB | 14 kB | 9.4 kB
+Progress (3): 37 kB | 17 kB | 9.4 kB
+Progress (3): 37 kB | 21 kB | 9.4 kB
+Progress (3): 37 kB | 24 kB | 9.4 kB
+Progress (3): 37 kB | 28 kB | 9.4 kB
+Progress (3): 37 kB | 32 kB | 9.4 kB
+Progress (3): 37 kB | 36 kB | 9.4 kB
+Progress (3): 41 kB | 36 kB | 9.4 kB
+Progress (3): 45 kB | 36 kB | 9.4 kB
+Progress (3): 49 kB | 36 kB | 9.4 kB
+Progress (3): 53 kB | 36 kB | 9.4 kB
+Progress (3): 57 kB | 36 kB | 9.4 kB
+Progress (3): 61 kB | 36 kB | 9.4 kB
+Progress (3): 64 kB | 36 kB | 9.4 kB
+Progress (3): 68 kB | 36 kB | 9.4 kB
+Progress (3): 73 kB | 36 kB | 9.4 kB
+Progress (3): 77 kB | 36 kB | 9.4 kB
+Progress (3): 77 kB | 40 kB | 9.4 kB
+Progress (3): 81 kB | 40 kB | 9.4 kB
+Progress (3): 81 kB | 44 kB | 9.4 kB
+Progress (3): 85 kB | 44 kB | 9.4 kB
+Progress (3): 85 kB | 47 kB | 9.4 kB
+Progress (3): 89 kB | 47 kB | 9.4 kB
+Progress (3): 89 kB | 50 kB | 9.4 kB
+Progress (3): 93 kB | 50 kB | 9.4 kB
+Progress (3): 93 kB | 53 kB | 9.4 kB
+Progress (3): 93 kB | 57 kB | 9.4 kB
+Progress (3): 93 kB | 61 kB | 9.4 kB
+Progress (3): 93 kB | 65 kB | 9.4 kB
+Progress (3): 93 kB | 69 kB | 9.4 kB
+Progress (3): 93 kB | 73 kB | 9.4 kB
+Progress (3): 93 kB | 77 kB | 9.4 kB
+Progress (3): 93 kB | 81 kB | 9.4 kB
+Progress (3): 93 kB | 86 kB | 9.4 kB
+Progress (3): 93 kB | 90 kB | 9.4 kB
+Progress (3): 93 kB | 94 kB | 9.4 kB
+Progress (3): 97 kB | 94 kB | 9.4 kB
+Progress (3): 101 kB | 94 kB | 9.4 kB
+Progress (3): 105 kB | 94 kB | 9.4 kB
+Progress (3): 109 kB | 94 kB | 9.4 kB
+Progress (3): 114 kB | 94 kB | 9.4 kB
+Progress (3): 118 kB | 94 kB | 9.4 kB
+Progress (3): 122 kB | 94 kB | 9.4 kB
+Progress (3): 126 kB | 94 kB | 9.4 kB
+Progress (3): 126 kB | 98 kB | 9.4 kB
+Progress (3): 130 kB | 98 kB | 9.4 kB
+Progress (3): 130 kB | 102 kB | 9.4 kB
+Progress (3): 134 kB | 102 kB | 9.4 kB
+Progress (3): 134 kB | 106 kB | 9.4 kB
+Progress (3): 138 kB | 106 kB | 9.4 kB
+Progress (3): 138 kB | 110 kB | 9.4 kB
+Progress (3): 140 kB | 110 kB | 9.4 kB
+Progress (3): 140 kB | 114 kB | 9.4 kB
+Progress (3): 140 kB | 118 kB | 9.4 kB
+Progress (3): 140 kB | 122 kB | 9.4 kB
+Progress (3): 140 kB | 126 kB | 9.4 kB
+Progress (3): 140 kB | 131 kB | 9.4 kB
+Progress (3): 140 kB | 135 kB | 9.4 kB
+Progress (3): 140 kB | 139 kB | 9.4 kB
+Progress (3): 140 kB | 143 kB | 9.4 kB
+Progress (3): 140 kB | 147 kB | 9.4 kB
+Progress (3): 140 kB | 151 kB | 9.4 kB
+Progress (3): 140 kB | 155 kB | 9.4 kB
+Progress (3): 140 kB | 159 kB | 9.4 kB
+Progress (3): 140 kB | 163 kB | 9.4 kB
+Progress (3): 140 kB | 167 kB | 9.4 kB
+Progress (3): 140 kB | 172 kB | 9.4 kB
+Progress (3): 140 kB | 176 kB | 9.4 kB
+Progress (3): 140 kB | 180 kB | 9.4 kB
+Progress (3): 140 kB | 184 kB | 9.4 kB
+Progress (3): 140 kB | 188 kB | 9.4 kB
+Progress (3): 140 kB | 192 kB | 9.4 kB
+Progress (3): 140 kB | 196 kB | 9.4 kB
+Progress (3): 140 kB | 200 kB | 9.4 kB
+Progress (3): 140 kB | 204 kB | 9.4 kB
+Progress (3): 140 kB | 208 kB | 9.4 kB
+Progress (3): 140 kB | 212 kB | 9.4 kB
+Progress (3): 140 kB | 217 kB | 9.4 kB
+Progress (3): 140 kB | 221 kB | 9.4 kB
+Progress (3): 140 kB | 225 kB | 9.4 kB
+Progress (3): 140 kB | 229 kB | 9.4 kB
+Progress (3): 140 kB | 233 kB | 9.4 kB
+Progress (3): 140 kB | 237 kB | 9.4 kB
+Progress (3): 140 kB | 241 kB | 9.4 kB
+Progress (3): 140 kB | 245 kB | 9.4 kB
+Progress (3): 140 kB | 249 kB | 9.4 kB
+Progress (3): 140 kB | 253 kB | 9.4 kB
+Progress (3): 140 kB | 258 kB | 9.4 kB
+Progress (3): 140 kB | 262 kB | 9.4 kB
+Progress (3): 140 kB | 266 kB | 9.4 kB
+Progress (3): 140 kB | 270 kB | 9.4 kB
+Progress (3): 140 kB | 274 kB | 9.4 kB
+Progress (3): 140 kB | 278 kB | 9.4 kB
+Progress (3): 140 kB | 282 kB | 9.4 kB
+Progress (3): 140 kB | 286 kB | 9.4 kB
+Progress (3): 140 kB | 290 kB | 9.4 kB
+Progress (3): 140 kB | 294 kB | 9.4 kB
+Progress (3): 140 kB | 298 kB | 9.4 kB
+Progress (3): 140 kB | 303 kB | 9.4 kB
+Progress (3): 140 kB | 307 kB | 9.4 kB
+Progress (3): 140 kB | 311 kB | 9.4 kB
+Progress (3): 140 kB | 315 kB | 9.4 kB
+Progress (3): 140 kB | 319 kB | 9.4 kB
+Progress (3): 140 kB | 323 kB | 9.4 kB
+Progress (3): 140 kB | 327 kB | 9.4 kB
+Progress (3): 140 kB | 331 kB | 9.4 kB
+Progress (3): 140 kB | 335 kB | 9.4 kB
+Progress (3): 140 kB | 339 kB | 9.4 kB
+Progress (3): 140 kB | 344 kB | 9.4 kB
+Progress (3): 140 kB | 348 kB | 9.4 kB
+Progress (3): 140 kB | 352 kB | 9.4 kB
+Progress (3): 140 kB | 356 kB | 9.4 kB
+Progress (3): 140 kB | 360 kB | 9.4 kB
+Progress (3): 140 kB | 364 kB | 9.4 kB
+Progress (3): 140 kB | 368 kB | 9.4 kB
+Progress (3): 140 kB | 372 kB | 9.4 kB
+Progress (3): 140 kB | 376 kB | 9.4 kB
+Progress (3): 140 kB | 380 kB | 9.4 kB
+Progress (3): 140 kB | 385 kB | 9.4 kB
+Progress (3): 140 kB | 389 kB | 9.4 kB
+Progress (3): 140 kB | 393 kB | 9.4 kB
+Progress (3): 140 kB | 397 kB | 9.4 kB
+Progress (3): 140 kB | 401 kB | 9.4 kB
+Progress (3): 140 kB | 405 kB | 9.4 kB
+Progress (3): 140 kB | 409 kB | 9.4 kB
+Progress (3): 140 kB | 413 kB | 9.4 kB
+Progress (3): 140 kB | 417 kB | 9.4 kB
+Progress (3): 140 kB | 421 kB | 9.4 kB
+Progress (3): 140 kB | 425 kB | 9.4 kB
+Progress (3): 140 kB | 430 kB | 9.4 kB
+Progress (3): 140 kB | 434 kB | 9.4 kB
+Progress (3): 140 kB | 438 kB | 9.4 kB
+Progress (3): 140 kB | 442 kB | 9.4 kB
+Progress (3): 140 kB | 446 kB | 9.4 kB
+Progress (3): 140 kB | 450 kB | 9.4 kB
+Progress (3): 140 kB | 454 kB | 9.4 kB
+Progress (3): 140 kB | 458 kB | 9.4 kB
+Progress (3): 140 kB | 462 kB | 9.4 kB
+Progress (3): 140 kB | 466 kB | 9.4 kB
+Progress (3): 140 kB | 471 kB | 9.4 kB
+Progress (3): 140 kB | 473 kB | 9.4 kB
+                                      
+Downloaded from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/io/jsonwebtoken/jjwt-jackson/0.12.6/jjwt-jackson-0.12.6.jar (9.4 kB at 28 kB/s)
+Downloading from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/com/github/hiwepy/jwt-issuer-with-nimbus/1.1.4.1.RELEASE/jwt-issuer-with-nimbus-1.1.4.1.RELEASE.jar
+Downloaded from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/io/jsonwebtoken/jjwt-api/0.12.6/jjwt-api-0.12.6.jar (140 kB at 381 kB/s)
+Downloading from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/com/nimbusds/nimbus-jose-jwt/9.41.2/nimbus-jose-jwt-9.41.2.jar
+Downloaded from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/io/jsonwebtoken/jjwt-impl/0.12.6/jjwt-impl-0.12.6.jar (473 kB at 1.2 MB/s)
+Downloading from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/com/github/hiwepy/dingtalk-spring-boot-starter/3.3.x.20241003.RELEASE/dingtalk-spring-boot-starter-3.3.x.20241003.RELEASE.jar
+Downloaded from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/com/nimbusds/nimbus-jose-jwt/9.41.2/nimbus-jose-jwt-9.41.2.jar (0 B at 0 B/s)
+Downloaded from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/com/github/hiwepy/jwt-issuer-with-jjwt/1.1.4.1.RELEASE/jwt-issuer-with-jjwt-1.1.4.1.RELEASE.jar (0 B at 0 B/s)
+Downloaded from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/com/github/hiwepy/security-biz-spring-boot-starter/3.3.x.20241003.RELEASE/security-biz-spring-boot-starter-3.3.x.20241003.RELEASE.jar (0 B at 0 B/s)
+Downloaded from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/com/github/hiwepy/dingtalk-spring-boot-starter/3.3.x.20241003.RELEASE/dingtalk-spring-boot-starter-3.3.x.20241003.RELEASE.jar (0 B at 0 B/s)
+Downloaded from aiban-tianyin-core: https://aiban-maven.pkg.coding.net/repository/tianyin/core/com/github/hiwepy/jwt-issuer-with-nimbus/1.1.4.1.RELEASE/jwt-issuer-with-nimbus-1.1.4.1.RELEASE.jar (0 B at 0 B/s)
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-clean-plugin:3.4.0:clean[m [1m(default-clean)[m @ [36msecurity-dingtalk-spring-boot-starter[0;1m ---[m
+[[1;34mINFO[m] Deleting /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot-starters/security-dingtalk-spring-boot-starter/target
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-enforcer-plugin:3.5.0:enforce[m [1m(default-cli)[m @ [36msecurity-dingtalk-spring-boot-starter[0;1m ---[m
+[[1;34mINFO[m] Rule 1: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;31mBUILD FAILURE[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  5.411 s
+[[1;34mINFO[m] Finished at: 2026-03-16T14:12:21+08:00
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;31mERROR[m] Failed to execute goal [32morg.apache.maven.plugins:maven-enforcer-plugin:3.5.0:enforce[m [1m(default-cli)[m on project [36msecurity-dingtalk-spring-boot-starter[m: [1;31m[m
+[[1;31mERROR[m] [1;31mRule 0: org.apache.maven.enforcer.rules.version.RequireMavenVersion failed with message:[m
+[[1;31mERROR[m] [1;31mYou are running an older version of Maven. This application requires at least Maven 3.9.9.[m
+[[1;31mERROR[m] -> [1m[Help 1][m
+[[1;31mERROR[m] 
+[[1;31mERROR[m] To see the full stack trace of the errors, re-run Maven with the [1m-e[m switch.
+[[1;31mERROR[m] Re-run Maven using the [1m-X[m switch to enable full debug logging.
+[[1;31mERROR[m] 
+[[1;31mERROR[m] For more information about the errors and possible solutions, please read the following articles:
+[[1;31mERROR[m] [1m[Help 1][m http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+[security-dingtalk-spring-boot-starter/3.0.x] 失败 - 查看日志
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------< [0;36mio.github.hiwepy:security-dingtalk-spring-boot-starter[0;1m >-------[m
+[[1;34mINFO[m] [1mBuilding io.github.hiwepy:security-dingtalk-spring-boot-starter 4.0.x.20251227-SNAPSHOT[m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-clean-plugin:3.4.0:clean[m [1m(default-clean)[m @ [36msecurity-dingtalk-spring-boot-starter[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-enforcer-plugin:3.5.0:enforce[m [1m(default-cli)[m @ [36msecurity-dingtalk-spring-boot-starter[0;1m ---[m
+[[1;34mINFO[m] Rule 1: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;31mBUILD FAILURE[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  0.315 s
+[[1;34mINFO[m] Finished at: 2026-03-16T14:12:22+08:00
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;31mERROR[m] Failed to execute goal [32morg.apache.maven.plugins:maven-enforcer-plugin:3.5.0:enforce[m [1m(default-cli)[m on project [36msecurity-dingtalk-spring-boot-starter[m: [1;31m[m
+[[1;31mERROR[m] [1;31mRule 0: org.apache.maven.enforcer.rules.version.RequireMavenVersion failed with message:[m
+[[1;31mERROR[m] [1;31mYou are running an older version of Maven. This application requires at least Maven 3.9.9.[m
+[[1;31mERROR[m] -> [1m[Help 1][m
+[[1;31mERROR[m] 
+[[1;31mERROR[m] To see the full stack trace of the errors, re-run Maven with the [1m-e[m switch.
+[[1;31mERROR[m] Re-run Maven using the [1m-X[m switch to enable full debug logging.
+[[1;31mERROR[m] 
+[[1;31mERROR[m] For more information about the errors and possible solutions, please read the following articles:
+[[1;31mERROR[m] [1m[Help 1][m http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+[security-dingtalk-spring-boot-starter/3.1.x] 失败 - 查看日志
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------< [0;36mio.github.hiwepy:security-dingtalk-spring-boot-starter[0;1m >-------[m
+[[1;34mINFO[m] [1mBuilding io.github.hiwepy:security-dingtalk-spring-boot-starter 4.0.x.20251227-SNAPSHOT[m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-clean-plugin:3.4.0:clean[m [1m(default-clean)[m @ [36msecurity-dingtalk-spring-boot-starter[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-enforcer-plugin:3.5.0:enforce[m [1m(default-cli)[m @ [36msecurity-dingtalk-spring-boot-starter[0;1m ---[m
+[[1;34mINFO[m] Rule 1: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;31mBUILD FAILURE[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  0.312 s
+[[1;34mINFO[m] Finished at: 2026-03-16T14:12:23+08:00
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;31mERROR[m] Failed to execute goal [32morg.apache.maven.plugins:maven-enforcer-plugin:3.5.0:enforce[m [1m(default-cli)[m on project [36msecurity-dingtalk-spring-boot-starter[m: [1;31m[m
+[[1;31mERROR[m] [1;31mRule 0: org.apache.maven.enforcer.rules.version.RequireMavenVersion failed with message:[m
+[[1;31mERROR[m] [1;31mYou are running an older version of Maven. This application requires at least Maven 3.9.9.[m
+[[1;31mERROR[m] -> [1m[Help 1][m
+[[1;31mERROR[m] 
+[[1;31mERROR[m] To see the full stack trace of the errors, re-run Maven with the [1m-e[m switch.
+[[1;31mERROR[m] Re-run Maven using the [1m-X[m switch to enable full debug logging.
+[[1;31mERROR[m] 
+[[1;31mERROR[m] For more information about the errors and possible solutions, please read the following articles:
+[[1;31mERROR[m] [1m[Help 1][m http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+[security-dingtalk-spring-boot-starter/3.2.x] 失败 - 查看日志
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------< [0;36mio.github.hiwepy:security-dingtalk-spring-boot-starter[0;1m >-------[m
+[[1;34mINFO[m] [1mBuilding io.github.hiwepy:security-dingtalk-spring-boot-starter 4.0.x.20251227-SNAPSHOT[m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-clean-plugin:3.4.0:clean[m [1m(default-clean)[m @ [36msecurity-dingtalk-spring-boot-starter[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-enforcer-plugin:3.5.0:enforce[m [1m(default-cli)[m @ [36msecurity-dingtalk-spring-boot-starter[0;1m ---[m
+[[1;34mINFO[m] Rule 1: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;31mBUILD FAILURE[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  0.303 s
+[[1;34mINFO[m] Finished at: 2026-03-16T14:12:24+08:00
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;31mERROR[m] Failed to execute goal [32morg.apache.maven.plugins:maven-enforcer-plugin:3.5.0:enforce[m [1m(default-cli)[m on project [36msecurity-dingtalk-spring-boot-starter[m: [1;31m[m
+[[1;31mERROR[m] [1;31mRule 0: org.apache.maven.enforcer.rules.version.RequireMavenVersion failed with message:[m
+[[1;31mERROR[m] [1;31mYou are running an older version of Maven. This application requires at least Maven 3.9.9.[m
+[[1;31mERROR[m] -> [1m[Help 1][m
+[[1;31mERROR[m] 
+[[1;31mERROR[m] To see the full stack trace of the errors, re-run Maven with the [1m-e[m switch.
+[[1;31mERROR[m] Re-run Maven using the [1m-X[m switch to enable full debug logging.
+[[1;31mERROR[m] 
+[[1;31mERROR[m] For more information about the errors and possible solutions, please read the following articles:
+[[1;31mERROR[m] [1m[Help 1][m http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+[security-dingtalk-spring-boot-starter/3.3.x] 失败 - 查看日志
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------< [0;36mio.github.hiwepy:security-dingtalk-spring-boot-starter[0;1m >-------[m
+[[1;34mINFO[m] [1mBuilding io.github.hiwepy:security-dingtalk-spring-boot-starter 4.0.x.20251227-SNAPSHOT[m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-clean-plugin:3.4.0:clean[m [1m(default-clean)[m @ [36msecurity-dingtalk-spring-boot-starter[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-enforcer-plugin:3.5.0:enforce[m [1m(default-cli)[m @ [36msecurity-dingtalk-spring-boot-starter[0;1m ---[m
+[[1;34mINFO[m] Rule 1: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;31mBUILD FAILURE[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  0.376 s
+[[1;34mINFO[m] Finished at: 2026-03-16T14:12:24+08:00
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;31mERROR[m] Failed to execute goal [32morg.apache.maven.plugins:maven-enforcer-plugin:3.5.0:enforce[m [1m(default-cli)[m on project [36msecurity-dingtalk-spring-boot-starter[m: [1;31m[m
+[[1;31mERROR[m] [1;31mRule 0: org.apache.maven.enforcer.rules.version.RequireMavenVersion failed with message:[m
+[[1;31mERROR[m] [1;31mYou are running an older version of Maven. This application requires at least Maven 3.9.9.[m
+[[1;31mERROR[m] -> [1m[Help 1][m
+[[1;31mERROR[m] 
+[[1;31mERROR[m] To see the full stack trace of the errors, re-run Maven with the [1m-e[m switch.
+[[1;31mERROR[m] Re-run Maven using the [1m-X[m switch to enable full debug logging.
+[[1;31mERROR[m] 
+[[1;31mERROR[m] For more information about the errors and possible solutions, please read the following articles:
+[[1;31mERROR[m] [1m[Help 1][m http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+[security-dingtalk-spring-boot-starter/3.4.x] 失败 - 查看日志
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------< [0;36mio.github.hiwepy:security-dingtalk-spring-boot-starter[0;1m >-------[m
+[[1;34mINFO[m] [1mBuilding io.github.hiwepy:security-dingtalk-spring-boot-starter 4.0.x.20251227-SNAPSHOT[m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-clean-plugin:3.4.0:clean[m [1m(default-clean)[m @ [36msecurity-dingtalk-spring-boot-starter[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-enforcer-plugin:3.5.0:enforce[m [1m(default-cli)[m @ [36msecurity-dingtalk-spring-boot-starter[0;1m ---[m
+[[1;34mINFO[m] Rule 1: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;31mBUILD FAILURE[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  0.325 s
+[[1;34mINFO[m] Finished at: 2026-03-16T14:12:25+08:00
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;31mERROR[m] Failed to execute goal [32morg.apache.maven.plugins:maven-enforcer-plugin:3.5.0:enforce[m [1m(default-cli)[m on project [36msecurity-dingtalk-spring-boot-starter[m: [1;31m[m
+[[1;31mERROR[m] [1;31mRule 0: org.apache.maven.enforcer.rules.version.RequireMavenVersion failed with message:[m
+[[1;31mERROR[m] [1;31mYou are running an older version of Maven. This application requires at least Maven 3.9.9.[m
+[[1;31mERROR[m] -> [1m[Help 1][m
+[[1;31mERROR[m] 
+[[1;31mERROR[m] To see the full stack trace of the errors, re-run Maven with the [1m-e[m switch.
+[[1;31mERROR[m] Re-run Maven using the [1m-X[m switch to enable full debug logging.
+[[1;31mERROR[m] 
+[[1;31mERROR[m] For more information about the errors and possible solutions, please read the following articles:
+[[1;31mERROR[m] [1m[Help 1][m http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+[security-dingtalk-spring-boot-starter/3.5.x] 失败 - 查看日志
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------< [0;36mio.github.hiwepy:security-dingtalk-spring-boot-starter[0;1m >-------[m
+[[1;34mINFO[m] [1mBuilding io.github.hiwepy:security-dingtalk-spring-boot-starter 4.0.x.20251227-SNAPSHOT[m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-clean-plugin:3.4.0:clean[m [1m(default-clean)[m @ [36msecurity-dingtalk-spring-boot-starter[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-enforcer-plugin:3.5.0:enforce[m [1m(default-cli)[m @ [36msecurity-dingtalk-spring-boot-starter[0;1m ---[m
+[[1;34mINFO[m] Rule 1: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;31mBUILD FAILURE[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  0.318 s
+[[1;34mINFO[m] Finished at: 2026-03-16T14:12:26+08:00
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;31mERROR[m] Failed to execute goal [32morg.apache.maven.plugins:maven-enforcer-plugin:3.5.0:enforce[m [1m(default-cli)[m on project [36msecurity-dingtalk-spring-boot-starter[m: [1;31m[m
+[[1;31mERROR[m] [1;31mRule 0: org.apache.maven.enforcer.rules.version.RequireMavenVersion failed with message:[m
+[[1;31mERROR[m] [1;31mYou are running an older version of Maven. This application requires at least Maven 3.9.9.[m
+[[1;31mERROR[m] -> [1m[Help 1][m
+[[1;31mERROR[m] 
+[[1;31mERROR[m] To see the full stack trace of the errors, re-run Maven with the [1m-e[m switch.
+[[1;31mERROR[m] Re-run Maven using the [1m-X[m switch to enable full debug logging.
+[[1;31mERROR[m] 
+[[1;31mERROR[m] For more information about the errors and possible solutions, please read the following articles:
+[[1;31mERROR[m] [1m[Help 1][m http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+[security-dingtalk-spring-boot-starter/4.0.x] 失败 - 查看日志
+[security-dingtalk-spring-boot-starter/master] 失败 - 分支切换失败
