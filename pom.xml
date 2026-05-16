@@ -9,7 +9,7 @@
 		<relativePath /> 
 	</parent>
 
-	<groupId>com.github.hiwepy</groupId>
+	<groupId>io.github.hiwepy</groupId>
 	<artifactId>security-dingtalk-spring-boot-starter</artifactId>
 	<description>Spring Boot Starter For Spring Security With DingTalk </description>
 	<version>4.0.x.20251227-SNAPSHOT</version>
@@ -382,13 +382,13 @@
 
 			
 			<dependency>
-				<groupId>com.github.hiwepy</groupId>
+				<groupId>io.github.hiwepy</groupId>
 				<artifactId>security-biz-spring-boot-starter</artifactId>
 				<version>${spring-boot-starter-security-biz.version}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>com.github.hiwepy</groupId>
+				<groupId>io.github.hiwepy</groupId>
 				<artifactId>dingtalk-spring-boot-starter</artifactId>
 				<version>${spring-boot-starter-dingtalk.version}</version>
 			</dependency>
@@ -401,19 +401,19 @@
 			</dependency>
 
 			<dependency>
-				<groupId>com.github.hiwepy</groupId>
+				<groupId>io.github.hiwepy</groupId>
 				<artifactId>jwt-issuer-api</artifactId>
 				<version>${jwt-issuer.version}</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
-				<groupId>com.github.hiwepy</groupId>
+				<groupId>io.github.hiwepy</groupId>
 				<artifactId>jwt-issuer-with-jjwt</artifactId>
 				<version>${jwt-issuer.version}</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
-				<groupId>com.github.hiwepy</groupId>
+				<groupId>io.github.hiwepy</groupId>
 				<artifactId>jwt-issuer-with-nimbus</artifactId>
 				<version>${jwt-issuer.version}</version>
 				<scope>provided</scope>
@@ -502,7 +502,7 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>com.github.hiwepy</groupId>
+			<groupId>io.github.hiwepy</groupId>
 			<artifactId>security-biz-spring-boot-starter</artifactId>
 			<exclusions>
 				<exclusion>
@@ -512,23 +512,23 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.github.hiwepy</groupId>
+			<groupId>io.github.hiwepy</groupId>
 			<artifactId>jwt-issuer-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.hiwepy</groupId>
+			<groupId>io.github.hiwepy</groupId>
 			<artifactId>jwt-issuer-with-jjwt</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.hiwepy</groupId>
+			<groupId>io.github.hiwepy</groupId>
 			<artifactId>jwt-issuer-with-nimbus</artifactId>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>com.github.hiwepy</groupId>
+			<groupId>io.github.hiwepy</groupId>
 			<artifactId>dingtalk-spring-boot-starter</artifactId>
 		</dependency>
 
